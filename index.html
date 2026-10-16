@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
     <title>Katakana Quest</title>
-    <link rel="stylesheet" href="katakana.css?v=daily-listening-10" />
+    <link rel="stylesheet" href="katakana.css?v=kanji-around-japan" />
   </head>
   <body>
     <main class="app-shell">
@@ -17,8 +17,9 @@
       </header>
 
       <nav class="view-tabs" aria-label="Practice views">
-        <button class="view-tab is-active" type="button" data-view="quest" aria-selected="true">Today’s quest</button>
+        <button class="view-tab is-active" type="button" data-view="quest" aria-selected="true">Katakana</button>
         <button class="view-tab" type="button" data-view="listening" aria-selected="false">N4 listening</button>
+        <button class="view-tab" type="button" data-view="kanji" aria-selected="false">Everyday kanji</button>
         <button class="view-tab" type="button" data-view="calendar" aria-selected="false">Calendar <span id="nav-stamp-count">0</span></button>
       </nav>
 
@@ -111,6 +112,41 @@
         </section>
       </section>
 
+      <section id="kanji-view" class="view-panel" aria-labelledby="kanji-title" hidden>
+        <div class="quest-topline">
+          <div>
+            <p class="eyebrow">Daily kanji · <span id="kanji-date"></span></p>
+            <h2 id="kanji-title">Kanji around Japan</h2>
+          </div>
+          <div class="progress-count"><strong id="kanji-count">0</strong><span>/ 10 signs</span></div>
+        </div>
+        <div class="progress-track" aria-label="Kanji progress"><span id="kanji-progress"></span></div>
+
+        <div id="kanji-card" class="practice-card">
+          <div class="card-meta"><span id="kanji-context">Everyday signs</span><span id="kanji-used">0 / 120 seen</span></div>
+          <div id="kanji-sign" class="kanji-sign" lang="ja">—</div>
+          <p id="kanji-reading" class="kanji-reading" lang="ja" hidden></p>
+          <form id="kanji-form">
+            <label for="kanji-input">What does this mean in English?</label>
+            <div class="answer-row">
+              <input id="kanji-input" name="meaning" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="100" placeholder="type the meaning" required />
+              <button id="kanji-submit" class="primary-button" type="submit">Check answer ↗</button>
+            </div>
+          </form>
+          <div id="kanji-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        </div>
+        <p class="one-and-done">Each sign appears once in the quiz. When the bank runs out, it stops.</p>
+
+        <section class="review-section" aria-labelledby="kanji-review-title">
+          <div class="review-heading">
+            <h3 id="kanji-review-title">Review missed signs</h3>
+            <span id="kanji-review-count" class="review-count">0 signs</span>
+          </div>
+          <p id="kanji-review-empty" class="review-empty">Missed signs will appear here with their reading and meaning.</p>
+          <ul id="kanji-review-list" class="review-list"></ul>
+        </section>
+      </section>
+
       <section id="calendar-view" class="view-panel" aria-labelledby="calendar-title" hidden>
         <div class="calendar-heading">
           <div>
@@ -136,9 +172,10 @@
 
       <footer class="site-footer">
         <span>Progress stays on this device.</span>
-        <button class="reset-button" id="reset-progress" type="button">Reset progress</button>
+        <button class="reset-button" id="reset-progress" type="button">Reset katakana &amp; listening</button>
       </footer>
     </main>
-    <script src="katakana.js?v=daily-listening-10"></script>
+    <script src="katakana.js?v=kanji-around-japan"></script>
+    <script src="kanji.js?v=kanji-around-japan"></script>
   </body>
 </html>

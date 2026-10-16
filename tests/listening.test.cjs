@@ -1,96 +1,6 @@
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
-const vm = require('node:vm');
 const test = require('node:test');
-
-const root = path.resolve(__dirname, '..');
-const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const source = fs.readFileSync(path.join(root, 'katakana.js'), 'utf8');
-const key = 'katakana-quest-progress-v1';
-const localDay = (offset, hour = 12, minute = 0) => new Date(2026, 9, 16 + offset, hour, minute).getTime();
-
-function element() {
-  const classes = new Set();
-  return {
-    children: [], style: {}, dataset: {}, listeners: {}, attributes: {},
-    hidden: false, disabled: false, value: '', textContent: '', className: '',
-    classList: {
-      add: (name) => classes.add(name),
-      remove: (...names) => names.forEach((name) => classes.delete(name)),
-      toggle: (name, active) => active ? classes.add(name) : classes.delete(name),
-    },
-    append(...items) { this.children.push(...items); },
-    appendChild(item) { this.children.push(item); },
-    replaceChildren(...items) { this.children = items; },
-    setAttribute(name, value) { this.attributes[name] = value; },
-    addEventListener(type, callback) { this.listeners[type] = callback; },
-    focus() {},
-  };
-}
-
-function launch({ saved = new Map(), clock = { now: localDay(0) }, random = 0.37, voice = 'ja-JP' } = {}) {
-  const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]);
-  const els = Object.fromEntries(ids.map((id) => [id, element()]));
-  const tabs = ['quest', 'listening', 'calendar'].map((view) => {
-    const tab = element();
-    tab.dataset.view = view;
-    return tab;
-  });
-  const marks = ['got', 'review'].map((mark) => {
-    const button = element();
-    button.dataset.listeningMark = mark;
-    return button;
-  });
-  const spoken = [];
-  const windowEvents = {};
-  const documentEvents = {};
-  const intervals = [];
-  const storage = {
-    getItem: (name) => saved.get(name) ?? null,
-    setItem: (name, value) => saved.set(name, value),
-    removeItem: (name) => saved.delete(name),
-  };
-  const synth = {
-    getVoices: () => [{ lang: voice }],
-    cancel() {},
-    speak(utterance) {
-      spoken.push(utterance);
-      utterance.onstart();
-      utterance.onend();
-    },
-  };
-  class Utterance {
-    constructor(text) { this.text = text; }
-  }
-  class ClockDate extends Date {
-    constructor(...args) { super(...(args.length ? args : [clock.now])); }
-    static now() { return clock.now; }
-  }
-  const document = {
-    hidden: false,
-    querySelector: (selector) => els[selector.slice(1)],
-    querySelectorAll: (selector) => selector === '[data-view]' ? tabs : marks,
-    createElement: element,
-    addEventListener: (type, callback) => { documentEvents[type] = callback; },
-  };
-  vm.runInNewContext(source, {
-    document, localStorage: storage, Date: ClockDate, Intl,
-    Math: Object.assign(Object.create(Math), { random: () => random }),
-    requestAnimationFrame: (callback) => callback(),
-    window: {
-      confirm: () => true,
-      speechSynthesis: synth,
-      SpeechSynthesisUtterance: Utterance,
-      addEventListener: (type, callback) => { windowEvents[type] = callback; },
-      setInterval: (callback) => intervals.push(callback),
-    },
-  });
-  return {
-    els, marks, tabs, spoken, clock, saved, windowEvents, documentEvents, intervals,
-    state: () => JSON.parse(saved.get(key)),
-  };
-}
+const { html, key, localDay, launch } = require('./browser-fixture.cjs');
 
 function compare(app, translation = 'My English translation') {
   app.els['listening-input'].value = translation;
@@ -217,7 +127,7 @@ test('a cycle boundary mid-set still produces ten distinct prompts', () => {
 });
 
 test('Japanese stays audio only, blank answers do not advance, and reset clears daily history', () => {
-  const listeningHtml = html.split('<section id="listening-view"')[1].split('<section id="calendar-view"')[0];
+  const listeningHtml = html.split('<section id="listening-view"')[1].split('<section id="kanji-view"')[0];
   assert(!/[ぁ-んァ-ン一-龯]/u.test(listeningHtml));
   const app = launch({ voice: 'en-US' });
   app.els['listening-play'].listeners.click();

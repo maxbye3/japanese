@@ -236,6 +236,7 @@
   const elements = {
     questView: document.querySelector('#quest-view'),
     listeningView: document.querySelector('#listening-view'),
+    kanjiView: document.querySelector('#kanji-view'),
     calendarView: document.querySelector('#calendar-view'),
     tabs: [...document.querySelectorAll('[data-view]')],
     todayLabel: document.querySelector('#today-label'),
@@ -343,6 +344,7 @@
   function setView(view) {
     elements.questView.hidden = view !== 'quest';
     elements.listeningView.hidden = view !== 'listening';
+    elements.kanjiView.hidden = view !== 'kanji';
     elements.calendarView.hidden = view !== 'calendar';
     elements.tabs.forEach((tab) => {
       const active = tab.dataset.view === view;
@@ -351,6 +353,7 @@
     });
     if (view !== 'listening') stopListeningAudio();
     if (view === 'listening') refreshListeningDay();
+    if (view === 'kanji') window.dispatchEvent(new Event('kanji:open'));
     if (view === 'calendar') renderCalendar();
   }
 
@@ -713,7 +716,7 @@
   elements.previousMonth.addEventListener('click', () => { calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1); renderCalendar(); });
   elements.nextMonth.addEventListener('click', () => { calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1); renderCalendar(); });
   elements.resetProgress.addEventListener('click', () => {
-    if (!window.confirm('Reset all words, listening practice, and calendar stamps on this device?')) return;
+    if (!window.confirm('Reset katakana, listening practice, and calendar stamps? Your kanji history and review will be kept.')) return;
     localStorage.removeItem(STORAGE_KEY);
     stopListeningAudio();
     listeningAttempt = null;
