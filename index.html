@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
     <title>Katakana Quest</title>
-    <link rel="stylesheet" href="katakana.css?v=n4-listening" />
+    <link rel="stylesheet" href="katakana.css?v=daily-listening-10" />
   </head>
   <body>
     <main class="app-shell">
@@ -61,16 +61,16 @@
       <section id="listening-view" class="view-panel" aria-labelledby="listening-title" hidden>
         <div class="quest-topline">
           <div>
-            <p class="eyebrow">Five everyday phrases</p>
+            <p class="eyebrow">Daily listening · <span id="listening-date"></span></p>
             <h2 id="listening-title">Listen and translate</h2>
           </div>
-          <div class="progress-count"><strong id="listening-count">0</strong><span>/ 5 phrases</span></div>
+          <div class="progress-count"><strong id="listening-count">0</strong><span>/ 10 phrases</span></div>
         </div>
 
         <div class="progress-track" aria-label="Listening progress"><span id="listening-progress"></span></div>
 
         <div class="practice-card listening-card">
-          <div class="card-meta"><span>Audio only · N4 level</span><span id="listening-step">Phrase 1 of 5</span></div>
+          <div class="card-meta"><span>Audio only · N4 level</span><span id="listening-step">Phrase 1 of 10</span></div>
           <div id="listening-prompt" class="audio-prompt">
             <span class="audio-mark" aria-hidden="true">♪</span>
             <button class="play-button" id="listening-play" type="button">▶ Play Japanese</button>
@@ -95,9 +95,9 @@
           </div>
           <div id="listening-done" class="listening-done" hidden>
             <span class="done-mark" aria-hidden="true">✦</span>
-            <h3>Five phrases done!</h3>
+            <h3>Today’s ten complete!</h3>
             <p id="listening-summary"></p>
-            <button class="primary-button" id="listening-restart" type="button">Practice again ↗</button>
+            <button class="primary-button" id="listening-restart" type="button">Practise today’s set again ↗</button>
           </div>
         </div>
 
@@ -139,6 +139,6 @@
         <button class="reset-button" id="reset-progress" type="button">Reset progress</button>
       </footer>
     </main>
-    <script src="katakana.js?v=n4-listening"></script>
+    <script src="katakana.js?v=daily-listening-10"></script>
   </body>
 </html>

@@ -96,10 +96,137 @@
     { id: 'rain', japanese: '明日は雨が降るかもしれません。', meaning: 'It might rain tomorrow.' },
     { id: 'closing', japanese: 'この店は何時まで開いていますか。', meaning: 'What time does this shop close?' },
     { id: 'home', japanese: '今日は早く帰らなければなりません。', meaning: 'I have to go home early today.' },
+    { id: 'speak-slowly', japanese: 'もう少しゆっくり話していただけませんか。', meaning: 'Could you speak a little more slowly?' },
+    { id: 'write-name', japanese: '名前をここに書いてください。', meaning: 'Please write your name here.' },
+    { id: 'word-meaning', japanese: 'この言葉の意味を教えてもらえますか。', meaning: 'Could you tell me what this word means?' },
+    { id: 'not-understood', japanese: 'すみませんが、よく分かりませんでした。', meaning: "I'm sorry, I didn't quite understand." },
+    { id: 'call-later', japanese: '後で電話してもいいですか。', meaning: 'May I call you later?' },
+
+    { id: 'change-trains', japanese: '次の駅で電車を乗り換えてください。', meaning: 'Please change trains at the next station.' },
+    { id: 'last-train', japanese: '最後の電車に間に合わないかもしれません。', meaning: 'I might not make it in time for the last train.' },
+    { id: 'bus-stop', japanese: 'バスが止まってから降りてください。', meaning: 'Please get off after the bus has stopped.' },
+    { id: 'walk-station', japanese: '駅まで歩いて十分ぐらいかかります。', meaning: 'It takes about ten minutes to walk to the station.' },
+    { id: 'missed-bus', japanese: 'バスに乗れなかったので、歩いて帰りました。', meaning: "I couldn't catch the bus, so I walked home." },
+    { id: 'ticket-before', japanese: '電車に乗る前に、切符を買ってください。', meaning: 'Please buy a ticket before boarding the train.' },
+    { id: 'bus-faster', japanese: '歩くより、バスで行ったほうが早いです。', meaning: 'Taking the bus is faster than walking.' },
+    { id: 'train-delay', japanese: '電車が遅れているので、少し待ちましょう。', meaning: "The train is delayed, so let's wait a little." },
+    { id: 'seat-free', japanese: 'この席に座ってもいいですか。', meaning: 'May I sit in this seat?' },
+    { id: 'next-bus', japanese: '次のバスが来るまで、ここで待ちましょう。', meaning: "Let's wait here until the next bus comes." },
+
+    { id: 'try-clothes', japanese: 'この服を着てみてもいいですか。', meaning: 'May I try on these clothes?' },
+    { id: 'smaller-size', japanese: 'もう少し小さいサイズはありませんか。', meaning: 'Do you have a slightly smaller size?' },
+    { id: 'pay-card', japanese: 'カードで払うことができますか。', meaning: 'Can I pay by card?' },
+    { id: 'bag-lighter', japanese: 'このかばんはあのかばんより軽いです。', meaning: 'This bag is lighter than that bag.' },
+    { id: 'too-expensive', japanese: '少し高すぎるので、今日は買いません。', meaning: "It's a little too expensive, so I won't buy it today." },
+    { id: 'buy-present', japanese: '友達にあげるプレゼントを探しています。', meaning: "I'm looking for a present to give to a friend." },
+    { id: 'shop-closed', japanese: '店が閉まっていたので、何も買えませんでした。', meaning: "The shop was closed, so I couldn't buy anything." },
+    { id: 'return-item', japanese: '昨日買ったシャツを返したいんですが。', meaning: "I'd like to return the shirt I bought yesterday." },
+    { id: 'cheaper-shop', japanese: 'もっと安い店があるかもしれません。', meaning: 'There might be a cheaper shop.' },
+    { id: 'look-only', japanese: '今日は見るだけにしておきます。', meaning: "I'll just have a look today." },
+
+    { id: 'order-ready', japanese: '注文してもいいですか。', meaning: 'May I order?' },
+    { id: 'no-meat', japanese: '肉が入っていない料理はありますか。', meaning: 'Do you have any dishes without meat?' },
+    { id: 'less-spicy', japanese: 'あまり辛くしないでください。', meaning: "Please don't make it too spicy." },
+    { id: 'looks-good', japanese: 'このケーキはおいしそうですね。', meaning: "This cake looks delicious, doesn't it?" },
+    { id: 'too-hot', japanese: '熱すぎて、まだ飲めません。', meaning: "It's too hot to drink yet." },
+    { id: 'try-food', japanese: 'この料理を食べてみたいです。', meaning: "I'd like to try this dish." },
+    { id: 'already-eaten', japanese: 'もう昼ご飯を食べてしまいました。', meaning: "I've already eaten lunch." },
+    { id: 'eat-before', japanese: '出かける前に、何か食べておきましょう。', meaning: "Let's eat something before going out." },
+    { id: 'drink-water', japanese: 'コーヒーではなく、水をお願いします。', meaning: "I'd like water instead of coffee, please." },
+    { id: 'bill-separate', japanese: '別々に払ってもいいですか。', meaning: 'May we pay separately?' },
+
+    { id: 'close-window', japanese: '寒いので、窓を閉めてもいいですか。', meaning: "It's cold, so may I close the window?" },
+    { id: 'light-left', japanese: '電気をつけたまま寝てしまいました。', meaning: 'I fell asleep with the light on.' },
+    { id: 'clean-room', japanese: '友達が来る前に、部屋を掃除しておきます。', meaning: "I'll clean the room before my friend comes." },
+    { id: 'take-shoes', japanese: 'ここで靴を脱いでください。', meaning: 'Please take off your shoes here.' },
+    { id: 'lost-key', japanese: '家の鍵をなくしてしまいました。', meaning: "I've lost my house key." },
+    { id: 'wash-dishes', japanese: 'ご飯を食べてから、お皿を洗います。', meaning: "I'll wash the dishes after eating." },
+    { id: 'help-carry', japanese: 'この箱を運ぶのを手伝ってもらえますか。', meaning: 'Could you help me carry this box?' },
+    { id: 'door-open', japanese: 'ドアが開いているので、閉めてください。', meaning: 'The door is open, so please close it.' },
+    { id: 'quiet-home', japanese: '子供が寝ているので、静かにしてください。', meaning: 'The child is sleeping, so please be quiet.' },
+    { id: 'laundry-rain', japanese: '雨が降る前に、洗濯物を中に入れましょう。', meaning: "Let's bring the laundry inside before it rains." },
+
+    { id: 'homework-tomorrow', japanese: '明日までに宿題を出さなければなりません。', meaning: 'I have to hand in my homework by tomorrow.' },
+    { id: 'forgot-book', japanese: '教科書を持ってくるのを忘れました。', meaning: 'I forgot to bring my textbook.' },
+    { id: 'borrow-pen', japanese: 'ペンを貸してもらえませんか。', meaning: 'Could you lend me a pen?' },
+    { id: 'meeting-time', japanese: '会議は三時に始まる予定です。', meaning: 'The meeting is scheduled to start at three.' },
+    { id: 'study-library', japanese: '図書館なら、静かに勉強できます。', meaning: 'You can study quietly at the library.' },
+    { id: 'late-work', japanese: '寝坊したので、仕事に遅れてしまいました。', meaning: 'I overslept, so I was late for work.' },
+    { id: 'finish-report', japanese: 'この仕事は今日中に終わると思います。', meaning: 'I think this work will be finished today.' },
+    { id: 'read-again', japanese: '分からなかったら、もう一度読んでください。', meaning: "If you don't understand, please read it again." },
+    { id: 'teacher-ask', japanese: '先生に聞いてから、答えを書きます。', meaning: "I'll write the answer after asking the teacher." },
+    { id: 'work-together', japanese: '一人でやるより、二人でやったほうがいいです。', meaning: "It's better to do it with another person than alone." },
+
+    { id: 'headache-rest', japanese: '頭が痛いので、少し休んでもいいですか。', meaning: 'I have a headache, so may I rest for a while?' },
+    { id: 'medicine-after', japanese: 'この薬は食事の後で飲んでください。', meaning: 'Please take this medicine after meals.' },
+    { id: 'see-doctor', japanese: '熱があるなら、病院に行ったほうがいいです。', meaning: 'If you have a fever, you should go to the hospital.' },
+    { id: 'feel-better', japanese: '昨日より、ずっと元気になりました。', meaning: "I feel much better than yesterday." },
+    { id: 'no-running', japanese: '足が痛くて、走ることができません。', meaning: "My leg hurts, so I can't run." },
+    { id: 'sleep-early', japanese: '今日は早く寝たほうがいいですよ。', meaning: 'You should go to bed early today.' },
+    { id: 'cold-maybe', japanese: '風邪をひいたかもしれません。', meaning: 'I might have caught a cold.' },
+    { id: 'water-often', japanese: '水をたくさん飲むようにしています。', meaning: 'I make a point of drinking plenty of water.' },
+    { id: 'better-medicine', japanese: '薬を飲んだら、少し楽になりました。', meaning: 'After taking the medicine, I felt a little better.' },
+    { id: 'not-overdo', japanese: '疲れているときは、無理をしないでください。', meaning: "When you're tired, please don't push yourself too hard." },
+
+    { id: 'weekend-plan', japanese: '週末は友達と映画を見るつもりです。', meaning: 'I plan to watch a film with a friend at the weekend.' },
+    { id: 'after-shopping', japanese: '買い物が終わったら、電話します。', meaning: "I'll call you when I've finished shopping." },
+    { id: 'meet-station', japanese: '駅の前で待ち合わせることにしました。', meaning: 'We decided to meet in front of the station.' },
+    { id: 'free-sunday', japanese: '日曜日なら、時間があります。', meaning: "If it's Sunday, I'm free." },
+    { id: 'cancel-rain', japanese: '雨だったら、出かけないつもりです。', meaning: "If it rains, I don't plan to go out." },
+    { id: 'reserve-early', japanese: '旅行の前に、ホテルを予約しておきます。', meaning: "I'll book a hotel before the trip." },
+    { id: 'change-time', japanese: '約束の時間を変えてもいいですか。', meaning: 'May we change the time we arranged to meet?' },
+    { id: 'arrive-soon', japanese: 'あと十分ぐらいで着くと思います。', meaning: "I think I'll arrive in about ten minutes." },
+    { id: 'wait-five', japanese: 'もう五分だけ待ってもらえませんか。', meaning: 'Could you wait just five more minutes?' },
+    { id: 'next-month-move', japanese: '来月、引っ越すことになりました。', meaning: "It's been arranged that I'll move house next month." },
+
+    { id: 'umbrella-take', japanese: '雨が降りそうなので、傘を持っていきます。', meaning: "It looks like rain, so I'll take an umbrella." },
+    { id: 'getting-cold', japanese: '夕方になると、寒くなります。', meaning: 'It gets cold in the evening.' },
+    { id: 'snow-first', japanese: 'こんなに雪が降るのを見たのは初めてです。', meaning: "This is the first time I've seen this much snow fall." },
+    { id: 'wind-strong', japanese: '風が強いので、窓を開けないでください。', meaning: "The wind is strong, so please don't open the window." },
+    { id: 'sunny-walk', japanese: '天気がよければ、公園を散歩しましょう。', meaning: "If the weather is good, let's take a walk in the park." },
+    { id: 'rain-stopped', japanese: '雨がやんだので、外に出ても大丈夫です。', meaning: "The rain has stopped, so it's all right to go outside." },
+    { id: 'hot-yesterday', japanese: '今日は昨日ほど暑くありません。', meaning: "Today isn't as hot as yesterday." },
+    { id: 'wet-clothes', japanese: '傘を忘れて、服がぬれてしまいました。', meaning: 'I forgot my umbrella and my clothes got wet.' },
+    { id: 'weather-news', japanese: '天気予報によると、明日は晴れるそうです。', meaning: 'According to the weather forecast, it will be sunny tomorrow.' },
+    { id: 'dark-soon', japanese: '暗くなる前に、家に帰りましょう。', meaning: "Let's go home before it gets dark." },
+
+    { id: 'been-kyoto', japanese: '京都に行ったことがありますか。', meaning: 'Have you ever been to Kyoto?' },
+    { id: 'hotel-bag', japanese: '荷物をここに置いておいてもいいですか。', meaning: 'May I leave my luggage here?' },
+    { id: 'photo-permission', japanese: 'ここで写真を撮ってもいいですか。', meaning: 'May I take photos here?' },
+    { id: 'no-parking', japanese: 'ここに車を止めてはいけません。', meaning: 'You must not park here.' },
+    { id: 'show-map', japanese: '地図を見せてもらえますか。', meaning: 'Could you show me the map?' },
+    { id: 'lost-way', japanese: '道が分からなくなってしまいました。', meaning: "I've lost my way." },
+    { id: 'room-view', japanese: 'この部屋から海が見えます。', meaning: 'You can see the sea from this room.' },
+    { id: 'travel-alone', japanese: '一人で旅行するのは初めてです。', meaning: 'This is my first time travelling alone.' },
+    { id: 'passport-needed', japanese: 'パスポートを見せなければなりませんか。', meaning: 'Do I have to show my passport?' },
+    { id: 'leave-hotel', japanese: '何時までに部屋を出ればいいですか。', meaning: 'By what time should I leave the room?' },
+
+    { id: 'help-friend', japanese: '困ったら、いつでも連絡してください。', meaning: 'If you have a problem, please contact me anytime.' },
+    { id: 'friend-taught', japanese: '友達が日本語を教えてくれました。', meaning: 'My friend taught me Japanese.' },
+    { id: 'give-directions', japanese: '駅までの道を教えてあげました。', meaning: 'I told someone how to get to the station.' },
+    { id: 'invite-dinner', japanese: 'よかったら、一緒に晩ご飯を食べませんか。', meaning: "If you'd like, shall we have dinner together?" },
+    { id: 'sorry-late', japanese: '遅れてしまって、すみません。', meaning: "I'm sorry I'm late." },
+    { id: 'thanks-help', japanese: '手伝ってくれて、ありがとうございます。', meaning: 'Thank you for helping me.' },
+    { id: 'looking-forward', japanese: 'また会えるのを楽しみにしています。', meaning: "I'm looking forward to seeing you again." },
+    { id: 'bring-friend', japanese: '友達を連れてきてもいいですか。', meaning: 'May I bring a friend?' },
+    { id: 'seems-busy', japanese: '今日は忙しそうですね。', meaning: 'You seem busy today.' },
+    { id: 'friend-moving', japanese: '友達は来年、日本に住むつもりだそうです。', meaning: 'I hear my friend plans to live in Japan next year.' },
+
+    { id: 'music-studying', japanese: '音楽を聞きながら、日本語を勉強しています。', meaning: "I'm studying Japanese while listening to music." },
+    { id: 'weekend-activities', japanese: '休みの日は、本を読んだり、散歩したりします。', meaning: 'On my days off, I do things like read books and take walks.' },
+    { id: 'exercise-daily', japanese: '毎日、少し運動するようにしています。', meaning: 'I try to get a little exercise every day.' },
+    { id: 'stop-sweets', japanese: '夜は甘い物を食べないことにしました。', meaning: "I've decided not to eat sweet things at night." },
+    { id: 'used-early', japanese: '最近、早く起きられるようになりました。', meaning: "Recently, I've become able to wake up early." },
+    { id: 'forgot-phone', japanese: '携帯電話を家に忘れてきました。', meaning: 'I left my mobile phone at home.' },
+    { id: 'pack-phone', japanese: '出かける前に、携帯電話をかばんに入れておきます。', meaning: "I'll put my mobile phone in my bag before going out." },
+    { id: 'read-book', japanese: 'この本は読みやすいので、おすすめです。', meaning: "This book is easy to read, so I recommend it." },
+    { id: 'cook-able', japanese: '簡単な料理なら、作ることができます。', meaning: 'I can cook simple dishes.' },
+    { id: 'practice-daily', japanese: '毎日練習すれば、少しずつ上手になります。', meaning: "If you practise every day, you'll gradually improve." },
   ];
 
   const STORAGE_KEY = 'katakana-quest-progress-v1';
   const QUEST_SIZE = 10;
+  const LISTENING_SIZE = 10;
   const today = dateKey(new Date());
   let calendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   let state = loadState();
@@ -140,6 +267,7 @@
     listeningDone: document.querySelector('#listening-done'),
     listeningSummary: document.querySelector('#listening-summary'),
     listeningRestart: document.querySelector('#listening-restart'),
+    listeningDate: document.querySelector('#listening-date'),
     listeningReviewCount: document.querySelector('#listening-review-count'),
     listeningReviewEmpty: document.querySelector('#listening-review-empty'),
     listeningReviewList: document.querySelector('#listening-review-list'),
@@ -166,13 +294,16 @@
       return {
         usedWords: Array.isArray(saved.usedWords) ? saved.usedWords : [],
         wrongAnswers: Array.isArray(saved.wrongAnswers) ? saved.wrongAnswers : [],
-        listeningAnswers: Array.isArray(saved.listeningAnswers) ? saved.listeningAnswers : [],
+        listeningSession: saved.listeningSession && typeof saved.listeningSession === 'object' ? saved.listeningSession : null,
+        usedListeningPhrases: Array.isArray(saved.usedListeningPhrases)
+          ? saved.usedListeningPhrases
+          : (Array.isArray(saved.listeningAnswers) ? saved.listeningAnswers.filter(Boolean).map((answer) => answer.id) : []),
         listeningReview: Array.isArray(saved.listeningReview) ? saved.listeningReview : [],
         days: saved.days && typeof saved.days === 'object' ? saved.days : {},
         currentQuestion: saved.currentQuestion && typeof saved.currentQuestion === 'object' ? saved.currentQuestion : null,
       };
     } catch {
-      return { usedWords: [], wrongAnswers: [], listeningAnswers: [], listeningReview: [], days: {}, currentQuestion: null };
+      return { usedWords: [], wrongAnswers: [], listeningSession: null, usedListeningPhrases: [], listeningReview: [], days: {}, currentQuestion: null };
     }
   }
 
@@ -219,6 +350,7 @@
       tab.setAttribute('aria-selected', String(active));
     });
     if (view !== 'listening') stopListeningAudio();
+    if (view === 'listening') refreshListeningDay();
     if (view === 'calendar') renderCalendar();
   }
 
@@ -295,6 +427,48 @@
     if (wasPlaying && 'speechSynthesis' in window) window.speechSynthesis.cancel();
   }
 
+  function getListeningSession() {
+    const date = dateKey(new Date());
+    const session = state.listeningSession;
+    const phraseIds = new Set(PHRASES.map((phrase) => phrase.id));
+    if (session && session.date === date
+      && Array.isArray(session.phraseIds) && session.phraseIds.length === LISTENING_SIZE
+      && new Set(session.phraseIds).size === LISTENING_SIZE
+      && session.phraseIds.every((id) => phraseIds.has(id))
+      && Array.isArray(session.answers) && session.answers.length <= LISTENING_SIZE) return session;
+
+    stopListeningAudio();
+    listeningAttempt = null;
+    let used = new Set(state.usedListeningPhrases.filter((id) => phraseIds.has(id)));
+    const selected = [];
+    while (selected.length < LISTENING_SIZE) {
+      let available = PHRASES.filter((phrase) => !used.has(phrase.id));
+      if (!available.length) {
+        // Start a new cycle, keeping this day's phrases distinct at the boundary.
+        used = new Set(selected);
+        available = PHRASES.filter((phrase) => !used.has(phrase.id));
+      }
+      const phrase = available[Math.floor(Math.random() * available.length)];
+      selected.push(phrase.id);
+      used.add(phrase.id);
+    }
+    state.usedListeningPhrases = [...used];
+    state.listeningSession = { date, phraseIds: selected, answers: [] };
+    saveState();
+    return state.listeningSession;
+  }
+
+  function currentListeningPhrase() {
+    const session = getListeningSession();
+    return PHRASES.find((phrase) => phrase.id === session.phraseIds[session.answers.length]);
+  }
+
+  function refreshListeningDay() {
+    if (state.listeningSession && state.listeningSession.date === dateKey(new Date())) return false;
+    renderListening();
+    return true;
+  }
+
   function playListening(phrase) {
     if (!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) {
       setAudioStatus('Japanese audio is not supported in this browser.');
@@ -362,11 +536,13 @@
   }
 
   function renderListening() {
-    const count = Math.min(state.listeningAnswers.length, PHRASES.length);
-    const done = count === PHRASES.length;
+    const session = getListeningSession();
+    const count = session.answers.length;
+    const done = count === LISTENING_SIZE;
+    elements.listeningDate.textContent = formatToday();
     elements.listeningCount.textContent = String(count);
-    elements.listeningProgress.style.width = `${count / PHRASES.length * 100}%`;
-    elements.listeningStep.textContent = done ? 'Complete' : `Phrase ${count + 1} of ${PHRASES.length}`;
+    elements.listeningProgress.style.width = `${count / LISTENING_SIZE * 100}%`;
+    elements.listeningStep.textContent = done ? 'Complete' : `Phrase ${count + 1} of ${LISTENING_SIZE}`;
     elements.listeningPrompt.hidden = done;
     elements.listeningForm.hidden = done;
     elements.listeningFeedback.hidden = true;
@@ -374,21 +550,23 @@
     elements.audioStatus.hidden = true;
     elements.listeningInput.value = '';
     if (done) {
-      const understood = state.listeningAnswers.filter((answer) => answer && answer.gotIt).length;
-      elements.listeningSummary.textContent = `You marked ${understood} of ${PHRASES.length} as understood. Replay any saved phrases below.`;
+      const understood = session.answers.filter((answer) => answer && answer.gotIt).length;
+      elements.listeningSummary.textContent = `You marked ${understood} of ${LISTENING_SIZE} as understood. Come back tomorrow for a new set, or replay saved phrases below.`;
     }
     renderListeningReview();
   }
 
   function submitListening(event) {
     event.preventDefault();
-    const phrase = PHRASES[state.listeningAnswers.length];
+    if (refreshListeningDay()) return;
+    const phrase = currentListeningPhrase();
     if (!phrase) return;
-    listeningAttempt = elements.listeningInput.value.trim();
-    if (!listeningAttempt) {
+    const translation = elements.listeningInput.value.trim();
+    if (!translation) {
       elements.listeningInput.focus();
       return;
     }
+    listeningAttempt = translation;
     elements.listeningForm.hidden = true;
     elements.listeningMeaning.textContent = phrase.meaning;
     elements.listeningAttempt.textContent = listeningAttempt;
@@ -396,10 +574,11 @@
   }
 
   function markListening(gotIt) {
+    if (refreshListeningDay()) return;
     if (listeningAttempt === null) return;
-    const phrase = PHRASES[state.listeningAnswers.length];
+    const phrase = currentListeningPhrase();
     if (!phrase) return;
-    state.listeningAnswers.push({ id: phrase.id, translation: listeningAttempt, gotIt });
+    getListeningSession().answers.push({ id: phrase.id, translation: listeningAttempt, gotIt });
     state.listeningReview = state.listeningReview.filter((answer) => answer && answer.id !== phrase.id);
     if (!gotIt) state.listeningReview.push({ id: phrase.id, translation: listeningAttempt });
     listeningAttempt = null;
@@ -517,14 +696,15 @@
   elements.answerForm.addEventListener('submit', submitAnswer);
   elements.tabs.forEach((tab) => tab.addEventListener('click', () => setView(tab.dataset.view)));
   elements.listeningPlay.addEventListener('click', () => {
-    const phrase = PHRASES[state.listeningAnswers.length];
+    refreshListeningDay();
+    const phrase = currentListeningPhrase();
     if (phrase) playListening(phrase);
   });
   elements.listeningForm.addEventListener('submit', submitListening);
   elements.listeningMarks.forEach((button) => button.addEventListener('click', () => markListening(button.dataset.listeningMark === 'got')));
   elements.listeningRestart.addEventListener('click', () => {
     stopListeningAudio();
-    state.listeningAnswers = [];
+    getListeningSession().answers = [];
     listeningAttempt = null;
     saveState();
     renderListening();
@@ -537,7 +717,7 @@
     localStorage.removeItem(STORAGE_KEY);
     stopListeningAudio();
     listeningAttempt = null;
-    state = { usedWords: [], wrongAnswers: [], listeningAnswers: [], listeningReview: [], days: {}, currentQuestion: null };
+    state = { usedWords: [], wrongAnswers: [], listeningSession: null, usedListeningPhrases: [], listeningReview: [], days: {}, currentQuestion: null };
     setView('quest');
     renderReview();
     renderQuestion();
@@ -547,4 +727,9 @@
   renderReview();
   renderQuestion();
   renderListening();
+  window.addEventListener('focus', refreshListeningDay);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) refreshListeningDay();
+  });
+  window.setInterval(refreshListeningDay, 60 * 1000);
 })();
