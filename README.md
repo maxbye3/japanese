@@ -6,7 +6,9 @@ The N4 listening tab picks 10 audio-only Japanese phrases each day from a curate
 
 Audio uses your browser's Japanese speech voice, so no microphone or account is needed. Compare your English translation with a suggested meaning, then mark it as understood or save it for audio replay in the review list. Saved phrases remain there across days until you mark them understood or reset progress. Progress and selection history are saved on the current browser and device.
 
-Everyday kanji introduces up to 10 unseen signs or kanji words each day from a bank of 120 useful entries found around Japan. Translate the displayed sign into English; its reading is revealed after answering. Missed signs stay in review. Each entry is reserved when first shown, and never becomes a new quiz question again. Refreshing resumes an unfinished question or its answer feedback. When the bank is exhausted, the quiz stops instead of recycling signs.
+Everyday kanji introduces up to 10 unseen signs or kanji words each day from a bank of 120 useful entries found around Japan. Translate the displayed sign into English; its reading is revealed after answering. New signs never repeat in the daily set. When the bank is exhausted, new practice stops instead of recycling signs.
+
+Missed kanji are saved and automatically retested before new practice when you next open the category, reload and return, or start a new day. Each review round asks every saved sign once, hiding readings and meanings until you answer. Correct review answers remove the sign from the pending list; another miss keeps it for your next visit. Review rounds resume across reloads, and do not consume new signs, count towards the ten new daily signs, or award extra calendar stamps.
 
 Kanji history and review have separate browser storage and survive the katakana/listening reset. Clearing browser data or using another browser removes access to that history, so the never-repeat rule applies within the saved browser profile. Individual characters may appear in different words; each complete sign or word is one quiz entry.
 
@@ -31,8 +33,8 @@ python3 -m http.server
 Then open <http://localhost:8000>.
 
 Progress is stored in `localStorage` on the current browser and device. A word is reserved as soon as it appears, so refreshing the page or answering incorrectly will never serve that word again.
-Missed words and the answers you typed stay in the review list until you reset progress.
+Missed katakana words and the answers you typed stay in the review list until you reset progress. Kanji misses stay pending until you answer them correctly in a retest.
 
 ## Check daily practice
 
-Run `node --test tests/*.test.cjs` to check daily selection, saved progress, rollover, review, migration, bank exhaustion, permanent kanji non-repetition, and calendar stamps for all three categories.
+Run `node --test tests/*.test.cjs` to check daily selection, saved progress, rollover, retesting, migration, bank exhaustion, no repeats among new kanji, and calendar stamps for all three categories.

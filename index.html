@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
     <title>Katakana Quest</title>
-    <link rel="stylesheet" href="katakana.css?v=category-stamps" />
+    <link rel="stylesheet" href="katakana.css?v=kanji-retest" />
   </head>
   <body>
     <main class="app-shell">
@@ -118,11 +118,12 @@
             <p class="eyebrow">Daily kanji · <span id="kanji-date"></span></p>
             <h2 id="kanji-title">Kanji around Japan</h2>
           </div>
-          <div class="progress-count"><strong id="kanji-count">0</strong><span>/ 10 signs</span></div>
+          <div class="progress-count"><strong id="kanji-count">0</strong><span>/ 10 new signs</span></div>
         </div>
         <div class="progress-track" aria-label="Kanji progress"><span id="kanji-progress"></span></div>
 
         <div id="kanji-card" class="practice-card">
+          <p id="kanji-round" class="kanji-round" hidden></p>
           <div class="card-meta"><span id="kanji-context">Everyday signs</span><span id="kanji-used">0 / 120 seen</span></div>
           <div id="kanji-sign" class="kanji-sign" lang="ja">—</div>
           <p id="kanji-reading" class="kanji-reading" lang="ja" hidden></p>
@@ -135,14 +136,15 @@
           </form>
           <div id="kanji-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
         </div>
-        <p class="one-and-done">Each sign appears once in the quiz. When the bank runs out, it stops.</p>
+        <p class="one-and-done">New signs appear once. Missed signs return for review until you get them right.</p>
 
         <section class="review-section" aria-labelledby="kanji-review-title">
           <div class="review-heading">
             <h3 id="kanji-review-title">Review missed signs</h3>
             <span id="kanji-review-count" class="review-count">0 signs</span>
           </div>
-          <p id="kanji-review-empty" class="review-empty">Missed signs will appear here with their reading and meaning.</p>
+          <p id="kanji-review-empty" class="review-empty">No signs waiting for review. Missed ones will be retested next visit.</p>
+          <p id="kanji-review-note" class="review-empty" hidden>Review in progress. Readings and meanings stay hidden while you answer.</p>
           <ul id="kanji-review-list" class="review-list"></ul>
         </section>
       </section>
@@ -179,7 +181,7 @@
         <button class="reset-button" id="reset-progress" type="button">Reset katakana &amp; listening</button>
       </footer>
     </main>
-    <script src="katakana.js?v=category-stamps"></script>
-    <script src="kanji.js?v=category-stamps"></script>
+    <script src="katakana.js?v=kanji-retest"></script>
+    <script src="kanji.js?v=kanji-retest"></script>
   </body>
 </html>

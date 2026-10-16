@@ -137,7 +137,7 @@
   const view = document.querySelector('#kanji-view');
   const elements = Object.fromEntries([
     'date', 'count', 'progress', 'card', 'context', 'used', 'sign', 'reading',
-    'form', 'input', 'submit', 'feedback', 'review-count', 'review-empty', 'review-list',
+    'form', 'input', 'submit', 'feedback', 'round', 'review-count', 'review-empty', 'review-list', 'review-note',
   ].map((name) => [name, document.querySelector('#kanji-' + name)]));
   let state = loadState();
 
@@ -147,6 +147,8 @@
       return {
         usedIds: Array.isArray(saved.usedIds) ? saved.usedIds : [],
         review: Array.isArray(saved.review) ? saved.review : [],
+        reviewSession: saved.reviewSession && Array.isArray(saved.reviewSession.ids)
+          && Array.isArray(saved.reviewSession.answers) ? saved.reviewSession : null,
         completedDays: [...new Set([
           ...(Array.isArray(saved.completedDays) ? saved.completedDays : []),
           ...(saved.day && Array.isArray(saved.day.answers) && saved.day.answers.length >= DAILY_SIZE ? [saved.day.date] : []),
@@ -154,7 +156,7 @@
         day: saved.day && typeof saved.day === 'object' ? saved.day : null,
       };
     } catch {
-      return { usedIds: [], review: [], completedDays: [], day: null };
+      return { usedIds: [], review: [], reviewSession: null, completedDays: [], day: null };
     }
   }
 
@@ -171,9 +173,24 @@
   function getDay() {
     if (!state.day || state.day.date !== dateKey()) {
       state.day = { date: dateKey(), answers: [], currentId: null };
+      state.reviewSession = null;
+      startReview();
       save();
     }
     return state.day;
+  }
+
+  function startReview() {
+    if (state.reviewSession) return;
+    const ids = [...new Set(state.review.filter(Boolean).map((answer) => answer.id))]
+      .filter((id) => SIGNS.some((sign) => sign.id === id));
+    if (!ids.length) return;
+    state.reviewSession = { ids, answers: [], index: 0 };
+    // Resume new practice at the next unanswered sign after the review round.
+    if (state.day && state.day.answers.some((answer) => answer.id === state.day.currentId)) {
+      state.day.currentId = null;
+    }
+    save();
   }
 
   function normalize(value) {
@@ -207,6 +224,14 @@
       .filter(({ sign }) => sign)
       .reverse();
     elements['review-count'].textContent = entries.length + (entries.length === 1 ? ' sign' : ' signs');
+    const testing = Boolean(state.reviewSession);
+    elements['review-list'].hidden = testing;
+    elements['review-note'].hidden = !testing;
+    if (testing) {
+      elements['review-empty'].hidden = true;
+      elements['review-list'].replaceChildren();
+      return;
+    }
     elements['review-empty'].hidden = entries.length > 0;
     elements['review-list'].replaceChildren();
     entries.forEach(({ answer, sign }) => {
@@ -231,6 +256,25 @@
     });
   }
 
+  function renderSign(sign, answered, reviewing) {
+    elements.context.textContent = sign.context;
+    elements.sign.textContent = sign.text;
+    elements.input.value = answered ? answered.translation : '';
+    elements.input.disabled = Boolean(answered);
+    const lastReview = reviewing && state.reviewSession.index === state.reviewSession.ids.length - 1;
+    elements.submit.textContent = answered
+      ? (reviewing ? (lastReview ? 'Continue →' : 'Next review →') : 'Next sign →')
+      : 'Check answer ↗';
+    if (answered) {
+      elements.reading.textContent = sign.reading;
+      elements.reading.hidden = false;
+      const message = reviewing
+        ? (answered.correct ? '. Remembered! Removed from review.' : '. Saved to try again next visit.')
+        : (answered.correct ? '. Great reading!' : '. Saved for a retest next visit.');
+      showFeedback(answered.correct, answered.correct ? 'Yes! You got it! 🎉' : 'Not this time', sign.meaning + message);
+    }
+  }
+
   function render() {
     const day = getDay();
     elements.date.textContent = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());
@@ -240,8 +284,19 @@
     elements.card.classList.remove('is-correct', 'is-wrong');
     elements.feedback.hidden = true;
     elements.reading.hidden = true;
+    elements.round.hidden = true;
     elements.form.hidden = false;
     renderReview();
+
+    const round = state.reviewSession;
+    if (round) {
+      const sign = SIGNS.find((entry) => entry.id === round.ids[round.index]);
+      const answered = round.answers.find((answer) => answer.id === sign.id);
+      elements.round.hidden = false;
+      elements.round.textContent = 'Review from last time · ' + (round.index + 1) + ' of ' + round.ids.length;
+      renderSign(sign, answered, true);
+      return;
+    }
 
     if (day.answers.length >= DAILY_SIZE) {
       elements.context.textContent = 'All done for today';
@@ -267,22 +322,12 @@
       elements.context.textContent = 'Bank complete';
       elements.sign.textContent = '✦';
       elements.form.hidden = true;
-      showFeedback(true, 'Every sign explored!', 'You have seen all ' + SIGNS.length + ' signs. The quiz stops here so nothing repeats. Your review stays below.');
+      showFeedback(true, 'Every sign explored!', 'You have seen all ' + SIGNS.length + ' signs. New signs stop here; missed signs will still be retested when you return.');
       return;
     }
 
-    elements.context.textContent = sign.context;
-    elements.sign.textContent = sign.text;
     const answered = day.answers.find((answer) => answer.id === sign.id);
-    elements.input.value = answered ? answered.translation : '';
-    elements.input.disabled = Boolean(answered);
-    elements.submit.textContent = answered ? 'Next sign →' : 'Check answer ↗';
-    if (answered) {
-      elements.reading.textContent = sign.reading;
-      elements.reading.hidden = false;
-      showFeedback(answered.correct, answered.correct ? 'Yes! You got it! 🎉' : 'Not this time',
-        sign.meaning + (answered.correct ? '. Great reading!' : '. Saved for review below.'));
-    }
+    renderSign(sign, answered, false);
   }
 
   elements.form.addEventListener('submit', (event) => {
@@ -292,6 +337,25 @@
       return;
     }
     const day = getDay();
+    const round = state.reviewSession;
+    if (round) {
+      const sign = SIGNS.find((entry) => entry.id === round.ids[round.index]);
+      if (round.answers.some((answer) => answer.id === sign.id)) {
+        if (round.index + 1 < round.ids.length) round.index += 1;
+        else state.reviewSession = null;
+      } else {
+        const translation = elements.input.value.trim();
+        if (!translation) return;
+        const correct = sign.answers.some((answer) => normalize(answer) === normalize(translation));
+        const answer = { id: sign.id, translation, correct };
+        round.answers.push(answer);
+        state.review = state.review.filter((entry) => entry && entry.id !== sign.id);
+        if (!correct) state.review.push(answer);
+      }
+      save();
+      render();
+      return;
+    }
     if (day.answers.length >= DAILY_SIZE) return;
     const sign = SIGNS.find((entry) => entry.id === day.currentId);
     if (!sign) return;
@@ -318,7 +382,11 @@
     if (!view.hidden && (!state.day || state.day.date !== dateKey())) render();
   }
 
-  window.addEventListener('kanji:open', render);
+  window.addEventListener('kanji:open', () => {
+    getDay();
+    startReview();
+    render();
+  });
   window.addEventListener('focus', refreshDay);
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) refreshDay();
