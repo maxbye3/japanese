@@ -89,7 +89,7 @@
     ['ポスト', 'postbox', ['postbox', 'mailbox', 'post']],
   ].map(([kana, english, answers], index) => ({ id: `word-${index + 1}`, kana, english, answers }));
 
-  // The Japanese prompt is spoken, never rendered as text in the listening UI.
+  // Japanese stays audio-only until the answer is marked, then its transcript is shown.
   const PHRASES = [
     { id: 'repeat', japanese: 'もう一度言ってください。', meaning: 'Please say that again.' },
     { id: 'station', japanese: '駅までどうやって行きますか。', meaning: 'How do I get to the station?' },
@@ -630,7 +630,7 @@
     elements.listeningForm.hidden = done || Boolean(revealed);
     elements.listeningFeedback.hidden = true;
     elements.listeningResult.hidden = !revealed;
-    elements.listeningJapanese.textContent = '';
+    window.KanjiTooltips.render(elements.listeningJapanese, '');
     elements.listeningResultMeaning.textContent = '';
     elements.listeningResultAttempt.textContent = '';
     elements.listeningDone.hidden = !done;
@@ -639,7 +639,7 @@
     if (revealed) {
       const phrase = currentListeningPhrase();
       elements.listeningResultTitle.textContent = revealed.gotIt ? 'You got it! 🎉' : 'Saved for review — keep learning!';
-      elements.listeningJapanese.textContent = phrase.japanese;
+      window.KanjiTooltips.render(elements.listeningJapanese, phrase.japanese);
       elements.listeningResultMeaning.textContent = phrase.meaning;
       elements.listeningResultAttempt.textContent = 'You wrote: ' + revealed.translation;
       elements.listeningNext.textContent = count === LISTENING_SIZE ? 'Finish today’s set →' : 'Next phrase →';

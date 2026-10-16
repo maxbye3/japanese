@@ -262,6 +262,7 @@
     'form', 'input', 'submit', 'feedback', 'round', 'review-count', 'review-empty', 'review-list', 'review-note',
     'hints', 'hint-button', 'hint-detail', 'hint-clue', 'hint-reading', 'hint-meaning', 'hint-note',
     'goal', 'reward', 'score',
+    'character-help',
   ].map((name) => [name, document.querySelector('#kanji-' + name)]));
   let state = loadState();
 
@@ -416,16 +417,29 @@
   }
 
   function makeAnswer(sign, translation) {
+    const session = state.reviewSession || state.day;
     return {
       id: sign.id, translation,
       correct: sign.answers.some((answer) => normalize(answer) === normalize(translation)),
-      assisted: hintLevel(sign) === 3,
+      assisted: hintLevel(sign) === 3 || Boolean(session.characterReveals && session.characterReveals[sign.id]),
     };
   }
 
   function renderSign(sign, answered, reviewing) {
     elements.context.textContent = sign.context;
-    elements.sign.textContent = sign.text;
+    window.KanjiTooltips.render(elements.sign, sign.text, (character) => {
+      if (!state.day || state.day.date !== dateKey()) {
+        render();
+        return false;
+      }
+      if (character === sign.text && !answered) {
+        const session = state.reviewSession || state.day;
+        session.characterReveals = { ...session.characterReveals, [sign.id]: true };
+        save();
+      }
+      return true;
+    });
+    elements['character-help'].hidden = false;
     elements.input.value = answered ? answered.translation : '';
     elements.input.disabled = Boolean(answered);
     renderHints(sign, answered);
@@ -464,6 +478,7 @@
     elements.reading.hidden = true;
     elements.round.hidden = true;
     elements.hints.hidden = true;
+    elements['character-help'].hidden = true;
     elements.form.hidden = false;
     renderReview();
 
@@ -490,7 +505,7 @@
     const sign = SIGNS.find((entry) => entry.id === day.currentId);
     if (!sign) {
       elements.context.textContent = 'Bank complete';
-      elements.sign.textContent = '✦';
+      window.KanjiTooltips.render(elements.sign, '✦');
       elements.form.hidden = true;
       showFeedback(true, 'Every sign explored!', 'You have seen all ' + SIGNS.length + ' signs. New signs stop here; missed signs will still be retested when you return.');
       return;

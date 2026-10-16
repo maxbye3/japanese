@@ -4,7 +4,7 @@ const vm = require('node:vm');
 
 const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const sources = ['katakana.js', 'kanji.js'].map((file) => fs.readFileSync(path.join(root, file), 'utf8'));
+const sources = ['kanji-meanings.js', 'kanji-tooltips.js', 'katakana.js', 'kanji.js'].map((file) => fs.readFileSync(path.join(root, file), 'utf8'));
 const key = 'katakana-quest-progress-v1';
 const kanjiKey = 'katakana-quest-kanji-v1';
 const localDay = (offset, hour = 12, minute = 0) => new Date(2026, 9, 16 + offset, hour, minute).getTime();
@@ -27,7 +27,8 @@ function eventTarget() {
 
 function element() {
   const classes = new Set();
-  return Object.assign(eventTarget(), {
+  let content = '';
+  const item = Object.assign(eventTarget(), {
     children: [], style: {}, dataset: {}, attributes: {},
     hidden: false, disabled: false, value: '', textContent: '', className: '',
     classList: {
@@ -37,10 +38,18 @@ function element() {
     },
     append(...items) { this.children.push(...items); },
     appendChild(item) { this.children.push(item); },
-    replaceChildren(...items) { this.children = items; },
+    replaceChildren(...items) { content = ''; this.children = items; },
+    contains(item) { return item === this || this.children.some((child) => child.contains(item)); },
+    getBoundingClientRect() { return { left: 30, top: 30, bottom: 74, width: 44, height: 44 }; },
     setAttribute(name, value) { this.attributes[name] = value; },
+    removeAttribute(name) { delete this.attributes[name]; },
     focus() {},
   });
+  Object.defineProperty(item, 'textContent', {
+    get() { return content + this.children.map((child) => child.textContent).join(''); },
+    set(value) { content = String(value); this.children = []; },
+  });
+  return item;
 }
 
 function launch({ saved = new Map(), clock = { now: localDay(0) }, random = 0.37, voice = 'ja-JP' } = {}) {
@@ -93,6 +102,7 @@ function launch({ saved = new Map(), clock = { now: localDay(0) }, random = 0.37
     createElement: element,
   });
   const window = Object.assign(eventTarget(), {
+    innerWidth: 375, innerHeight: 900,
     confirm: () => true,
     speechSynthesis: synth,
     SpeechSynthesisUtterance: Utterance,

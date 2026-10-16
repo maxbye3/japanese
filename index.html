@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
     <title>Katakana Quest</title>
-    <link rel="stylesheet" href="katakana.css?v=listening-transcript" />
+    <link rel="stylesheet" href="katakana.css?v=kanji-tooltips" />
   </head>
   <body>
     <main class="app-shell">
@@ -99,6 +99,7 @@
               <h3 id="listening-result-title"></h3>
               <p class="transcript-label">What you heard</p>
               <p id="listening-japanese" class="listening-japanese" lang="ja"></p>
+              <p class="character-help">Tap any kanji above for its individual meaning.</p>
               <p id="listening-result-meaning" class="listening-result-meaning"></p>
               <p id="listening-result-attempt" class="listening-result-attempt"></p>
             </div>
@@ -140,6 +141,7 @@
           <p id="kanji-round" class="kanji-round" hidden></p>
           <div class="card-meta"><span id="kanji-context">Everyday signs</span><span id="kanji-used">0 / 120 seen</span></div>
           <div id="kanji-sign" class="kanji-sign" lang="ja">—</div>
+          <p id="kanji-character-help" class="character-help" hidden>Tap a kanji for its meaning. Single-character answers stay saved for review.</p>
           <p id="kanji-reading" class="kanji-reading" lang="ja" hidden></p>
           <div id="kanji-hints" class="kanji-hints" hidden>
             <button id="kanji-hint-button" class="kanji-hint-button" type="button" aria-controls="kanji-hint-detail" aria-expanded="false">Need a hint?</button>
@@ -200,11 +202,18 @@
       </section>
 
       <footer class="site-footer">
-        <span>Progress stays on this device.</span>
+        <span>Progress stays on this device.<br />Kanji meanings: <a href="https://www.edrdg.org/wiki/KANJIDIC_Project.html">KANJIDIC2 / EDRDG</a> · <a href="https://www.edrdg.org/edrdg/licence.html">CC BY-SA 4.0</a>.</span>
         <button class="reset-button" id="reset-progress" type="button">Reset katakana &amp; listening</button>
       </footer>
     </main>
-    <script src="katakana.js?v=listening-transcript"></script>
-    <script src="kanji.js?v=listening-transcript"></script>
+    <div id="kanji-tooltip" class="kanji-tooltip" role="tooltip" lang="en" hidden>
+      <strong id="kanji-tooltip-character" lang="ja"></strong>
+      <span id="kanji-tooltip-meaning"></span>
+      <small>Character meaning — a word’s meaning can differ.</small>
+    </div>
+    <script src="kanji-meanings.js?v=kanji-tooltips"></script>
+    <script src="kanji-tooltips.js?v=kanji-tooltips"></script>
+    <script src="katakana.js?v=kanji-tooltips"></script>
+    <script src="kanji.js?v=kanji-tooltips"></script>
   </body>
 </html>

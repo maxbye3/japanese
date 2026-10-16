@@ -127,6 +127,15 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
 .one-and-done { margin: 17px 2px 0; color: var(--muted); font-size: 12px; }
 .one-and-done span { margin-right: 5px; color: var(--yellow); }
 .kanji-sign { margin: 38px 0 24px; font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; font-size: clamp(36px, 8vw, 82px); font-weight: 700; line-height: 1.3; letter-spacing: .08em; text-align: center; overflow-wrap: anywhere; }
+.kanji-character { display: inline; margin: 0; padding: 0; border: 0; border-radius: 4px; border-bottom: 1px dotted var(--teal); color: inherit; background: transparent; font: inherit; letter-spacing: inherit; line-height: inherit; vertical-align: baseline; }
+.kanji-sign .kanji-character { display: inline-block; min-width: 44px; min-height: 44px; }
+.kanji-character:hover, .kanji-character[aria-expanded="true"] { color: var(--teal-dark); background: #dfeee8; }
+.kanji-character:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+.character-help { margin: -8px 0 24px; color: var(--muted); font-size: 12px; line-height: 1.5; text-align: center; }
+.listening-result .character-help { margin: 0 0 16px; text-align: left; }
+.kanji-tooltip { position: fixed; z-index: 20; display: grid; gap: 8px; width: min(280px, calc(100vw - 24px)); padding: 16px; border: 1px solid #e3ca8b; border-radius: 12px; color: var(--ink); background: #fff5d9; box-shadow: 0 8px 28px rgb(32 59 57 / 20%); font-size: 15px; line-height: 1.5; overflow-wrap: anywhere; }
+.kanji-tooltip strong { font-size: 30px; line-height: 1.2; }
+.kanji-tooltip small { color: #715015; font-size: 11px; }
 .kanji-reading { margin: -10px 0 24px; color: var(--muted); font-size: 18px; text-align: center; }
 .kanji-round { margin: 0 0 22px; padding: 10px 14px; border-radius: 8px; color: var(--teal-dark); background: #dfeee8; font-size: 13px; font-weight: 800; }
 .kanji-reward { display: grid; gap: 7px; margin: 0 0 22px; padding: 18px; border: 1px solid #e3ca8b; border-radius: 12px; color: #715015; background: #fff0c7; animation: win-pop .6s ease-out; overflow-wrap: anywhere; }
@@ -162,6 +171,7 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
 .listening-result h3 { margin: 0 0 20px; font-size: 19px; }
 .listening-result .transcript-label { margin: 0 0 6px; color: var(--muted); font-size: 12px; font-weight: 700; }
 .listening-japanese { margin: 0 0 14px; font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; font-size: clamp(21px, 4vw, 28px); line-height: 1.7; }
+.listening-japanese .kanji-character { display: inline-block; min-width: 32px; min-height: 44px; }
 .listening-result-meaning { margin: 0 0 12px; font-size: 16px; line-height: 1.5; }
 .listening-result-attempt { margin: 0 0 20px; color: var(--muted); font-size: 13px; line-height: 1.5; }
 .listening-done { display: grid; justify-items: center; gap: 13px; padding: 35px 0 10px; text-align: center; }
@@ -215,6 +225,7 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
 .text-button:hover, .reset-button:hover { color: var(--coral); }
 
 .site-footer { display: flex; justify-content: space-between; gap: 16px; margin-top: auto; padding-top: 42px; color: #9aa29b; font-size: 11px; }
+.site-footer a { color: var(--muted); text-underline-offset: 2px; }
 .reset-button { color: #9aa29b; font-weight: 600; }
 
 [hidden] { display: none !important; }
