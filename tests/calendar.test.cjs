@@ -31,7 +31,6 @@ test('each category earns one distinct stamp only when its daily set is complete
     submit(app, 'answer-form');
     if (index < 9) {
       assert.equal(app.els['nav-stamp-count'].textContent, '0');
-      submit(app, 'answer-form');
     }
   });
   assert.equal(app.els['nav-stamp-count'].textContent, '1');
@@ -124,10 +123,9 @@ test('katakana completion after midnight belongs to the new local day', () => {
   assert.equal(app.els['correct-count'].textContent, '0');
   const meanings = ['anime', 'apartment', 'america', 'album', 'air conditioner',
     'elevator', 'orange', 'camera', 'calendar', 'guitar'];
-  meanings.forEach((meaning, index) => {
+  meanings.forEach((meaning) => {
     app.els['answer-input'].value = meaning;
     submit(app, 'answer-form');
-    if (index < 9) submit(app, 'answer-form');
   });
   app.tabs[3].listeners.click();
   assert.deepEqual(stamps(app, '2026-10-16'), []);

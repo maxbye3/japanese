@@ -754,6 +754,10 @@
     }
     const word = currentWord();
     if (!word) return;
+    if (!elements.answerInput.value.trim()) {
+      elements.answerInput.focus();
+      return;
+    }
     const correct = word.answers.some((answer) => normalize(answer) === normalize(elements.answerInput.value));
     if (correct) getToday().correct += 1;
     else {
@@ -763,8 +767,15 @@
     state.currentQuestion = null;
     saveState();
     renderStats();
-    showFeedback(correct, word);
-    if (correct && getToday().correct >= QUEST_SIZE) completeToday();
+    if (correct) {
+      if (getToday().correct >= QUEST_SIZE) completeToday();
+      else {
+        renderQuestion();
+        if (state.currentQuestion) {
+          setFeedback('is-correct', 'Yes! You got it! 🎉', `${word.kana} = ${word.english}. Next word is ready!`);
+        }
+      }
+    } else showFeedback(false, word);
   }
 
   function renderCalendar() {

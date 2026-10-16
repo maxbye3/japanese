@@ -2,6 +2,8 @@
 
 A tiny, browser-only site for katakana, Japanese listening, and everyday kanji practice.
 
+Correct katakana answers automatically show the next unused word, clear and focus the input, and keep a success message identifying the answer just checked. Wrong answers keep their correction on screen until you tap “Next word”. Blank submissions do not advance. The tenth correct answer still finishes the daily quest and awards its stamp rather than introducing another word.
+
 The N4 listening tab picks 10 audio-only Japanese phrases each day from a curated bank of 120 everyday sentences. Each local calendar day has a saved random set: refreshing or practising again keeps the same ten. New daily sets avoid previously selected phrases until the bank is exhausted, then begin a new shuffled cycle. The day changes automatically, including in an open tab.
 
 Audio uses your browser's Japanese speech voice, so no microphone or account is needed. Compare your English translation with a suggested meaning, then mark it as understood or save it for audio replay in the review list. After either mark, the original written Japanese appears alongside its English meaning and your answer. Replay the same audio while reading, then tap “Next phrase” (or “Finish today’s set” after the tenth answer). This result stays open across reloads; the next prompt remains audio-only until marked, and a new day or restarted set clears the transcript. The tenth marked answer earns the listening stamp immediately, before you dismiss its transcript. Saved phrases remain in review across days until you mark them understood or reset progress. Progress and selection history are saved on the current browser and device.
