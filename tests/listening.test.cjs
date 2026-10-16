@@ -10,7 +10,6 @@ function compare(app, translation = 'My English translation') {
 function answer(app, gotIt = true) {
   compare(app);
   app.marks[gotIt ? 0 : 1].listeners.click();
-  app.els['listening-next'].listeners.click();
 }
 
 test('today has ten fixed phrases, saved progress, and replay without rerolling', () => {

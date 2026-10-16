@@ -1,124 +1,141 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
-const { launch, localDay } = require('./browser-fixture.cjs');
+const { html, key, launch, localDay } = require('./browser-fixture.cjs');
 
 const open = (app) => app.tabs[1].listeners.click();
 const play = (app) => app.els['listening-play'].listeners.click();
-const next = (app) => app.els['listening-next'].listeners.click();
 function compare(app, translation = 'My translation') {
   app.els['listening-input'].value = translation;
   app.els['listening-form'].listeners.submit({ preventDefault() {} });
 }
 
-test('both right and wrong marks reveal exactly the spoken Japanese, without exposing the next prompt', () => {
+function assertFreshPrompt(app, step) {
+  assert.equal(app.els['listening-transcript'].hidden, true);
+  assert.equal(app.els['listening-japanese'].textContent, '');
+  assert.equal(app.els['listening-feedback'].hidden, true);
+  assert.equal(app.els['listening-form'].hidden, false);
+  assert.equal(app.els['listening-input'].value, '');
+  assert.equal(app.els['listening-step'].textContent, `Phrase ${step} of 10`);
+}
+
+test('compare reveals the spoken Japanese, and either mark immediately opens the next audio-only prompt', () => {
+  assert.doesNotMatch(html, /id="listening-(?:result|next)"/);
   for (const gotIt of [true, false]) {
     const app = launch({ random: 0 });
     open(app);
-    assert.equal(app.els['listening-result'].hidden, true);
-    assert.equal(app.els['listening-japanese'].textContent, '');
+    assertFreshPrompt(app, 1);
     play(app);
     const japanese = app.spoken.at(-1).text;
     compare(app);
-    assert.equal(app.els['listening-result'].hidden, true);
-    assert.equal(app.els['listening-japanese'].textContent, '');
-    const meaning = app.els['listening-meaning'].textContent;
-    app.marks[gotIt ? 0 : 1].listeners.click();
+    assert.equal(app.els['listening-feedback'].hidden, false);
+    assert.equal(app.els['listening-transcript'].hidden, false);
     assert.equal(app.els['listening-japanese'].textContent, japanese);
-    assert.equal(app.els['listening-result-meaning'].textContent, meaning);
-    assert.equal(app.els['listening-result-attempt'].textContent, 'You wrote: My translation');
-    assert.equal(app.els['listening-result'].hidden, false);
-    assert.equal(app.els['listening-feedback'].hidden, true);
-    assert.equal(app.els['listening-form'].hidden, true);
-    assert.equal(app.els['listening-count'].textContent, '1');
-    assert.equal(app.els['listening-step'].textContent, 'Phrase 1 of 10');
-    assert.match(app.els['listening-result-title'].textContent, gotIt ? /You got it/ : /Saved for review/);
-    assert.equal(app.state().listeningReview.length, gotIt ? 0 : 1);
+    assert.equal(app.state().listeningSession.answers.length, 0);
     play(app);
     assert.equal(app.spoken.at(-1).text, japanese);
-    compare(app, 'Another attempt must not advance');
+    app.marks[gotIt ? 0 : 1].listeners.click();
+    assertFreshPrompt(app, 2);
+    assert.equal(app.els['listening-count'].textContent, '1');
+    assert.equal(app.state().listeningSession.answers[0].translation, 'My translation');
+    assert.equal(app.state().listeningSession.answers[0].gotIt, gotIt);
+    assert.equal(app.state().listeningReview.length, gotIt ? 0 : 1);
     app.marks[0].listeners.click();
     assert.equal(app.state().listeningSession.answers.length, 1);
-    next(app);
-    assert.equal(app.els['listening-result'].hidden, true);
-    assert.equal(app.els['listening-japanese'].textContent, '');
-    assert.equal(app.els['listening-form'].hidden, false);
-    assert.equal(app.els['listening-step'].textContent, 'Phrase 2 of 10');
     play(app);
     assert.notEqual(app.spoken.at(-1).text, japanese);
   }
 });
 
-test('the result resumes across reload and tab changes; next clears it without marking another answer', () => {
+test('reload and tab changes resume at the next phrase, including old saved confirmation screens', () => {
   let app = launch();
+  compare(app);
+  app.marks[1].listeners.click();
+  const saved = app.saved;
+  // A previous version persisted this flag while waiting for an extra Next click.
+  const progress = app.state();
+  progress.listeningSession.showLastAnswer = true;
+  saved.set(key, JSON.stringify(progress));
+  app = launch({ saved });
+  open(app);
+  assertFreshPrompt(app, 2);
+  app.tabs[0].listeners.click();
+  open(app);
+  assertFreshPrompt(app, 2);
+  assert.equal(app.state().listeningSession.answers.length, 1);
+  assert.equal(app.state().listeningReview.length, 1);
   play(app);
   const japanese = app.spoken.at(-1).text;
   compare(app);
-  app.marks[1].listeners.click();
-  app = launch({ saved: app.saved });
-  open(app);
   assert.equal(app.els['listening-japanese'].textContent, japanese);
-  assert.equal(app.els['listening-result'].hidden, false);
-  app.tabs[0].listeners.click();
-  open(app);
-  assert.equal(app.els['listening-japanese'].textContent, japanese);
-  play(app);
-  assert.equal(app.spoken.at(-1).text, japanese);
-  next(app); next(app);
-  assert.equal(app.state().listeningSession.answers.length, 1);
-  assert.equal(app.els['listening-japanese'].textContent, '');
-  app = launch({ saved: app.saved });
-  assert.equal(app.els['listening-result'].hidden, true);
-  assert.equal(app.els['listening-japanese'].textContent, '');
-  assert.equal(app.els['listening-step'].textContent, 'Phrase 2 of 10');
 });
 
-test('the tenth transcript is readable before finishing, without delaying or duplicating its stamp', () => {
+test('the tenth mark immediately finishes and awards one stamp, with replay and reload preserving it', () => {
   const app = launch();
   for (let index = 0; index < 10; index += 1) {
+    play(app);
     compare(app);
+    assert.equal(app.els['listening-japanese'].textContent, app.spoken.at(-1).text);
     app.marks[0].listeners.click();
-    if (index < 9) next(app);
   }
   assert.equal(app.els['listening-count'].textContent, '10');
-  assert.equal(app.els['listening-step'].textContent, 'Phrase 10 of 10');
-  assert.equal(app.els['listening-result'].hidden, false);
-  assert.equal(app.els['listening-done'].hidden, true);
-  assert.equal(app.els['listening-next'].textContent, 'Finish today’s set →');
+  assert.equal(app.els['listening-step'].textContent, 'Complete');
+  assert.equal(app.els['listening-done'].hidden, false);
+  assert.equal(app.els['listening-prompt'].hidden, true);
+  assert.equal(app.els['listening-form'].hidden, true);
+  assert.equal(app.els['listening-transcript'].hidden, true);
   assert.equal(app.els['nav-stamp-count'].textContent, '1');
   assert.equal(app.state().listeningCompletedDays.length, 1);
-  const japanese = app.els['listening-japanese'].textContent;
-  play(app);
-  assert.equal(app.spoken.at(-1).text, japanese);
+  app.marks[0].listeners.click();
+  assert.equal(app.state().listeningSession.answers.length, 10);
+  // Older completed sessions also skip their former confirmation screen.
+  const progress = app.state();
+  progress.listeningSession.showLastAnswer = true;
+  app.saved.set(key, JSON.stringify(progress));
   const resumed = launch({ saved: app.saved });
-  assert.equal(resumed.els['listening-japanese'].textContent, japanese);
-  next(resumed);
   assert.equal(resumed.els['listening-done'].hidden, false);
-  assert.equal(resumed.els['listening-japanese'].textContent, '');
   resumed.els['listening-restart'].listeners.click();
-  assert.equal(resumed.els['listening-count'].textContent, '0');
-  assert.equal(resumed.els['listening-result'].hidden, true);
-  assert.equal(resumed.els['listening-japanese'].textContent, '');
+  assertFreshPrompt(resumed, 1);
   assert.equal(resumed.els['nav-stamp-count'].textContent, '1');
 });
 
-test('new days and resets remove the old transcript and never skip the new first phrase', () => {
+test('new days and resets clear the comparison without marking or skipping the new first phrase', () => {
   const clock = { now: localDay(0, 23, 59) };
   const app = launch({ clock });
   open(app);
   compare(app);
-  app.marks[1].listeners.click();
   clock.now = localDay(1, 0, 1);
-  next(app);
+  app.marks[1].listeners.click();
   assert.equal(app.state().listeningSession.answers.length, 0);
-  assert.equal(app.els['listening-japanese'].textContent, '');
-  assert.equal(app.els['listening-result'].hidden, true);
-  assert.equal(app.els['listening-form'].hidden, false);
-  assert.equal(app.els['listening-step'].textContent, 'Phrase 1 of 10');
+  assertFreshPrompt(app, 1);
   compare(app);
-  app.marks[0].listeners.click();
   assert.notEqual(app.els['listening-japanese'].textContent, '');
   app.els['reset-progress'].listeners.click();
-  assert.equal(app.els['listening-japanese'].textContent, '');
-  assert.equal(app.els['listening-result'].hidden, true);
+  assertFreshPrompt(app, 1);
   assert.equal(app.els['listening-count'].textContent, '0');
+});
+
+
+test('Not sure reveals the phrase without typing and saves an unanswered phrase for review', () => {
+  const app = launch();
+  open(app);
+  play(app);
+  const japanese = app.spoken.at(-1).text;
+  compare(app, '');
+  assertFreshPrompt(app, 1);
+  app.els['listening-not-sure'].listeners.click({ preventDefault() {} });
+  assert.equal(app.els['listening-transcript'].hidden, false);
+  assert.equal(app.els['listening-japanese'].textContent, japanese);
+  assert.equal(app.els['listening-feedback'].hidden, false);
+  assert.equal(app.els['listening-attempt'].textContent, 'Not sure');
+  assert.notEqual(app.els['listening-meaning'].textContent, '');
+  assert.equal(app.state().listeningSession.answers.length, 0);
+  app.marks[1].listeners.click();
+  assertFreshPrompt(app, 2);
+  assert.equal(app.state().listeningSession.answers[0].translation, '');
+  assert.equal(app.state().listeningSession.answers[0].gotIt, false);
+  assert.equal(app.state().listeningReview.length, 1);
+  assert.match(app.els['listening-review-list'].textContent, /Not sure/);
+  const resumed = launch({ saved: app.saved });
+  assert.equal(resumed.state().listeningReview.length, 1);
+  assertFreshPrompt(resumed, 2);
 });

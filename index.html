@@ -4,15 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
-    <title>Katakana Quest</title>
+    <title>Max's Japanese Learning</title>
     <link rel="stylesheet" href="katakana.css?v=kanji-tooltips" />
   </head>
   <body>
     <main class="app-shell">
       <header class="site-header">
-        <a class="brand" href="index.html" aria-label="Katakana Quest home">
+        <a class="brand" href="index.html" aria-label="Max's Japanese Learning home">
           <span class="brand-mark" aria-hidden="true">カ</span>
-          <span><strong>KATAKANA</strong><small>QUEST</small></span>
+          <span><strong>Max's Japanese</strong><small>Learning</small></span>
         </a>
       </header>
 
@@ -83,7 +83,13 @@
               <input id="listening-input" name="translation" type="text" autocomplete="off" spellcheck="false" maxlength="180" placeholder="type what it means" required />
               <button class="primary-button" type="submit">Compare translation <span aria-hidden="true">↗</span></button>
             </div>
+            <button id="listening-not-sure" class="not-sure-button" type="button">Not sure</button>
           </form>
+          <div id="listening-transcript" class="listening-transcript" role="status" aria-live="polite" hidden>
+            <p class="transcript-label">What you heard</p>
+            <p id="listening-japanese" class="listening-japanese" lang="ja"></p>
+            <p class="character-help">Tap any kanji above for its individual meaning.</p>
+          </div>
           <div id="listening-feedback" class="translation-feedback" role="status" aria-live="polite" hidden>
             <p>Suggested meaning <strong id="listening-meaning"></strong></p>
             <p>Your translation <span id="listening-attempt"></span></p>
@@ -92,17 +98,6 @@
               <button class="mark-got" type="button" data-listening-mark="got">Yes, I got it</button>
               <button class="mark-review" type="button" data-listening-mark="review">Save for review</button>
             </div>
-          </div>
-          <div id="listening-result" class="listening-result" hidden>
-            <div role="status" aria-live="polite">
-              <h3 id="listening-result-title"></h3>
-              <p class="transcript-label">What you heard</p>
-              <p id="listening-japanese" class="listening-japanese" lang="ja"></p>
-              <p class="character-help">Tap any kanji above for its individual meaning.</p>
-              <p id="listening-result-meaning" class="listening-result-meaning"></p>
-              <p id="listening-result-attempt" class="listening-result-attempt"></p>
-            </div>
-            <button id="listening-next" class="primary-button" type="button">Next phrase →</button>
           </div>
           <div id="listening-done" class="listening-done" hidden>
             <span class="done-mark" aria-hidden="true">✦</span>
@@ -158,7 +153,10 @@
               <button id="kanji-submit" class="primary-button" type="submit">Check answer ↗</button>
             </div>
           </form>
-          <div id="kanji-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          <div class="kanji-feedback-row">
+            <div id="kanji-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+            <button id="kanji-grade-override" class="grade-override" type="button" hidden></button>
+          </div>
         </div>
         <p class="one-and-done">Earn a stamp at ten, then keep going — no daily limit. New signs appear once. Missed signs and revealed answers return for review.</p>
 

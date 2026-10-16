@@ -104,6 +104,9 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
 .answer-row input:focus { border-color: var(--teal); box-shadow: 0 0 0 4px rgb(30 106 100 / 12%); }
 .primary-button { min-height: 52px; padding: 0 19px; border: 0; border-radius: 10px; color: #fffdf8; background: var(--teal); font-size: 13px; font-weight: 800; transition: background .2s, transform .2s; }
 .primary-button:hover { background: var(--teal-dark); transform: translateY(-1px); }
+.not-sure-button { min-height: 44px; margin-top: 10px; padding: 0 17px; border: 1px solid var(--teal); border-radius: 10px; color: var(--teal); background: transparent; font-size: 13px; font-weight: 800; }
+.not-sure-button:hover { background: #dfeee8; }
+.not-sure-button:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
 .primary-button:disabled { cursor: default; opacity: .72; transform: none; }
 .feedback { display: flex; align-items: center; gap: 14px; margin-top: 20px; padding: 16px; border-radius: 12px; background: #e5f1e9; color: var(--teal-dark); font-size: 13px; line-height: 1.4; }
 .feedback.is-wrong { background: #fbe8df; color: #9c4d3c; }
@@ -132,7 +135,7 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
 .kanji-character:hover, .kanji-character[aria-expanded="true"] { color: var(--teal-dark); background: #dfeee8; }
 .kanji-character:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
 .character-help { margin: -8px 0 24px; color: var(--muted); font-size: 12px; line-height: 1.5; text-align: center; }
-.listening-result .character-help { margin: 0 0 16px; text-align: left; }
+.listening-transcript .character-help { margin: 0; text-align: left; }
 .kanji-tooltip { position: fixed; z-index: 20; display: grid; gap: 8px; width: min(280px, calc(100vw - 24px)); padding: 16px; border: 1px solid #e3ca8b; border-radius: 12px; color: var(--ink); background: #fff5d9; box-shadow: 0 8px 28px rgb(32 59 57 / 20%); font-size: 15px; line-height: 1.5; overflow-wrap: anywhere; }
 .kanji-tooltip strong { font-size: 30px; line-height: 1.2; }
 .kanji-tooltip small { color: #715015; font-size: 11px; }
@@ -167,13 +170,10 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
 .mark-got { color: #fffdf8; background: var(--teal); }
 .mark-review { color: var(--teal); background: transparent; }
 .mark-actions button:hover { transform: translateY(-1px); }
-.listening-result { margin-top: 22px; padding: 20px; border-radius: 12px; background: #e5f1e9; overflow-wrap: anywhere; }
-.listening-result h3 { margin: 0 0 20px; font-size: 19px; }
-.listening-result .transcript-label { margin: 0 0 6px; color: var(--muted); font-size: 12px; font-weight: 700; }
+.listening-transcript { margin-top: 22px; padding: 20px; border-radius: 12px; background: #e5f1e9; overflow-wrap: anywhere; }
+.listening-transcript .transcript-label { margin: 0 0 6px; color: var(--muted); font-size: 12px; font-weight: 700; }
 .listening-japanese { margin: 0 0 14px; font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; font-size: clamp(21px, 4vw, 28px); line-height: 1.7; }
 .listening-japanese .kanji-character { display: inline-block; min-width: 32px; min-height: 44px; }
-.listening-result-meaning { margin: 0 0 12px; font-size: 16px; line-height: 1.5; }
-.listening-result-attempt { margin: 0 0 20px; color: var(--muted); font-size: 13px; line-height: 1.5; }
 .listening-done { display: grid; justify-items: center; gap: 13px; padding: 35px 0 10px; text-align: center; }
 .done-mark { color: var(--coral); font-size: 55px; line-height: 1; }
 .listening-done h3 { margin: 0; font-size: 27px; }
@@ -265,3 +265,9 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
 @media (prefers-reduced-motion: reduce) {
   .practice-card.is-correct, .practice-card.is-wrong, .feedback-flourish, .kanji-reward { animation: none; }
 }
+
+.kanji-feedback-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.kanji-feedback-row .feedback { flex: 1 1 260px; }
+.grade-override { min-height: 44px; margin-top: 20px; padding: 10px 17px; border: 1px solid var(--teal); border-radius: 10px; color: var(--teal); background: transparent; font-size: 13px; font-weight: 800; }
+.grade-override:hover { background: #dfeee8; }
+.grade-override:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }

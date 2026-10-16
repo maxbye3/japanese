@@ -103,7 +103,7 @@ test('a lookup after checking a single-character answer does not change the earn
   assert.equal(app.kanjiState().dailyStats['2026-10-16'].correct, 1);
 });
 
-test('kana and punctuation stay plain; listening kanji are tappable only after marking', () => {
+test('kana and punctuation stay plain; listening kanji are tappable after comparing', () => {
   const app = launch({ saved: withSign('お手洗い'), random: 0 });
   open(app);
   assert.equal(app.els['kanji-sign'].textContent, 'お手洗い');
@@ -114,8 +114,8 @@ test('kana and punctuation stay plain; listening kanji are tappable only after m
   const japanese = app.spoken.at(-1).text;
   app.els['listening-input'].value = 'My translation';
   app.els['listening-form'].listeners.submit({ preventDefault() {} });
-  assert.equal(app.els['listening-japanese'].children.length, 0);
-  app.marks[0].listeners.click();
+  assert.equal(app.els['listening-japanese'].textContent, japanese);
+  assert.equal(app.els['listening-transcript'].hidden, false);
   assert.equal(app.els['listening-japanese'].textContent, japanese);
   const characters = app.els['listening-japanese'].children.filter((item) => item.dataset.kanji);
   assert.equal(characters.length, 3);
@@ -124,7 +124,7 @@ test('kana and punctuation stay plain; listening kanji are tappable only after m
   assert.equal(app.els['kanji-tooltip-character'].textContent, '一');
   assert.match(app.els['kanji-tooltip-meaning'].textContent, /one/);
   assert.deepEqual(app.state(), before);
-  app.els['listening-next'].listeners.click();
+  app.marks[0].listeners.click();
   assert.equal(app.els['kanji-tooltip'].hidden, true);
   assert.equal(app.els['listening-japanese'].textContent, '');
 });

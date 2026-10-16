@@ -89,7 +89,7 @@
     ['ポスト', 'postbox', ['postbox', 'mailbox', 'post']],
   ].map(([kana, english, answers], index) => ({ id: `word-${index + 1}`, kana, english, answers }));
 
-  // Japanese stays audio-only until the answer is marked, then its transcript is shown.
+  // Japanese stays audio-only until comparing a translation or choosing Not sure.
   const PHRASES = [
     { id: 'repeat', japanese: 'もう一度言ってください。', meaning: 'Please say that again.' },
     { id: 'station', japanese: '駅までどうやって行きますか。', meaning: 'How do I get to the station?' },
@@ -267,16 +267,13 @@
     audioStatus: document.querySelector('#audio-status'),
     listeningForm: document.querySelector('#listening-form'),
     listeningInput: document.querySelector('#listening-input'),
+    listeningNotSure: document.querySelector('#listening-not-sure'),
     listeningFeedback: document.querySelector('#listening-feedback'),
+    listeningTranscript: document.querySelector('#listening-transcript'),
     listeningMeaning: document.querySelector('#listening-meaning'),
     listeningAttempt: document.querySelector('#listening-attempt'),
     listeningMarks: [...document.querySelectorAll('[data-listening-mark]')],
-    listeningResult: document.querySelector('#listening-result'),
-    listeningResultTitle: document.querySelector('#listening-result-title'),
     listeningJapanese: document.querySelector('#listening-japanese'),
-    listeningResultMeaning: document.querySelector('#listening-result-meaning'),
-    listeningResultAttempt: document.querySelector('#listening-result-attempt'),
-    listeningNext: document.querySelector('#listening-next'),
     listeningDone: document.querySelector('#listening-done'),
     listeningSummary: document.querySelector('#listening-summary'),
     listeningRestart: document.querySelector('#listening-restart'),
@@ -518,14 +515,7 @@
 
   function currentListeningPhrase() {
     const session = getListeningSession();
-    const revealed = shownListeningAnswer(session);
-    return PHRASES.find((phrase) => phrase.id === (revealed ? revealed.id : session.phraseIds[session.answers.length]));
-  }
-
-  function shownListeningAnswer(session) {
-    const answer = session.answers[session.answers.length - 1];
-    return session.showLastAnswer && answer && answer.id === session.phraseIds[session.answers.length - 1]
-      ? answer : null;
+    return PHRASES.find((phrase) => phrase.id === session.phraseIds[session.answers.length]);
   }
 
   function refreshListeningDay() {
@@ -607,7 +597,7 @@
       const meaning = document.createElement('strong');
       meaning.textContent = phrase.meaning;
       const attempt = document.createElement('span');
-      attempt.textContent = `You wrote: ${answer.translation}`;
+      attempt.textContent = answer.translation ? `You wrote: ${answer.translation}` : 'Not sure';
       details.append(meaning, attempt);
       item.append(replay, details);
       elements.listeningReviewList.appendChild(item);
@@ -617,33 +607,20 @@
   function renderListening() {
     const session = getListeningSession();
     const count = session.answers.length;
-    const revealed = shownListeningAnswer(session);
-    const done = count === LISTENING_SIZE && !revealed;
+    const done = count === LISTENING_SIZE;
     elements.listeningDate.textContent = formatToday();
     elements.listeningCount.textContent = String(count);
     elements.listeningProgress.style.width = `${count / LISTENING_SIZE * 100}%`;
-    elements.listeningStep.textContent = done ? 'Complete' : `Phrase ${revealed ? count : count + 1} of ${LISTENING_SIZE}`;
+    elements.listeningStep.textContent = done ? 'Complete' : `Phrase ${count + 1} of ${LISTENING_SIZE}`;
     elements.listeningPrompt.hidden = done;
-    elements.listeningInstruction.textContent = revealed
-      ? 'Read the Japanese and replay the audio before moving on.'
-      : 'Listen as often as you like, then translate into English.';
-    elements.listeningForm.hidden = done || Boolean(revealed);
+    elements.listeningInstruction.textContent = 'Listen as often as you like, then translate into English.';
+    elements.listeningForm.hidden = done;
     elements.listeningFeedback.hidden = true;
-    elements.listeningResult.hidden = !revealed;
+    elements.listeningTranscript.hidden = true;
     window.KanjiTooltips.render(elements.listeningJapanese, '');
-    elements.listeningResultMeaning.textContent = '';
-    elements.listeningResultAttempt.textContent = '';
     elements.listeningDone.hidden = !done;
     elements.audioStatus.hidden = true;
     elements.listeningInput.value = '';
-    if (revealed) {
-      const phrase = currentListeningPhrase();
-      elements.listeningResultTitle.textContent = revealed.gotIt ? 'You got it! 🎉' : 'Saved for review — keep learning!';
-      window.KanjiTooltips.render(elements.listeningJapanese, phrase.japanese);
-      elements.listeningResultMeaning.textContent = phrase.meaning;
-      elements.listeningResultAttempt.textContent = 'You wrote: ' + revealed.translation;
-      elements.listeningNext.textContent = count === LISTENING_SIZE ? 'Finish today’s set →' : 'Next phrase →';
-    }
     if (done) {
       const understood = session.answers.filter((answer) => answer && answer.gotIt).length;
       elements.listeningSummary.textContent = `You marked ${understood} of ${LISTENING_SIZE} as understood. Come back tomorrow for a new set, or replay saved phrases below.`;
@@ -651,21 +628,23 @@
     renderListeningReview();
   }
 
-  function submitListening(event) {
+  function submitListening(event, allowBlank = false) {
     event.preventDefault();
     if (refreshListeningDay()) return;
-    if (shownListeningAnswer(getListeningSession())) return;
     const phrase = currentListeningPhrase();
     if (!phrase) return;
     const translation = elements.listeningInput.value.trim();
-    if (!translation) {
+    if (!translation && !allowBlank) {
       elements.listeningInput.focus();
       return;
     }
     listeningAttempt = translation;
     elements.listeningForm.hidden = true;
     elements.listeningMeaning.textContent = phrase.meaning;
-    elements.listeningAttempt.textContent = listeningAttempt;
+    elements.listeningAttempt.textContent = listeningAttempt || 'Not sure';
+    window.KanjiTooltips.render(elements.listeningJapanese, phrase.japanese);
+    elements.listeningTranscript.hidden = false;
+    elements.listeningInstruction.textContent = 'Read the Japanese and replay the audio before marking your answer.';
     elements.listeningFeedback.hidden = false;
   }
 
@@ -676,7 +655,6 @@
     if (!phrase) return;
     const session = getListeningSession();
     session.answers.push({ id: phrase.id, translation: listeningAttempt, gotIt });
-    session.showLastAnswer = true;
     if (session.answers.length === LISTENING_SIZE && !state.listeningCompletedDays.includes(session.date)) {
       state.listeningCompletedDays.push(session.date);
     }
@@ -687,7 +665,8 @@
     stopListeningAudio();
     renderListening();
     refreshCalendar();
-    elements.listeningNext.focus();
+    if (session.answers.length === LISTENING_SIZE) elements.listeningRestart.focus();
+    else elements.listeningPlay.focus();
   }
 
   function renderQuestion() {
@@ -841,23 +820,12 @@
     if (phrase) playListening(phrase);
   });
   elements.listeningForm.addEventListener('submit', submitListening);
+  elements.listeningNotSure.addEventListener('click', (event) => submitListening(event, true));
   elements.listeningMarks.forEach((button) => button.addEventListener('click', () => markListening(button.dataset.listeningMark === 'got')));
-  elements.listeningNext.addEventListener('click', () => {
-    if (refreshListeningDay()) return;
-    const session = getListeningSession();
-    if (!shownListeningAnswer(session)) return;
-    stopListeningAudio();
-    session.showLastAnswer = false;
-    saveState();
-    renderListening();
-    if (session.answers.length === LISTENING_SIZE) elements.listeningRestart.focus();
-    else elements.listeningPlay.focus();
-  });
   elements.listeningRestart.addEventListener('click', () => {
     stopListeningAudio();
     const session = getListeningSession();
     session.answers = [];
-    session.showLastAnswer = false;
     listeningAttempt = null;
     saveState();
     renderListening();

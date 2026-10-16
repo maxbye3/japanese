@@ -262,9 +262,10 @@
     'form', 'input', 'submit', 'feedback', 'round', 'review-count', 'review-empty', 'review-list', 'review-note',
     'hints', 'hint-button', 'hint-detail', 'hint-clue', 'hint-reading', 'hint-meaning', 'hint-note',
     'goal', 'reward', 'score',
-    'character-help',
+    'character-help', 'grade-override',
   ].map((name) => [name, document.querySelector('#kanji-' + name)]));
   let state = loadState();
+  let correctionTarget = null;
 
   function loadState() {
     try {
@@ -282,6 +283,7 @@
           ...(saved.dailyStats && typeof saved.dailyStats === 'object' && !Array.isArray(saved.dailyStats) ? saved.dailyStats : {}),
           ...(saved.day && Array.isArray(saved.day.answers) ? { [saved.day.date]: summarizeDay(saved.day) } : {}),
         },
+        lastGrade: saved.lastGrade && saved.lastGrade.answer ? saved.lastGrade : null,
         day: saved.day && typeof saved.day === 'object' ? saved.day : null,
       };
     } catch {
@@ -311,6 +313,7 @@
     if (!state.day || state.day.date !== dateKey()) {
       state.day = { date: dateKey(), answers: [], currentId: null };
       state.reviewSession = null;
+      state.lastGrade = null;
       startReview();
       save();
     }
@@ -323,6 +326,7 @@
       .filter((id) => SIGNS.some((sign) => sign.id === id));
     if (!ids.length) return;
     state.reviewSession = { ids, answers: [], index: 0 };
+    state.lastGrade = null;
     // Resume new practice at the next unanswered sign after the review round.
     if (state.day && state.day.answers.some((answer) => answer.id === state.day.currentId)) {
       state.day.currentId = null;
@@ -425,6 +429,13 @@
     };
   }
 
+  function renderCorrection(answer, reviewing) {
+    correctionTarget = { answer, reviewing };
+    elements['grade-override'].hidden = false;
+    elements['grade-override'].textContent = answer.correct ? 'Mark previous as wrong' : 'I got this right';
+    elements['grade-override'].setAttribute('aria-label', elements['grade-override'].textContent + ': ' + answer.id);
+  }
+
   function renderSign(sign, answered, reviewing) {
     elements.context.textContent = sign.context;
     window.KanjiTooltips.render(elements.sign, sign.text, (character) => {
@@ -449,6 +460,7 @@
         : state.day.answers.length === STAMP_GOAL ? 'Keep going →' : 'Next sign →')
       : 'Check answer ↗';
     if (answered) {
+      renderCorrection(answered, reviewing);
       elements.reading.textContent = sign.reading;
       elements.reading.hidden = false;
       if (answered.assisted) {
@@ -475,6 +487,14 @@
     elements.used.textContent = state.usedIds.length + ' / ' + SIGNS.length + ' seen';
     elements.card.classList.remove('is-correct', 'is-wrong');
     elements.feedback.hidden = true;
+    elements['grade-override'].hidden = true;
+    correctionTarget = null;
+    const previous = state.lastGrade;
+    if (previous && previous.date === day.date && previous.answer.correct) {
+      const answers = previous.reviewing ? state.reviewSession?.answers : day.answers;
+      const answer = answers?.find((entry) => entry.id === previous.answer.id) || previous.answer;
+      renderCorrection(answer, previous.reviewing);
+    }
     elements.reading.hidden = true;
     elements.round.hidden = true;
     elements.hints.hidden = true;
@@ -533,6 +553,7 @@
         if (!translation) return;
         const answer = makeAnswer(sign, translation);
         round.answers.push(answer);
+        state.lastGrade = { date: day.date, reviewing: true, answer };
         state.review = state.review.filter((entry) => entry && entry.id !== sign.id);
         if (!answer.correct || answer.assisted) state.review.push(answer);
       }
@@ -552,12 +573,35 @@
     if (!translation) return;
     const answer = makeAnswer(sign, translation);
     day.answers.push(answer);
+    state.lastGrade = { date: day.date, reviewing: false, answer };
     if (day.answers.length === STAMP_GOAL && !state.completedDays.includes(day.date)) {
       state.completedDays.push(day.date);
     }
     if (!answer.correct || answer.assisted) state.review.push(answer);
     save();
     render();
+  });
+
+  elements['grade-override'].addEventListener('click', () => {
+    if (!state.day || state.day.date !== dateKey()) {
+      render();
+      return;
+    }
+    if (!correctionTarget) return;
+    const { answer, reviewing } = correctionTarget;
+    answer.correct = !answer.correct;
+    answer.manuallyGraded = true;
+    state.lastGrade = { date: state.day.date, reviewing, answer };
+    state.review = state.review.filter((entry) => entry && entry.id !== answer.id);
+    if (!answer.correct || answer.assisted) state.review.push(answer);
+    const typed = elements.input.value;
+    save();
+    render();
+    // Correcting the previous grade must preserve the current answer in progress.
+    if (!elements.input.disabled) {
+      elements.input.value = typed;
+      elements.input.focus();
+    }
   });
 
   elements['hint-button'].addEventListener('click', () => {

@@ -19,7 +19,6 @@ function listeningAnswer(app) {
   app.els['listening-input'].value = 'My translation';
   submit(app, 'listening-form');
   app.marks[0].listeners.click();
-  app.els['listening-next'].listeners.click();
 }
 
 test('each category earns one distinct stamp only when its daily set is complete', () => {
