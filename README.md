@@ -1,6 +1,8 @@
 # Katakana Quest
 
-A tiny, browser-only daily katakana practice site.
+A tiny, browser-only katakana and Japanese listening practice site.
+
+The N4 listening tab has five audio-only Japanese phrases to translate into English. It uses your browser's Japanese speech voice, so no microphone or account is needed. Compare your translation with a suggested meaning, then mark it as understood or save it for audio replay in the review list. Saved phrases remain there across practice rounds until you mark them understood or reset progress.
 
 ## Play online
 

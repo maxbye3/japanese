@@ -89,14 +89,26 @@
     ['ポスト', 'postbox', ['postbox', 'mailbox', 'post']],
   ].map(([kana, english, answers], index) => ({ id: `word-${index + 1}`, kana, english, answers }));
 
+  // The Japanese prompt is spoken, never rendered as text in the listening UI.
+  const PHRASES = [
+    { id: 'repeat', japanese: 'もう一度言ってください。', meaning: 'Please say that again.' },
+    { id: 'station', japanese: '駅までどうやって行きますか。', meaning: 'How do I get to the station?' },
+    { id: 'rain', japanese: '明日は雨が降るかもしれません。', meaning: 'It might rain tomorrow.' },
+    { id: 'closing', japanese: 'この店は何時まで開いていますか。', meaning: 'What time does this shop close?' },
+    { id: 'home', japanese: '今日は早く帰らなければなりません。', meaning: 'I have to go home early today.' },
+  ];
+
   const STORAGE_KEY = 'katakana-quest-progress-v1';
   const QUEST_SIZE = 10;
   const today = dateKey(new Date());
   let calendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   let state = loadState();
+  let listeningAttempt = null;
+  let activeUtterance = null;
 
   const elements = {
     questView: document.querySelector('#quest-view'),
+    listeningView: document.querySelector('#listening-view'),
     calendarView: document.querySelector('#calendar-view'),
     tabs: [...document.querySelectorAll('[data-view]')],
     todayLabel: document.querySelector('#today-label'),
@@ -113,6 +125,24 @@
     answerInput: document.querySelector('#answer-input'),
     submitAnswer: document.querySelector('#submit-answer'),
     feedback: document.querySelector('#feedback'),
+    listeningCount: document.querySelector('#listening-count'),
+    listeningProgress: document.querySelector('#listening-progress'),
+    listeningStep: document.querySelector('#listening-step'),
+    listeningPrompt: document.querySelector('#listening-prompt'),
+    listeningPlay: document.querySelector('#listening-play'),
+    audioStatus: document.querySelector('#audio-status'),
+    listeningForm: document.querySelector('#listening-form'),
+    listeningInput: document.querySelector('#listening-input'),
+    listeningFeedback: document.querySelector('#listening-feedback'),
+    listeningMeaning: document.querySelector('#listening-meaning'),
+    listeningAttempt: document.querySelector('#listening-attempt'),
+    listeningMarks: [...document.querySelectorAll('[data-listening-mark]')],
+    listeningDone: document.querySelector('#listening-done'),
+    listeningSummary: document.querySelector('#listening-summary'),
+    listeningRestart: document.querySelector('#listening-restart'),
+    listeningReviewCount: document.querySelector('#listening-review-count'),
+    listeningReviewEmpty: document.querySelector('#listening-review-empty'),
+    listeningReviewList: document.querySelector('#listening-review-list'),
     navStampCount: document.querySelector('#nav-stamp-count'),
     completedDays: document.querySelector('#completed-days'),
     monthLabel: document.querySelector('#month-label'),
@@ -136,11 +166,13 @@
       return {
         usedWords: Array.isArray(saved.usedWords) ? saved.usedWords : [],
         wrongAnswers: Array.isArray(saved.wrongAnswers) ? saved.wrongAnswers : [],
+        listeningAnswers: Array.isArray(saved.listeningAnswers) ? saved.listeningAnswers : [],
+        listeningReview: Array.isArray(saved.listeningReview) ? saved.listeningReview : [],
         days: saved.days && typeof saved.days === 'object' ? saved.days : {},
         currentQuestion: saved.currentQuestion && typeof saved.currentQuestion === 'object' ? saved.currentQuestion : null,
       };
     } catch {
-      return { usedWords: [], wrongAnswers: [], days: {}, currentQuestion: null };
+      return { usedWords: [], wrongAnswers: [], listeningAnswers: [], listeningReview: [], days: {}, currentQuestion: null };
     }
   }
 
@@ -178,15 +210,16 @@
   }
 
   function setView(view) {
-    const isQuest = view === 'quest';
-    elements.questView.hidden = !isQuest;
-    elements.calendarView.hidden = isQuest;
+    elements.questView.hidden = view !== 'quest';
+    elements.listeningView.hidden = view !== 'listening';
+    elements.calendarView.hidden = view !== 'calendar';
     elements.tabs.forEach((tab) => {
       const active = tab.dataset.view === view;
       tab.classList.toggle('is-active', active);
       tab.setAttribute('aria-selected', String(active));
     });
-    if (!isQuest) renderCalendar();
+    if (view !== 'listening') stopListeningAudio();
+    if (view === 'calendar') renderCalendar();
   }
 
   function renderStats() {
@@ -249,6 +282,130 @@
     flourish.setAttribute('aria-hidden', 'true');
     flourish.textContent = kind === 'is-correct' ? '✦  ✧  ✦' : kind === 'is-wrong' ? '↺' : '';
     elements.feedback.replaceChildren(symbol, copy, flourish);
+  }
+
+  function setAudioStatus(message) {
+    elements.audioStatus.textContent = message;
+    elements.audioStatus.hidden = false;
+  }
+
+  function stopListeningAudio() {
+    const wasPlaying = activeUtterance;
+    activeUtterance = null;
+    if (wasPlaying && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+  }
+
+  function playListening(phrase) {
+    if (!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) {
+      setAudioStatus('Japanese audio is not supported in this browser.');
+      return;
+    }
+    const synth = window.speechSynthesis;
+    const voices = synth.getVoices();
+    const japaneseVoice = voices.find((voice) => /^ja(?:$|[-_])/i.test(voice.lang));
+    if (voices.length && !japaneseVoice) {
+      setAudioStatus('No Japanese voice is installed on this device.');
+      return;
+    }
+    stopListeningAudio();
+    const utterance = new window.SpeechSynthesisUtterance(phrase.japanese);
+    utterance.lang = 'ja-JP';
+    utterance.rate = 0.85;
+    if (japaneseVoice) utterance.voice = japaneseVoice;
+    activeUtterance = utterance;
+    utterance.onstart = () => {
+      if (activeUtterance === utterance) setAudioStatus('Playing Japanese audio…');
+    };
+    utterance.onend = () => {
+      if (activeUtterance === utterance) {
+        activeUtterance = null;
+        setAudioStatus('Tap play to listen again.');
+      }
+    };
+    utterance.onerror = () => {
+      if (activeUtterance === utterance) {
+        activeUtterance = null;
+        setAudioStatus('Audio could not play. Check that your device has a Japanese voice.');
+      }
+    };
+    setAudioStatus('Preparing Japanese audio…');
+    synth.speak(utterance);
+  }
+
+  function renderListeningReview() {
+    const saved = state.listeningReview
+      .filter((answer) => answer && typeof answer.id === 'string')
+      .map((answer) => ({ answer, phrase: PHRASES.find((phrase) => phrase.id === answer.id) }))
+      .filter(({ phrase }) => phrase);
+    elements.listeningReviewCount.textContent = `${saved.length} phrase${saved.length === 1 ? '' : 's'}`;
+    elements.listeningReviewEmpty.hidden = saved.length > 0;
+    elements.listeningReviewList.replaceChildren();
+    saved.forEach(({ answer, phrase }) => {
+      const item = document.createElement('li');
+      item.className = 'review-item listening-review-item';
+      const replay = document.createElement('button');
+      replay.type = 'button';
+      replay.className = 'review-play';
+      replay.textContent = '▶ Replay';
+      replay.setAttribute('aria-label', `Replay Japanese phrase ${PHRASES.indexOf(phrase) + 1}`);
+      replay.addEventListener('click', () => playListening(phrase));
+      const details = document.createElement('div');
+      details.className = 'review-details';
+      const meaning = document.createElement('strong');
+      meaning.textContent = phrase.meaning;
+      const attempt = document.createElement('span');
+      attempt.textContent = `You wrote: ${answer.translation}`;
+      details.append(meaning, attempt);
+      item.append(replay, details);
+      elements.listeningReviewList.appendChild(item);
+    });
+  }
+
+  function renderListening() {
+    const count = Math.min(state.listeningAnswers.length, PHRASES.length);
+    const done = count === PHRASES.length;
+    elements.listeningCount.textContent = String(count);
+    elements.listeningProgress.style.width = `${count / PHRASES.length * 100}%`;
+    elements.listeningStep.textContent = done ? 'Complete' : `Phrase ${count + 1} of ${PHRASES.length}`;
+    elements.listeningPrompt.hidden = done;
+    elements.listeningForm.hidden = done;
+    elements.listeningFeedback.hidden = true;
+    elements.listeningDone.hidden = !done;
+    elements.audioStatus.hidden = true;
+    elements.listeningInput.value = '';
+    if (done) {
+      const understood = state.listeningAnswers.filter((answer) => answer && answer.gotIt).length;
+      elements.listeningSummary.textContent = `You marked ${understood} of ${PHRASES.length} as understood. Replay any saved phrases below.`;
+    }
+    renderListeningReview();
+  }
+
+  function submitListening(event) {
+    event.preventDefault();
+    const phrase = PHRASES[state.listeningAnswers.length];
+    if (!phrase) return;
+    listeningAttempt = elements.listeningInput.value.trim();
+    if (!listeningAttempt) {
+      elements.listeningInput.focus();
+      return;
+    }
+    elements.listeningForm.hidden = true;
+    elements.listeningMeaning.textContent = phrase.meaning;
+    elements.listeningAttempt.textContent = listeningAttempt;
+    elements.listeningFeedback.hidden = false;
+  }
+
+  function markListening(gotIt) {
+    if (listeningAttempt === null) return;
+    const phrase = PHRASES[state.listeningAnswers.length];
+    if (!phrase) return;
+    state.listeningAnswers.push({ id: phrase.id, translation: listeningAttempt, gotIt });
+    state.listeningReview = state.listeningReview.filter((answer) => answer && answer.id !== phrase.id);
+    if (!gotIt) state.listeningReview.push({ id: phrase.id, translation: listeningAttempt });
+    listeningAttempt = null;
+    saveState();
+    stopListeningAudio();
+    renderListening();
   }
 
   function renderQuestion() {
@@ -359,18 +516,35 @@
 
   elements.answerForm.addEventListener('submit', submitAnswer);
   elements.tabs.forEach((tab) => tab.addEventListener('click', () => setView(tab.dataset.view)));
+  elements.listeningPlay.addEventListener('click', () => {
+    const phrase = PHRASES[state.listeningAnswers.length];
+    if (phrase) playListening(phrase);
+  });
+  elements.listeningForm.addEventListener('submit', submitListening);
+  elements.listeningMarks.forEach((button) => button.addEventListener('click', () => markListening(button.dataset.listeningMark === 'got')));
+  elements.listeningRestart.addEventListener('click', () => {
+    stopListeningAudio();
+    state.listeningAnswers = [];
+    listeningAttempt = null;
+    saveState();
+    renderListening();
+  });
   elements.backToQuest.addEventListener('click', () => setView('quest'));
   elements.previousMonth.addEventListener('click', () => { calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1); renderCalendar(); });
   elements.nextMonth.addEventListener('click', () => { calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1); renderCalendar(); });
   elements.resetProgress.addEventListener('click', () => {
-    if (!window.confirm('Reset all words and calendar stamps on this device?')) return;
+    if (!window.confirm('Reset all words, listening practice, and calendar stamps on this device?')) return;
     localStorage.removeItem(STORAGE_KEY);
-    state = { usedWords: [], wrongAnswers: [], days: {}, currentQuestion: null };
+    stopListeningAudio();
+    listeningAttempt = null;
+    state = { usedWords: [], wrongAnswers: [], listeningAnswers: [], listeningReview: [], days: {}, currentQuestion: null };
     setView('quest');
     renderReview();
     renderQuestion();
+    renderListening();
   });
 
   renderReview();
   renderQuestion();
+  renderListening();
 })();

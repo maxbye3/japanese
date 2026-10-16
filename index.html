@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
     <title>Katakana Quest</title>
-    <link rel="stylesheet" href="katakana.css" />
+    <link rel="stylesheet" href="katakana.css?v=n4-listening" />
   </head>
   <body>
     <main class="app-shell">
@@ -18,6 +18,7 @@
 
       <nav class="view-tabs" aria-label="Practice views">
         <button class="view-tab is-active" type="button" data-view="quest" aria-selected="true">Today’s quest</button>
+        <button class="view-tab" type="button" data-view="listening" aria-selected="false">N4 listening</button>
         <button class="view-tab" type="button" data-view="calendar" aria-selected="false">Calendar <span id="nav-stamp-count">0</span></button>
       </nav>
 
@@ -57,6 +58,59 @@
         <p class="one-and-done"><span aria-hidden="true">✦</span> One-and-done words: wrong answers won’t come back.</p>
       </section>
 
+      <section id="listening-view" class="view-panel" aria-labelledby="listening-title" hidden>
+        <div class="quest-topline">
+          <div>
+            <p class="eyebrow">Five everyday phrases</p>
+            <h2 id="listening-title">Listen and translate</h2>
+          </div>
+          <div class="progress-count"><strong id="listening-count">0</strong><span>/ 5 phrases</span></div>
+        </div>
+
+        <div class="progress-track" aria-label="Listening progress"><span id="listening-progress"></span></div>
+
+        <div class="practice-card listening-card">
+          <div class="card-meta"><span>Audio only · N4 level</span><span id="listening-step">Phrase 1 of 5</span></div>
+          <div id="listening-prompt" class="audio-prompt">
+            <span class="audio-mark" aria-hidden="true">♪</span>
+            <button class="play-button" id="listening-play" type="button">▶ Play Japanese</button>
+            <p>Listen as often as you like, then translate into English.</p>
+          </div>
+          <p id="audio-status" class="audio-status" role="status" aria-live="polite" hidden></p>
+          <form id="listening-form">
+            <label for="listening-input">Your English translation</label>
+            <div class="answer-row">
+              <input id="listening-input" name="translation" type="text" autocomplete="off" spellcheck="false" maxlength="180" placeholder="type what it means" required />
+              <button class="primary-button" type="submit">Compare translation <span aria-hidden="true">↗</span></button>
+            </div>
+          </form>
+          <div id="listening-feedback" class="translation-feedback" role="status" aria-live="polite" hidden>
+            <p>Suggested meaning <strong id="listening-meaning"></strong></p>
+            <p>Your translation <span id="listening-attempt"></span></p>
+            <p class="translation-hint">Did your answer convey the same meaning?</p>
+            <div class="mark-actions">
+              <button class="mark-got" type="button" data-listening-mark="got">Yes, I got it</button>
+              <button class="mark-review" type="button" data-listening-mark="review">Save for review</button>
+            </div>
+          </div>
+          <div id="listening-done" class="listening-done" hidden>
+            <span class="done-mark" aria-hidden="true">✦</span>
+            <h3>Five phrases done!</h3>
+            <p id="listening-summary"></p>
+            <button class="primary-button" id="listening-restart" type="button">Practice again ↗</button>
+          </div>
+        </div>
+
+        <section class="review-section" aria-labelledby="listening-review-title">
+          <div class="review-heading">
+            <h3 id="listening-review-title">Listening review</h3>
+            <span id="listening-review-count" class="review-count">0 phrases</span>
+          </div>
+          <p id="listening-review-empty" class="review-empty">Phrases you save will appear here with audio replay.</p>
+          <ul id="listening-review-list" class="review-list"></ul>
+        </section>
+      </section>
+
       <section id="calendar-view" class="view-panel" aria-labelledby="calendar-title" hidden>
         <div class="calendar-heading">
           <div>
@@ -85,6 +139,6 @@
         <button class="reset-button" id="reset-progress" type="button">Reset progress</button>
       </footer>
     </main>
-    <script src="katakana.js"></script>
+    <script src="katakana.js?v=n4-listening"></script>
   </body>
 </html>
