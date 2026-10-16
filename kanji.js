@@ -133,11 +133,134 @@
   }));
 
   const STORAGE_KEY = 'katakana-quest-kanji-v1';
+  const CLUES = {
+    '入口': 'Look for this when you want to go into a building.',
+    '出口': 'Look for this when you want to leave a building.',
+    '非常口': 'The way out to use in a fire or other emergency.',
+    '押': 'Move the door away from you.',
+    '引': 'Move the door towards you.',
+    '開': 'This lift button makes the doors move apart.',
+    '閉': 'This lift button brings the doors together.',
+    '禁止': 'A rule telling you that something is not allowed.',
+    '注意': 'A notice asking you to be careful.',
+    '危険': 'A warning that you could get hurt.',
+    '立入禁止': 'You must not go into this area.',
+    '通行止め': 'Traffic cannot continue along this road.',
+    '工事中': 'Building or repair work is happening here.',
+    '禁煙': 'You cannot light a cigarette here.',
+    '喫煙所': 'A designated place for people with cigarettes.',
+    '撮影禁止': 'Put your camera away here.',
+    '飲食禁止': 'Keep your snacks and drinks in your bag.',
+    '無料': 'You do not need to pay anything.',
+    '有料': 'You will need to pay to use this.',
+    '受付': 'The desk where you check in or register.',
+    '駅': 'The place where you catch a train.',
+    '改札口': 'Pass through these with your ticket or IC card.',
+    '切符': 'Buy this to travel on a train.',
+    '乗車券': 'The ticket covering the basic cost of your rail journey.',
+    '精算': 'Pay the difference if your ticket did not cover the whole journey.',
+    '運賃': 'The amount a journey costs.',
+    '片道': 'A ticket for going there, but not coming back.',
+    '往復': 'A ticket for going there and coming back.',
+    '普通': 'The slower, ordinary train service.',
+    '快速': 'A faster service that skips some stations.',
+    '急行': 'A fast service with fewer stops than a local train.',
+    '特急': 'A premium fast train service with very few stops.',
+    '各駅停車': 'This train does not skip any stations.',
+    '指定席': 'A seat booked for a particular passenger.',
+    '自由席': 'Choose an available seat without booking a specific one.',
+    '優先席': 'Seats intended for people who need them most.',
+    '乗換': 'Leave one train and catch another.',
+    '終点': 'Everyone gets off here: the route goes no further.',
+    '発車': 'The train is leaving.',
+    '到着': 'The train has reached its destination.',
+    '東': 'The compass direction where the sun rises.',
+    '西': 'The compass direction where the sun sets.',
+    '南': 'The compass direction opposite north.',
+    '北': 'The compass direction usually at the top of a map.',
+    '右': 'The direction opposite left.',
+    '左': 'The direction opposite right.',
+    '上': 'Towards the ceiling, not the floor.',
+    '下': 'Towards the floor, not the ceiling.',
+    '地下': 'A level underneath the ground floor.',
+    '地上': 'Not underground: at or above the surface.',
+    '階段': 'Use these steps instead of the lift.',
+    '上り': 'These steps or this escalator take you to a higher floor.',
+    '下り': 'These steps or this escalator take you to a lower floor.',
+    '方面': 'Tells you which way a service is heading.',
+    '現在地': 'The marker on a map showing your present position.',
+    '案内所': 'Ask here for maps, directions and local advice.',
+    '駐車場': 'Leave your car here.',
+    '駐輪場': 'Leave your bicycle here.',
+    '横断歩道': 'The marked place where people walk across a road.',
+    '出口専用': 'You may leave through here, but not enter.',
+    '営業中': 'The shop is ready to welcome customers now.',
+    '準備中': 'Staff are getting ready; customers must wait.',
+    '本日休業': 'The shop is not serving customers on this date.',
+    '定休日': 'The recurring day of the week when a shop does not open.',
+    '営業時間': 'The times when a shop serves customers.',
+    '開店': 'The start of a shop’s business day.',
+    '閉店': 'The end of a shop’s business day.',
+    '入口専用': 'You may enter through here, but not leave.',
+    '会計': 'Go here when you are ready to pay.',
+    '現金': 'Coins and banknotes, rather than a card.',
+    '両替': 'Swap one currency or denomination for another.',
+    '税込': 'The displayed price already contains the tax.',
+    '税抜': 'Tax will be added to the displayed price.',
+    '割引': 'A reduction from the usual price.',
+    '半額': 'Pay only 50% of the original price.',
+    '特売': 'A temporary bargain offer in a shop.',
+    '売り切れ': 'There are none left to buy.',
+    '本日': 'This calendar day, not yesterday or tomorrow.',
+    '予約': 'Arrange a table, room or service in advance.',
+    '満席': 'Every seat is already occupied or booked.',
+    '水': 'The clear drink that comes from a tap.',
+    'お湯': 'What you boil in a kettle for tea.',
+    '飲料水': 'Water that is suitable to drink.',
+    '冷水': 'Water from the chilly side of the dispenser.',
+    '温水': 'Water from the heated side of the dispenser.',
+    '牛肉': 'Meat from a cow.',
+    '豚肉': 'Meat from a pig.',
+    '鶏肉': 'Meat from the bird commonly served fried.',
+    '魚': 'An animal from the sea, often served as sashimi.',
+    '卵': 'Something a hen lays.',
+    '野菜': 'Foods such as carrots, cabbage and spinach.',
+    '乳': 'A dairy allergen in cheese and yoghurt.',
+    '小麦': 'The grain used for most bread and noodles.',
+    '米': 'The grain used to make onigiri.',
+    '食券': 'Buy this from a machine and hand it over for your food.',
+    '持ち帰り': 'Your order is packed to eat somewhere else.',
+    '大盛': 'Ask for this when you want extra food in your bowl.',
+    '小盛': 'Ask for this when you want less food in your bowl.',
+    '飲み放題': 'One price lets you order as many drinks as allowed.',
+    '食べ放題': 'One price lets you help yourself to more food.',
+    '化粧室': 'A polite sign pointing to the toilets.',
+    'お手洗い': 'Literally mentions washing hands; look for this when nature calls.',
+    '男': 'The male side of the toilets or baths.',
+    '女': 'The female side of the toilets or baths.',
+    '病院': 'A place for medical treatment with doctors and nurses.',
+    '薬局': 'A shop where you get medicines.',
+    '交番': 'A small neighbourhood police booth.',
+    '警察署': 'The main local building where police officers work.',
+    '郵便局': 'Send letters and parcels from here.',
+    '銀行': 'A place for money accounts and financial services.',
+    '温泉': 'A bath fed by naturally heated spring water.',
+    '大浴場': 'A large shared bathing area in a hotel.',
+    '入浴': 'The activity of getting into a bath.',
+    '清掃中': 'Staff are washing or tidying this area now.',
+    '使用中': 'Someone is already using this facility.',
+    '空室': 'A hotel has a room available for you.',
+    '満室': 'A hotel has no rooms left to book.',
+    '休憩所': 'A place to sit down and take a break.',
+    '忘れ物': 'Belongings that someone accidentally left behind.',
+    '避難所': 'A safe place to go during a disaster.',
+  };
   const DAILY_SIZE = 10;
   const view = document.querySelector('#kanji-view');
   const elements = Object.fromEntries([
     'date', 'count', 'progress', 'card', 'context', 'used', 'sign', 'reading',
     'form', 'input', 'submit', 'feedback', 'round', 'review-count', 'review-empty', 'review-list', 'review-note',
+    'hints', 'hint-button', 'hint-detail', 'hint-clue', 'hint-reading', 'hint-meaning', 'hint-note',
   ].map((name) => [name, document.querySelector('#kanji-' + name)]));
   let state = loadState();
 
@@ -249,11 +372,42 @@
       reading.lang = 'ja';
       reading.textContent = sign.reading;
       const attempt = document.createElement('span');
-      attempt.textContent = 'You wrote: ' + answer.translation;
+      attempt.textContent = (answer.assisted ? 'Meaning revealed · You wrote: ' : 'You wrote: ') + answer.translation;
       details.append(meaning, reading, attempt);
       item.append(text, details);
       elements['review-list'].appendChild(item);
     });
+  }
+
+  function hintLevel(sign) {
+    const session = state.reviewSession || state.day;
+    return Math.max(0, Math.min(3, Number(session.hints && session.hints[sign.id]) || 0));
+  }
+
+  function renderHints(sign, answered) {
+    elements.hints.hidden = Boolean(answered);
+    const level = hintLevel(sign);
+    elements['hint-button'].hidden = level === 3;
+    elements['hint-button'].textContent = ['Need a hint?', 'Show reading →', 'Reveal meaning (save for review)'][level] || '';
+    elements['hint-button'].setAttribute('aria-expanded', String(level > 0));
+    elements['hint-detail'].hidden = level === 0;
+    elements['hint-clue'].textContent = level ? 'Clue: ' + CLUES[sign.id] : '';
+    elements['hint-reading'].hidden = level < 2;
+    elements['hint-reading'].textContent = level >= 2 ? sign.reading : '';
+    elements['hint-meaning'].hidden = level < 3;
+    elements['hint-meaning'].textContent = level >= 3 ? 'Meaning: ' + sign.meaning : '';
+    elements['hint-note'].textContent = level === 3
+      ? 'Type the meaning to practise. After you check it, this sign stays saved for another try.'
+      : level === 2 ? 'Still stuck? Revealing the meaning will keep this sign for review.'
+        : 'Start with a clue, then the reading. Reveal the meaning if you’re stuck.';
+  }
+
+  function makeAnswer(sign, translation) {
+    return {
+      id: sign.id, translation,
+      correct: sign.answers.some((answer) => normalize(answer) === normalize(translation)),
+      assisted: hintLevel(sign) === 3,
+    };
   }
 
   function renderSign(sign, answered, reviewing) {
@@ -261,6 +415,7 @@
     elements.sign.textContent = sign.text;
     elements.input.value = answered ? answered.translation : '';
     elements.input.disabled = Boolean(answered);
+    renderHints(sign, answered);
     const lastReview = reviewing && state.reviewSession.index === state.reviewSession.ids.length - 1;
     elements.submit.textContent = answered
       ? (reviewing ? (lastReview ? 'Continue →' : 'Next review →') : 'Next sign →')
@@ -268,6 +423,10 @@
     if (answered) {
       elements.reading.textContent = sign.reading;
       elements.reading.hidden = false;
+      if (answered.assisted) {
+        showFeedback(true, 'Keep learning — you’ve got this!', sign.meaning + '. Meaning revealed, so this sign is saved for another try.');
+        return;
+      }
       const message = reviewing
         ? (answered.correct ? '. Remembered! Removed from review.' : '. Saved to try again next visit.')
         : (answered.correct ? '. Great reading!' : '. Saved for a retest next visit.');
@@ -285,6 +444,7 @@
     elements.feedback.hidden = true;
     elements.reading.hidden = true;
     elements.round.hidden = true;
+    elements.hints.hidden = true;
     elements.form.hidden = false;
     renderReview();
 
@@ -302,8 +462,8 @@
       elements.context.textContent = 'All done for today';
       elements.sign.textContent = '✦';
       elements.form.hidden = true;
-      const correct = day.answers.filter((answer) => answer.correct).length;
-      showFeedback(true, 'Ten signs done! 🎉', correct + ' / 10 correct. Come back tomorrow for fresh signs.');
+      const correct = day.answers.filter((answer) => answer.correct && !answer.assisted).length;
+      showFeedback(true, 'Ten signs done! 🎉', correct + ' / 10 correct without revealing the meaning. Come back tomorrow for fresh signs.');
       return;
     }
 
@@ -346,11 +506,10 @@
       } else {
         const translation = elements.input.value.trim();
         if (!translation) return;
-        const correct = sign.answers.some((answer) => normalize(answer) === normalize(translation));
-        const answer = { id: sign.id, translation, correct };
+        const answer = makeAnswer(sign, translation);
         round.answers.push(answer);
         state.review = state.review.filter((entry) => entry && entry.id !== sign.id);
-        if (!correct) state.review.push(answer);
+        if (!answer.correct || answer.assisted) state.review.push(answer);
       }
       save();
       render();
@@ -367,15 +526,33 @@
     }
     const translation = elements.input.value.trim();
     if (!translation) return;
-    const correct = sign.answers.some((answer) => normalize(answer) === normalize(translation));
-    const answer = { id: sign.id, translation, correct };
+    const answer = makeAnswer(sign, translation);
     day.answers.push(answer);
     if (day.answers.length === DAILY_SIZE && !state.completedDays.includes(day.date)) {
       state.completedDays.push(day.date);
     }
-    if (!correct) state.review.push(answer);
+    if (!answer.correct || answer.assisted) state.review.push(answer);
     save();
     render();
+  });
+
+  elements['hint-button'].addEventListener('click', () => {
+    if (!state.day || state.day.date !== dateKey()) {
+      render();
+      return;
+    }
+    const session = state.reviewSession || state.day;
+    const id = state.reviewSession ? session.ids[session.index] : session.currentId;
+    const sign = SIGNS.find((entry) => entry.id === id);
+    if (!sign || session.answers.some((answer) => answer.id === id)
+      || (!state.reviewSession && session.answers.length >= DAILY_SIZE)) return;
+    const level = hintLevel(sign);
+    if (level >= 3) return;
+    session.hints = { ...session.hints, [id]: level + 1 };
+    save();
+    // Update hints only: do not erase an answer already being typed.
+    renderHints(sign, false);
+    if (level === 2) elements.input.focus();
   });
 
   function refreshDay() {
