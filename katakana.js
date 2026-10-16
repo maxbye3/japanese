@@ -262,6 +262,7 @@
     listeningProgress: document.querySelector('#listening-progress'),
     listeningStep: document.querySelector('#listening-step'),
     listeningPrompt: document.querySelector('#listening-prompt'),
+    listeningInstruction: document.querySelector('#listening-instruction'),
     listeningPlay: document.querySelector('#listening-play'),
     audioStatus: document.querySelector('#audio-status'),
     listeningForm: document.querySelector('#listening-form'),
@@ -270,6 +271,12 @@
     listeningMeaning: document.querySelector('#listening-meaning'),
     listeningAttempt: document.querySelector('#listening-attempt'),
     listeningMarks: [...document.querySelectorAll('[data-listening-mark]')],
+    listeningResult: document.querySelector('#listening-result'),
+    listeningResultTitle: document.querySelector('#listening-result-title'),
+    listeningJapanese: document.querySelector('#listening-japanese'),
+    listeningResultMeaning: document.querySelector('#listening-result-meaning'),
+    listeningResultAttempt: document.querySelector('#listening-result-attempt'),
+    listeningNext: document.querySelector('#listening-next'),
     listeningDone: document.querySelector('#listening-done'),
     listeningSummary: document.querySelector('#listening-summary'),
     listeningRestart: document.querySelector('#listening-restart'),
@@ -511,7 +518,14 @@
 
   function currentListeningPhrase() {
     const session = getListeningSession();
-    return PHRASES.find((phrase) => phrase.id === session.phraseIds[session.answers.length]);
+    const revealed = shownListeningAnswer(session);
+    return PHRASES.find((phrase) => phrase.id === (revealed ? revealed.id : session.phraseIds[session.answers.length]));
+  }
+
+  function shownListeningAnswer(session) {
+    const answer = session.answers[session.answers.length - 1];
+    return session.showLastAnswer && answer && answer.id === session.phraseIds[session.answers.length - 1]
+      ? answer : null;
   }
 
   function refreshListeningDay() {
@@ -603,17 +617,33 @@
   function renderListening() {
     const session = getListeningSession();
     const count = session.answers.length;
-    const done = count === LISTENING_SIZE;
+    const revealed = shownListeningAnswer(session);
+    const done = count === LISTENING_SIZE && !revealed;
     elements.listeningDate.textContent = formatToday();
     elements.listeningCount.textContent = String(count);
     elements.listeningProgress.style.width = `${count / LISTENING_SIZE * 100}%`;
-    elements.listeningStep.textContent = done ? 'Complete' : `Phrase ${count + 1} of ${LISTENING_SIZE}`;
+    elements.listeningStep.textContent = done ? 'Complete' : `Phrase ${revealed ? count : count + 1} of ${LISTENING_SIZE}`;
     elements.listeningPrompt.hidden = done;
-    elements.listeningForm.hidden = done;
+    elements.listeningInstruction.textContent = revealed
+      ? 'Read the Japanese and replay the audio before moving on.'
+      : 'Listen as often as you like, then translate into English.';
+    elements.listeningForm.hidden = done || Boolean(revealed);
     elements.listeningFeedback.hidden = true;
+    elements.listeningResult.hidden = !revealed;
+    elements.listeningJapanese.textContent = '';
+    elements.listeningResultMeaning.textContent = '';
+    elements.listeningResultAttempt.textContent = '';
     elements.listeningDone.hidden = !done;
     elements.audioStatus.hidden = true;
     elements.listeningInput.value = '';
+    if (revealed) {
+      const phrase = currentListeningPhrase();
+      elements.listeningResultTitle.textContent = revealed.gotIt ? 'You got it! 🎉' : 'Saved for review — keep learning!';
+      elements.listeningJapanese.textContent = phrase.japanese;
+      elements.listeningResultMeaning.textContent = phrase.meaning;
+      elements.listeningResultAttempt.textContent = 'You wrote: ' + revealed.translation;
+      elements.listeningNext.textContent = count === LISTENING_SIZE ? 'Finish today’s set →' : 'Next phrase →';
+    }
     if (done) {
       const understood = session.answers.filter((answer) => answer && answer.gotIt).length;
       elements.listeningSummary.textContent = `You marked ${understood} of ${LISTENING_SIZE} as understood. Come back tomorrow for a new set, or replay saved phrases below.`;
@@ -624,6 +654,7 @@
   function submitListening(event) {
     event.preventDefault();
     if (refreshListeningDay()) return;
+    if (shownListeningAnswer(getListeningSession())) return;
     const phrase = currentListeningPhrase();
     if (!phrase) return;
     const translation = elements.listeningInput.value.trim();
@@ -645,6 +676,7 @@
     if (!phrase) return;
     const session = getListeningSession();
     session.answers.push({ id: phrase.id, translation: listeningAttempt, gotIt });
+    session.showLastAnswer = true;
     if (session.answers.length === LISTENING_SIZE && !state.listeningCompletedDays.includes(session.date)) {
       state.listeningCompletedDays.push(session.date);
     }
@@ -655,6 +687,7 @@
     stopListeningAudio();
     renderListening();
     refreshCalendar();
+    elements.listeningNext.focus();
   }
 
   function renderQuestion() {
@@ -798,9 +831,22 @@
   });
   elements.listeningForm.addEventListener('submit', submitListening);
   elements.listeningMarks.forEach((button) => button.addEventListener('click', () => markListening(button.dataset.listeningMark === 'got')));
+  elements.listeningNext.addEventListener('click', () => {
+    if (refreshListeningDay()) return;
+    const session = getListeningSession();
+    if (!shownListeningAnswer(session)) return;
+    stopListeningAudio();
+    session.showLastAnswer = false;
+    saveState();
+    renderListening();
+    if (session.answers.length === LISTENING_SIZE) elements.listeningRestart.focus();
+    else elements.listeningPlay.focus();
+  });
   elements.listeningRestart.addEventListener('click', () => {
     stopListeningAudio();
-    getListeningSession().answers = [];
+    const session = getListeningSession();
+    session.answers = [];
+    session.showLastAnswer = false;
     listeningAttempt = null;
     saveState();
     renderListening();

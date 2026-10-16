@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
     <title>Katakana Quest</title>
-    <link rel="stylesheet" href="katakana.css?v=kanji-more" />
+    <link rel="stylesheet" href="katakana.css?v=listening-transcript" />
   </head>
   <body>
     <main class="app-shell">
@@ -71,11 +71,11 @@
         <div class="progress-track" aria-label="Listening progress"><span id="listening-progress"></span></div>
 
         <div class="practice-card listening-card">
-          <div class="card-meta"><span>Audio only · N4 level</span><span id="listening-step">Phrase 1 of 10</span></div>
+          <div class="card-meta"><span>Listen first · N4 level</span><span id="listening-step">Phrase 1 of 10</span></div>
           <div id="listening-prompt" class="audio-prompt">
             <span class="audio-mark" aria-hidden="true">♪</span>
             <button class="play-button" id="listening-play" type="button">▶ Play Japanese</button>
-            <p>Listen as often as you like, then translate into English.</p>
+            <p id="listening-instruction">Listen as often as you like, then translate into English.</p>
           </div>
           <p id="audio-status" class="audio-status" role="status" aria-live="polite" hidden></p>
           <form id="listening-form">
@@ -93,6 +93,16 @@
               <button class="mark-got" type="button" data-listening-mark="got">Yes, I got it</button>
               <button class="mark-review" type="button" data-listening-mark="review">Save for review</button>
             </div>
+          </div>
+          <div id="listening-result" class="listening-result" hidden>
+            <div role="status" aria-live="polite">
+              <h3 id="listening-result-title"></h3>
+              <p class="transcript-label">What you heard</p>
+              <p id="listening-japanese" class="listening-japanese" lang="ja"></p>
+              <p id="listening-result-meaning" class="listening-result-meaning"></p>
+              <p id="listening-result-attempt" class="listening-result-attempt"></p>
+            </div>
+            <button id="listening-next" class="primary-button" type="button">Next phrase →</button>
           </div>
           <div id="listening-done" class="listening-done" hidden>
             <span class="done-mark" aria-hidden="true">✦</span>
@@ -194,7 +204,7 @@
         <button class="reset-button" id="reset-progress" type="button">Reset katakana &amp; listening</button>
       </footer>
     </main>
-    <script src="katakana.js?v=kanji-more"></script>
-    <script src="kanji.js?v=kanji-more"></script>
+    <script src="katakana.js?v=listening-transcript"></script>
+    <script src="kanji.js?v=listening-transcript"></script>
   </body>
 </html>

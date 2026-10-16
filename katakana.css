@@ -158,6 +158,12 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
 .mark-got { color: #fffdf8; background: var(--teal); }
 .mark-review { color: var(--teal); background: transparent; }
 .mark-actions button:hover { transform: translateY(-1px); }
+.listening-result { margin-top: 22px; padding: 20px; border-radius: 12px; background: #e5f1e9; overflow-wrap: anywhere; }
+.listening-result h3 { margin: 0 0 20px; font-size: 19px; }
+.listening-result .transcript-label { margin: 0 0 6px; color: var(--muted); font-size: 12px; font-weight: 700; }
+.listening-japanese { margin: 0 0 14px; font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; font-size: clamp(21px, 4vw, 28px); line-height: 1.7; }
+.listening-result-meaning { margin: 0 0 12px; font-size: 16px; line-height: 1.5; }
+.listening-result-attempt { margin: 0 0 20px; color: var(--muted); font-size: 13px; line-height: 1.5; }
 .listening-done { display: grid; justify-items: center; gap: 13px; padding: 35px 0 10px; text-align: center; }
 .done-mark { color: var(--coral); font-size: 55px; line-height: 1; }
 .listening-done h3 { margin: 0; font-size: 27px; }

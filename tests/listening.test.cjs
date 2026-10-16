@@ -10,6 +10,7 @@ function compare(app, translation = 'My English translation') {
 function answer(app, gotIt = true) {
   compare(app);
   app.marks[gotIt ? 0 : 1].listeners.click();
+  app.els['listening-next'].listeners.click();
 }
 
 test('today has ten fixed phrases, saved progress, and replay without rerolling', () => {
@@ -126,7 +127,7 @@ test('a cycle boundary mid-set still produces ten distinct prompts', () => {
   assert(tomorrow.state().listeningSession.phraseIds.every((id) => !chosen.includes(id)));
 });
 
-test('Japanese stays audio only, blank answers do not advance, and reset clears daily history', () => {
+test('Japanese starts audio only, blank answers do not advance, and reset clears daily history', () => {
   const listeningHtml = html.split('<section id="listening-view"')[1].split('<section id="kanji-view"')[0];
   assert(!/[ぁ-んァ-ン一-龯]/u.test(listeningHtml));
   const app = launch({ voice: 'en-US' });
