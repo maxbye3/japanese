@@ -147,15 +147,20 @@
       return {
         usedIds: Array.isArray(saved.usedIds) ? saved.usedIds : [],
         review: Array.isArray(saved.review) ? saved.review : [],
+        completedDays: [...new Set([
+          ...(Array.isArray(saved.completedDays) ? saved.completedDays : []),
+          ...(saved.day && Array.isArray(saved.day.answers) && saved.day.answers.length >= DAILY_SIZE ? [saved.day.date] : []),
+        ])].filter((date) => typeof date === 'string'),
         day: saved.day && typeof saved.day === 'object' ? saved.day : null,
       };
     } catch {
-      return { usedIds: [], review: [], day: null };
+      return { usedIds: [], review: [], completedDays: [], day: null };
     }
   }
 
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    window.dispatchEvent(new Event('kanji:progress'));
   }
 
   function dateKey() {
@@ -301,6 +306,9 @@
     const correct = sign.answers.some((answer) => normalize(answer) === normalize(translation));
     const answer = { id: sign.id, translation, correct };
     day.answers.push(answer);
+    if (day.answers.length === DAILY_SIZE && !state.completedDays.includes(day.date)) {
+      state.completedDays.push(day.date);
+    }
     if (!correct) state.review.push(answer);
     save();
     render();

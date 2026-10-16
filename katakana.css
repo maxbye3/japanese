@@ -178,14 +178,17 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
 .weekday-row, .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
 .weekday-row { margin-bottom: 8px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .1em; text-align: center; text-transform: uppercase; }
 .calendar-grid { gap: 7px; }
-.day-cell { position: relative; min-height: 80px; padding: 10px; border: 1px solid transparent; border-radius: 10px; color: var(--ink); background: rgb(247 243 235 / 72%); text-align: left; }
+.day-cell { min-width: 0; min-height: 94px; padding: 10px; border: 1px solid transparent; border-radius: 10px; color: var(--ink); background: rgb(247 243 235 / 72%); text-align: left; }
 .day-cell.is-outside { color: #b7beb8; background: transparent; }
 .day-cell.is-today { border-color: var(--coral); }
 .day-number { position: relative; z-index: 1; font-size: 12px; font-weight: 700; }
-.day-stamp { position: absolute; right: 8px; bottom: 7px; color: var(--coral); font-family: Georgia, serif; font-size: 32px; line-height: .8; transform: rotate(-12deg); }
-.day-stamp::after { position: absolute; right: -1px; bottom: -3px; width: 25px; height: 2px; border-radius: 50%; background: currentColor; content: ""; opacity: .35; transform: rotate(20deg); }
-.calendar-legend { display: flex; align-items: center; gap: 7px; margin-top: 19px; color: var(--muted); font-size: 11px; }
-.legend-stamp { color: var(--coral); font-size: 20px; transform: rotate(-12deg); }
+.day-stamps { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.day-stamp { display: inline-grid; flex: 0 0 24px; width: 24px; height: 24px; place-items: center; border: 2px solid currentColor; border-radius: 50%; font-size: 14px; font-weight: 800; line-height: 1; transform: rotate(-7deg); }
+.stamp-katakana { color: #a94d38; background: #fbe8df; }
+.stamp-listening { color: var(--teal); background: #dfeee8; transform: rotate(7deg); }
+.stamp-kanji { border-radius: 4px; color: #886015; background: #fff0c7; transform: rotate(-4deg); }
+.calendar-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 19px; color: var(--muted); font-size: 12px; }
+.calendar-legend > span { display: inline-flex; align-items: center; gap: 7px; }
 .text-button, .reset-button { padding: 0; border: 0; color: var(--teal); background: transparent; font-size: 12px; font-weight: 800; }
 .text-button { margin-top: 21px; }
 .text-button:hover, .reset-button:hover { color: var(--coral); }
@@ -210,8 +213,11 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
   .listening-review-item { grid-template-columns: minmax(0, 90px) minmax(0, 1fr); }
   .review-kana { font-size: 23px; }
   .mark-actions { display: grid; grid-template-columns: 1fr; }
-  .day-cell { min-height: 58px; padding: 7px; }
-  .day-stamp { right: 5px; bottom: 4px; font-size: 25px; }
+  .calendar-card { padding: 16px 10px; }
+  .calendar-grid { gap: 4px; }
+  .day-cell { min-height: 94px; padding: 4px; }
+  .day-stamps { gap: 3px; margin-top: 6px; }
+  .day-stamps .day-stamp { flex-basis: 17px; width: 17px; height: 17px; border-width: 1px; font-size: 12px; }
   .site-footer { align-items: flex-start; flex-direction: column; gap: 8px; padding-top: 27px; }
 }
 
@@ -220,7 +226,6 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
   .brand small { font-size: 8px; }
   .weekday-row { font-size: 8px; letter-spacing: .04em; }
   .calendar-grid { gap: 4px; }
-  .day-cell { min-height: 51px; }
   .day-number { font-size: 11px; }
 }
 

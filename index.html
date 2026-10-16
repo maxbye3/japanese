@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
     <title>Katakana Quest</title>
-    <link rel="stylesheet" href="katakana.css?v=kanji-around-japan" />
+    <link rel="stylesheet" href="katakana.css?v=category-stamps" />
   </head>
   <body>
     <main class="app-shell">
@@ -153,7 +153,7 @@
             <p class="eyebrow">Your trail of practice</p>
             <h2 id="calendar-title">The calendar</h2>
           </div>
-          <div class="calendar-stats"><strong id="completed-days">0</strong><span>days stamped</span></div>
+          <div class="calendar-stats"><strong id="stamp-total">0</strong><span>stamps earned</span></div>
         </div>
 
         <div class="calendar-card">
@@ -164,7 +164,11 @@
           </div>
           <div class="weekday-row" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
           <div id="calendar-grid" class="calendar-grid" role="grid" aria-label="Practice calendar"></div>
-          <div class="calendar-legend"><span class="legend-stamp" aria-hidden="true">✦</span> quest complete</div>
+          <div class="calendar-legend" aria-label="Calendar stamp key">
+            <span><span class="day-stamp stamp-katakana" aria-hidden="true">カ</span> Katakana</span>
+            <span><span class="day-stamp stamp-listening" aria-hidden="true">♪</span> Listening</span>
+            <span><span class="day-stamp stamp-kanji" aria-hidden="true">漢</span> Kanji</span>
+          </div>
         </div>
 
         <button class="text-button" type="button" id="back-to-quest">← Back to today’s quest</button>
@@ -175,7 +179,7 @@
         <button class="reset-button" id="reset-progress" type="button">Reset katakana &amp; listening</button>
       </footer>
     </main>
-    <script src="katakana.js?v=kanji-around-japan"></script>
-    <script src="kanji.js?v=kanji-around-japan"></script>
+    <script src="katakana.js?v=category-stamps"></script>
+    <script src="kanji.js?v=category-stamps"></script>
   </body>
 </html>

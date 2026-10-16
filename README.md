@@ -12,6 +12,10 @@ Kanji history and review have separate browser storage and survive the katakana/
 
 The sign bank covers the everyday sign vocabulary illustrated by the Japan Foundation's [Irodori word lists](https://www.irodori.jpf.go.jp/en/resources.html) and railway terminology used by [JR Central](https://global.jr-central.co.jp/en/tickets/type/combinations.html).
 
+The calendar awards separate stamps: coral カ for completing 10 correct katakana words, teal ♪ for completing all 10 listening translations, and gold 漢 for answering all 10 kanji signs. A date can hold all three. The calendar badge and total count category stamps, not just dates. Replaying a listening set preserves its earned stamp without adding another.
+
+Listening and kanji completions are archived by local date, so stamps remain after a new daily set arrives. Existing saved katakana completions and any completed listening/kanji daily sessions still in storage are backfilled. Earlier sessions that were already replaced before this feature cannot be reconstructed. Resetting katakana/listening clears their stamps; kanji stamps remain with the protected kanji history.
+
 ## Play online
 
 <https://maxbye.co/japanese/>
@@ -31,4 +35,4 @@ Missed words and the answers you typed stay in the review list until you reset p
 
 ## Check daily practice
 
-Run `node --test tests/*.test.cjs` to check daily selection, saved progress, rollover, review, migration, bank exhaustion, and permanent kanji non-repetition.
+Run `node --test tests/*.test.cjs` to check daily selection, saved progress, rollover, review, migration, bank exhaustion, permanent kanji non-repetition, and calendar stamps for all three categories.

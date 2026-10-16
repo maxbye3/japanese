@@ -227,7 +227,12 @@
   const STORAGE_KEY = 'katakana-quest-progress-v1';
   const QUEST_SIZE = 10;
   const LISTENING_SIZE = 10;
-  const today = dateKey(new Date());
+  const STAMP_TYPES = [
+    { key: 'katakana', label: 'Katakana', symbol: 'カ' },
+    { key: 'listening', label: 'N4 listening', symbol: '♪' },
+    { key: 'kanji', label: 'Everyday kanji', symbol: '漢' },
+  ];
+  let today = dateKey(new Date());
   let calendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   let state = loadState();
   let listeningAttempt = null;
@@ -273,7 +278,7 @@
     listeningReviewEmpty: document.querySelector('#listening-review-empty'),
     listeningReviewList: document.querySelector('#listening-review-list'),
     navStampCount: document.querySelector('#nav-stamp-count'),
-    completedDays: document.querySelector('#completed-days'),
+    stampTotal: document.querySelector('#stamp-total'),
     monthLabel: document.querySelector('#month-label'),
     calendarGrid: document.querySelector('#calendar-grid'),
     previousMonth: document.querySelector('#previous-month'),
@@ -300,11 +305,16 @@
           ? saved.usedListeningPhrases
           : (Array.isArray(saved.listeningAnswers) ? saved.listeningAnswers.filter(Boolean).map((answer) => answer.id) : []),
         listeningReview: Array.isArray(saved.listeningReview) ? saved.listeningReview : [],
+        listeningCompletedDays: [...new Set([
+          ...(Array.isArray(saved.listeningCompletedDays) ? saved.listeningCompletedDays : []),
+          ...(saved.listeningSession && Array.isArray(saved.listeningSession.answers)
+            && saved.listeningSession.answers.length >= LISTENING_SIZE ? [saved.listeningSession.date] : []),
+        ])].filter((date) => typeof date === 'string'),
         days: saved.days && typeof saved.days === 'object' ? saved.days : {},
         currentQuestion: saved.currentQuestion && typeof saved.currentQuestion === 'object' ? saved.currentQuestion : null,
       };
     } catch {
-      return { usedWords: [], wrongAnswers: [], listeningSession: null, usedListeningPhrases: [], listeningReview: [], days: {}, currentQuestion: null };
+      return { usedWords: [], wrongAnswers: [], listeningSession: null, usedListeningPhrases: [], listeningReview: [], listeningCompletedDays: [], days: {}, currentQuestion: null };
     }
   }
 
@@ -352,6 +362,7 @@
       tab.setAttribute('aria-selected', String(active));
     });
     if (view !== 'listening') stopListeningAudio();
+    if (view === 'quest') refreshKatakanaDay();
     if (view === 'listening') refreshListeningDay();
     if (view === 'kanji') window.dispatchEvent(new Event('kanji:open'));
     if (view === 'calendar') renderCalendar();
@@ -359,13 +370,41 @@
 
   function renderStats() {
     const day = getToday();
-    const completed = Object.values(state.days).filter((item) => item && item.completed).length;
     elements.todayLabel.textContent = formatToday();
     elements.correctCount.textContent = String(day.correct);
     elements.progressFill.style.width = `${Math.min(day.correct / QUEST_SIZE, 1) * 100}%`;
     elements.wordsUsed.textContent = `${state.usedWords.length} word${state.usedWords.length === 1 ? '' : 's'} used`;
-    elements.navStampCount.textContent = String(completed);
-    elements.completedDays.textContent = String(completed);
+    renderCalendarStats();
+  }
+
+  function getCalendarCompletions() {
+    let kanjiDays = [];
+    try {
+      const kanji = JSON.parse(localStorage.getItem('katakana-quest-kanji-v1') || '{}');
+      kanjiDays = Array.isArray(kanji.completedDays) ? kanji.completedDays : [];
+      if (kanji.day && Array.isArray(kanji.day.answers) && kanji.day.answers.length >= 10) {
+        kanjiDays = [...kanjiDays, kanji.day.date];
+      }
+    } catch {
+      // Katakana and listening stamps remain available if kanji storage cannot be read.
+    }
+    return {
+      katakana: new Set(Object.keys(state.days).filter((date) => state.days[date] && state.days[date].completed)),
+      listening: new Set(state.listeningCompletedDays),
+      kanji: new Set(kanjiDays.filter((date) => typeof date === 'string')),
+    };
+  }
+
+  function renderCalendarStats() {
+    const completions = getCalendarCompletions();
+    const total = STAMP_TYPES.reduce((sum, type) => sum + completions[type.key].size, 0);
+    elements.navStampCount.textContent = String(total);
+    elements.stampTotal.textContent = String(total);
+  }
+
+  function refreshCalendar() {
+    renderCalendarStats();
+    if (!elements.calendarView.hidden) renderCalendar();
   }
 
   function renderReview() {
@@ -470,6 +509,20 @@
     if (state.listeningSession && state.listeningSession.date === dateKey(new Date())) return false;
     renderListening();
     return true;
+  }
+
+  function refreshKatakanaDay() {
+    const date = dateKey(new Date());
+    if (today === date) return false;
+    today = date;
+    renderQuestion();
+    return true;
+  }
+
+  function refreshDailyPractice() {
+    const katakanaChanged = refreshKatakanaDay();
+    const listeningChanged = refreshListeningDay();
+    if (katakanaChanged || listeningChanged) refreshCalendar();
   }
 
   function playListening(phrase) {
@@ -581,13 +634,18 @@
     if (listeningAttempt === null) return;
     const phrase = currentListeningPhrase();
     if (!phrase) return;
-    getListeningSession().answers.push({ id: phrase.id, translation: listeningAttempt, gotIt });
+    const session = getListeningSession();
+    session.answers.push({ id: phrase.id, translation: listeningAttempt, gotIt });
+    if (session.answers.length === LISTENING_SIZE && !state.listeningCompletedDays.includes(session.date)) {
+      state.listeningCompletedDays.push(session.date);
+    }
     state.listeningReview = state.listeningReview.filter((answer) => answer && answer.id !== phrase.id);
     if (!gotIt) state.listeningReview.push({ id: phrase.id, translation: listeningAttempt });
     listeningAttempt = null;
     saveState();
     stopListeningAudio();
     renderListening();
+    refreshCalendar();
   }
 
   function renderQuestion() {
@@ -619,7 +677,9 @@
     elements.submitAnswer.innerHTML = 'Check answer <span aria-hidden="true">↗</span>';
     elements.feedback.hidden = true;
     elements.feedback.className = 'feedback';
-    requestAnimationFrame(() => elements.answerInput.focus());
+    requestAnimationFrame(() => {
+      if (!elements.questView.hidden) elements.answerInput.focus();
+    });
   }
 
   function showFeedback(correct, word) {
@@ -643,6 +703,7 @@
 
   function submitAnswer(event) {
     event.preventDefault();
+    if (refreshKatakanaDay()) return;
     if (elements.answerInput.disabled) {
       state.currentQuestion = null;
       saveState();
@@ -667,30 +728,44 @@
   function renderCalendar() {
     const year = calendarMonth.getFullYear();
     const month = calendarMonth.getMonth();
+    const completions = getCalendarCompletions();
+    renderCalendarStats();
     elements.monthLabel.textContent = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric' }).format(calendarMonth);
-    elements.calendarGrid.innerHTML = '';
-    const firstDay = new Date(year, month, 1);
-    const startOffset = (firstDay.getDay() + 6) % 7;
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const previousMonthDays = new Date(year, month, 0).getDate();
+    elements.calendarGrid.replaceChildren();
+    const startOffset = (new Date(year, month, 1).getDay() + 6) % 7;
     for (let index = 0; index < 42; index += 1) {
-      const dayNumber = index - startOffset + 1;
-      const cellDate = new Date(year, month, dayNumber);
+      const cellDate = new Date(year, month, index - startOffset + 1);
+      const key = dateKey(cellDate);
       const cell = document.createElement('div');
       cell.className = 'day-cell';
+      cell.dataset.date = key;
       cell.setAttribute('role', 'gridcell');
-      if (dayNumber < 1) {
+      const number = document.createElement('span');
+      number.className = 'day-number';
+      number.textContent = String(cellDate.getDate());
+      cell.appendChild(number);
+      const dateLabel = cellDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+      if (cellDate.getMonth() !== month) {
         cell.classList.add('is-outside');
-        cell.innerHTML = `<span class="day-number">${previousMonthDays + dayNumber}</span>`;
-      } else if (dayNumber > daysInMonth) {
-        cell.classList.add('is-outside');
-        cell.innerHTML = `<span class="day-number">${dayNumber - daysInMonth}</span>`;
+        cell.setAttribute('aria-label', dateLabel);
       } else {
-        const key = dateKey(cellDate);
-        if (key === today) cell.classList.add('is-today');
-        const stamped = state.days[key] && state.days[key].completed;
-        cell.setAttribute('aria-label', `${cellDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}${stamped ? ', quest complete' : ''}`);
-        cell.innerHTML = `<span class="day-number">${dayNumber}</span>${stamped ? '<span class="day-stamp" aria-hidden="true">✦</span>' : ''}`;
+        if (key === dateKey(new Date())) cell.classList.add('is-today');
+        const earned = STAMP_TYPES.filter((type) => completions[type.key].has(key));
+        const label = dateLabel + (earned.length ? ', completed: ' + earned.map((type) => type.label).join(', ') : '');
+        cell.setAttribute('aria-label', label);
+        cell.setAttribute('title', label);
+        if (earned.length) {
+          const stamps = document.createElement('div');
+          stamps.className = 'day-stamps';
+          stamps.setAttribute('aria-hidden', 'true');
+          earned.forEach((type) => {
+            const stamp = document.createElement('span');
+            stamp.className = 'day-stamp stamp-' + type.key;
+            stamp.textContent = type.symbol;
+            stamps.appendChild(stamp);
+          });
+          cell.appendChild(stamps);
+        }
       }
       elements.calendarGrid.appendChild(cell);
     }
@@ -716,11 +791,11 @@
   elements.previousMonth.addEventListener('click', () => { calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1); renderCalendar(); });
   elements.nextMonth.addEventListener('click', () => { calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1); renderCalendar(); });
   elements.resetProgress.addEventListener('click', () => {
-    if (!window.confirm('Reset katakana, listening practice, and calendar stamps? Your kanji history and review will be kept.')) return;
+    if (!window.confirm('Reset katakana, listening practice, and their stamps? Your kanji history, review, and stamps will be kept.')) return;
     localStorage.removeItem(STORAGE_KEY);
     stopListeningAudio();
     listeningAttempt = null;
-    state = { usedWords: [], wrongAnswers: [], listeningSession: null, usedListeningPhrases: [], listeningReview: [], days: {}, currentQuestion: null };
+    state = { usedWords: [], wrongAnswers: [], listeningSession: null, usedListeningPhrases: [], listeningReview: [], listeningCompletedDays: [], days: {}, currentQuestion: null };
     setView('quest');
     renderReview();
     renderQuestion();
@@ -730,9 +805,10 @@
   renderReview();
   renderQuestion();
   renderListening();
-  window.addEventListener('focus', refreshListeningDay);
+  window.addEventListener('kanji:progress', refreshCalendar);
+  window.addEventListener('focus', refreshDailyPractice);
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) refreshListeningDay();
+    if (!document.hidden) refreshDailyPractice();
   });
-  window.setInterval(refreshListeningDay, 60 * 1000);
+  window.setInterval(refreshDailyPractice, 60 * 1000);
 })();
