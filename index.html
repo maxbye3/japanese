@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f3eb" />
+    <title>Katakana Quest — Daily Japanese practice</title>
+    <link rel="stylesheet" href="katakana.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="site-header">
+        <a class="brand" href="index.html" aria-label="Katakana Quest home">
+          <span class="brand-mark" aria-hidden="true">カ</span>
+          <span><strong>KATAKANA</strong><small>QUEST</small></span>
+        </a>
+        <div class="header-note"><span class="status-dot"></span> daily practice</div>
+      </header>
+
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">Small steps, every day</p>
+        <h1 id="page-title">Read it. Type it.<br /><em>Keep going.</em></h1>
+        <p class="intro-copy">Translate 10 katakana words into English. Every word is one-and-done, so each session keeps moving forward.</p>
+      </section>
+
+      <nav class="view-tabs" aria-label="Practice views">
+        <button class="view-tab is-active" type="button" data-view="quest" aria-selected="true">Today’s quest</button>
+        <button class="view-tab" type="button" data-view="calendar" aria-selected="false">Calendar <span id="nav-stamp-count">0</span></button>
+      </nav>
+
+      <section id="quest-view" class="view-panel" aria-labelledby="quest-title">
+        <div class="quest-topline">
+          <div>
+            <p class="eyebrow">Daily quest · <span id="today-label"></span></p>
+            <h2 id="quest-title">10 words before you go</h2>
+          </div>
+          <div class="progress-count"><strong id="correct-count">0</strong><span>/ 10 correct</span></div>
+        </div>
+
+        <div class="progress-track" aria-label="Daily progress"><span id="progress-fill"></span></div>
+
+        <div id="practice-card" class="practice-card">
+          <div class="card-meta"><span>Translate this word</span><span id="words-used">0 words used</span></div>
+          <div class="kana-word" id="kana-word" lang="ja">—</div>
+          <form id="answer-form" novalidate>
+            <label for="answer-input">Your English answer</label>
+            <div class="answer-row">
+              <input id="answer-input" name="answer" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="type your answer" required />
+              <button class="primary-button" id="submit-answer" type="submit">Check answer <span aria-hidden="true">↗</span></button>
+            </div>
+          </form>
+          <div id="feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        </div>
+
+        <p class="one-and-done"><span aria-hidden="true">✦</span> One-and-done words: wrong answers won’t come back.</p>
+      </section>
+
+      <section id="calendar-view" class="view-panel" aria-labelledby="calendar-title" hidden>
+        <div class="calendar-heading">
+          <div>
+            <p class="eyebrow">Your trail of practice</p>
+            <h2 id="calendar-title">The calendar</h2>
+          </div>
+          <div class="calendar-stats"><strong id="completed-days">0</strong><span>days stamped</span></div>
+        </div>
+
+        <div class="calendar-card">
+          <div class="month-toolbar">
+            <button class="icon-button" type="button" id="previous-month" aria-label="Previous month">←</button>
+            <h3 id="month-label"></h3>
+            <button class="icon-button" type="button" id="next-month" aria-label="Next month">→</button>
+          </div>
+          <div class="weekday-row" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+          <div id="calendar-grid" class="calendar-grid" role="grid" aria-label="Practice calendar"></div>
+          <div class="calendar-legend"><span class="legend-stamp" aria-hidden="true">✦</span> quest complete</div>
+        </div>
+
+        <button class="text-button" type="button" id="back-to-quest">← Back to today’s quest</button>
+      </section>
+
+      <footer class="site-footer">
+        <span>Progress stays on this device.</span>
+        <button class="reset-button" id="reset-progress" type="button">Reset progress</button>
+      </footer>
+    </main>
+    <script src="katakana.js"></script>
+  </body>
+</html>
