@@ -379,9 +379,17 @@
 
   function getCalendarCompletions() {
     let kanjiDays = [];
+    let kanjiStats = {};
     try {
       const kanji = JSON.parse(localStorage.getItem('katakana-quest-kanji-v1') || '{}');
       kanjiDays = Array.isArray(kanji.completedDays) ? kanji.completedDays : [];
+      kanjiStats = kanji.dailyStats && typeof kanji.dailyStats === 'object' ? { ...kanji.dailyStats } : {};
+      if (kanji.day && Array.isArray(kanji.day.answers)) {
+        kanjiStats[kanji.day.date] = {
+          answered: kanji.day.answers.length,
+          correct: kanji.day.answers.filter((answer) => answer.correct && !answer.assisted).length,
+        };
+      }
       if (kanji.day && Array.isArray(kanji.day.answers) && kanji.day.answers.length >= 10) {
         kanjiDays = [...kanjiDays, kanji.day.date];
       }
@@ -392,6 +400,7 @@
       katakana: new Set(Object.keys(state.days).filter((date) => state.days[date] && state.days[date].completed)),
       listening: new Set(state.listeningCompletedDays),
       kanji: new Set(kanjiDays.filter((date) => typeof date === 'string')),
+      kanjiStats,
     };
   }
 
@@ -751,7 +760,12 @@
       } else {
         if (key === dateKey(new Date())) cell.classList.add('is-today');
         const earned = STAMP_TYPES.filter((type) => completions[type.key].has(key));
-        const label = dateLabel + (earned.length ? ', completed: ' + earned.map((type) => type.label).join(', ') : '');
+        const kanjiStats = completions.kanjiStats[key];
+        const showKanjiScore = kanjiStats && Number.isInteger(kanjiStats.answered) && kanjiStats.answered > 10
+          && Number.isInteger(kanjiStats.correct) && kanjiStats.correct >= 0 && kanjiStats.correct <= kanjiStats.answered;
+        const label = dateLabel + (earned.length ? ', completed: ' + earned.map((type) =>
+          type.label + (type.key === 'kanji' && showKanjiScore
+            ? ': ' + kanjiStats.correct + ' correct out of ' + kanjiStats.answered + ' new signs (without revealing the meaning)' : '')).join(', ') : '');
         cell.setAttribute('aria-label', label);
         cell.setAttribute('title', label);
         if (earned.length) {
@@ -762,6 +776,10 @@
             const stamp = document.createElement('span');
             stamp.className = 'day-stamp stamp-' + type.key;
             stamp.textContent = type.symbol;
+            if (type.key === 'kanji' && showKanjiScore) {
+              stamp.classList.add('has-score');
+              stamp.textContent += ' ' + kanjiStats.correct;
+            }
             stamps.appendChild(stamp);
           });
           cell.appendChild(stamps);

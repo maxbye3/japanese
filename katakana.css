@@ -129,6 +129,9 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
 .kanji-sign { margin: 38px 0 24px; font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; font-size: clamp(36px, 8vw, 82px); font-weight: 700; line-height: 1.3; letter-spacing: .08em; text-align: center; overflow-wrap: anywhere; }
 .kanji-reading { margin: -10px 0 24px; color: var(--muted); font-size: 18px; text-align: center; }
 .kanji-round { margin: 0 0 22px; padding: 10px 14px; border-radius: 8px; color: var(--teal-dark); background: #dfeee8; font-size: 13px; font-weight: 800; }
+.kanji-reward { display: grid; gap: 7px; margin: 0 0 22px; padding: 18px; border: 1px solid #e3ca8b; border-radius: 12px; color: #715015; background: #fff0c7; animation: win-pop .6s ease-out; overflow-wrap: anywhere; }
+.kanji-reward strong { font-size: 16px; }
+.kanji-reward span { font-size: 13px; line-height: 1.5; }
 .kanji-hints { margin: 0 0 24px; text-align: center; }
 .kanji-hint-button { max-width: 100%; min-height: 44px; padding: 10px 18px; border: 1px solid var(--teal); border-radius: 10px; color: var(--teal-dark); background: #edf3e9; font-size: 14px; font-weight: 800; }
 .kanji-hint-button:hover { background: #dfeee8; }
@@ -198,6 +201,7 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
 .stamp-katakana { color: #a94d38; background: #fbe8df; }
 .stamp-listening { color: var(--teal); background: #dfeee8; transform: rotate(7deg); }
 .stamp-kanji { border-radius: 4px; color: #886015; background: #fff0c7; transform: rotate(-4deg); }
+.day-stamp.has-score { flex: 0 1 auto; width: auto; max-width: 100%; height: auto; min-height: 24px; padding: 3px; font-size: 12px; line-height: 1.25; overflow-wrap: anywhere; }
 .calendar-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 19px; color: var(--muted); font-size: 12px; }
 .calendar-legend > span { display: inline-flex; align-items: center; gap: 7px; }
 .text-button, .reset-button { padding: 0; border: 0; color: var(--teal); background: transparent; font-size: 12px; font-weight: 800; }
@@ -229,6 +233,7 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
   .day-cell { min-height: 94px; padding: 4px; }
   .day-stamps { gap: 3px; margin-top: 6px; }
   .day-stamps .day-stamp { flex-basis: 17px; width: 17px; height: 17px; border-width: 1px; font-size: 12px; }
+  .day-stamps .day-stamp.has-score { flex-basis: 100%; width: 100%; height: auto; min-height: 28px; padding: 2px; font-size: 10px; }
   .site-footer { align-items: flex-start; flex-direction: column; gap: 8px; padding-top: 27px; }
 }
 
@@ -241,5 +246,5 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .practice-card.is-correct, .practice-card.is-wrong, .feedback-flourish { animation: none; }
+  .practice-card.is-correct, .practice-card.is-wrong, .feedback-flourish, .kanji-reward { animation: none; }
 }

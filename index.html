@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
     <title>Katakana Quest</title>
-    <link rel="stylesheet" href="katakana.css?v=kanji-hints" />
+    <link rel="stylesheet" href="katakana.css?v=kanji-more" />
   </head>
   <body>
     <main class="app-shell">
@@ -118,9 +118,13 @@
             <p class="eyebrow">Daily kanji · <span id="kanji-date"></span></p>
             <h2 id="kanji-title">Kanji around Japan</h2>
           </div>
-          <div class="progress-count"><strong id="kanji-count">0</strong><span>/ 10 new signs</span></div>
+          <div class="progress-count"><strong id="kanji-count">0</strong><span id="kanji-goal">/ 10 for a stamp</span></div>
         </div>
         <div class="progress-track" aria-label="Kanji progress"><span id="kanji-progress"></span></div>
+        <div id="kanji-reward" class="kanji-reward" role="status" aria-live="polite" hidden>
+          <strong>Ten signs done — daily stamp earned! 🎉</strong>
+          <span id="kanji-score"></span>
+        </div>
 
         <div id="kanji-card" class="practice-card">
           <p id="kanji-round" class="kanji-round" hidden></p>
@@ -145,7 +149,7 @@
           </form>
           <div id="kanji-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
         </div>
-        <p class="one-and-done">New signs appear once. Missed signs and revealed answers return for review.</p>
+        <p class="one-and-done">Earn a stamp at ten, then keep going — no daily limit. New signs appear once. Missed signs and revealed answers return for review.</p>
 
         <section class="review-section" aria-labelledby="kanji-review-title">
           <div class="review-heading">
@@ -190,7 +194,7 @@
         <button class="reset-button" id="reset-progress" type="button">Reset katakana &amp; listening</button>
       </footer>
     </main>
-    <script src="katakana.js?v=kanji-hints"></script>
-    <script src="kanji.js?v=kanji-hints"></script>
+    <script src="katakana.js?v=kanji-more"></script>
+    <script src="kanji.js?v=kanji-more"></script>
   </body>
 </html>

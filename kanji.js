@@ -255,12 +255,13 @@
     '忘れ物': 'Belongings that someone accidentally left behind.',
     '避難所': 'A safe place to go during a disaster.',
   };
-  const DAILY_SIZE = 10;
+  const STAMP_GOAL = 10;
   const view = document.querySelector('#kanji-view');
   const elements = Object.fromEntries([
     'date', 'count', 'progress', 'card', 'context', 'used', 'sign', 'reading',
     'form', 'input', 'submit', 'feedback', 'round', 'review-count', 'review-empty', 'review-list', 'review-note',
     'hints', 'hint-button', 'hint-detail', 'hint-clue', 'hint-reading', 'hint-meaning', 'hint-note',
+    'goal', 'reward', 'score',
   ].map((name) => [name, document.querySelector('#kanji-' + name)]));
   let state = loadState();
 
@@ -274,18 +275,30 @@
           && Array.isArray(saved.reviewSession.answers) ? saved.reviewSession : null,
         completedDays: [...new Set([
           ...(Array.isArray(saved.completedDays) ? saved.completedDays : []),
-          ...(saved.day && Array.isArray(saved.day.answers) && saved.day.answers.length >= DAILY_SIZE ? [saved.day.date] : []),
+          ...(saved.day && Array.isArray(saved.day.answers) && saved.day.answers.length >= STAMP_GOAL ? [saved.day.date] : []),
         ])].filter((date) => typeof date === 'string'),
+        dailyStats: {
+          ...(saved.dailyStats && typeof saved.dailyStats === 'object' && !Array.isArray(saved.dailyStats) ? saved.dailyStats : {}),
+          ...(saved.day && Array.isArray(saved.day.answers) ? { [saved.day.date]: summarizeDay(saved.day) } : {}),
+        },
         day: saved.day && typeof saved.day === 'object' ? saved.day : null,
       };
     } catch {
-      return { usedIds: [], review: [], reviewSession: null, completedDays: [], day: null };
+      return { usedIds: [], review: [], reviewSession: null, completedDays: [], dailyStats: {}, day: null };
     }
   }
 
   function save() {
+    if (state.day) state.dailyStats[state.day.date] = summarizeDay(state.day);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     window.dispatchEvent(new Event('kanji:progress'));
+  }
+
+  function summarizeDay(day) {
+    return {
+      answered: day.answers.length,
+      correct: day.answers.filter((answer) => answer.correct && !answer.assisted).length,
+    };
   }
 
   function dateKey() {
@@ -418,7 +431,8 @@
     renderHints(sign, answered);
     const lastReview = reviewing && state.reviewSession.index === state.reviewSession.ids.length - 1;
     elements.submit.textContent = answered
-      ? (reviewing ? (lastReview ? 'Continue →' : 'Next review →') : 'Next sign →')
+      ? (reviewing ? (lastReview ? 'Continue →' : 'Next review →')
+        : state.day.answers.length === STAMP_GOAL ? 'Keep going →' : 'Next sign →')
       : 'Check answer ↗';
     if (answered) {
       elements.reading.textContent = sign.reading;
@@ -438,7 +452,12 @@
     const day = getDay();
     elements.date.textContent = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());
     elements.count.textContent = String(day.answers.length);
-    elements.progress.style.width = day.answers.length / DAILY_SIZE * 100 + '%';
+    elements.goal.textContent = day.answers.length >= STAMP_GOAL ? 'new signs today' : '/ 10 for a stamp';
+    elements.progress.style.width = Math.min(day.answers.length / STAMP_GOAL, 1) * 100 + '%';
+    elements.reward.hidden = day.answers.length < STAMP_GOAL;
+    const stats = summarizeDay(day);
+    elements.score.textContent = stats.correct + ' / ' + stats.answered
+      + ' correct without revealing the meaning. Keep going whenever you like!';
     elements.used.textContent = state.usedIds.length + ' / ' + SIGNS.length + ' seen';
     elements.card.classList.remove('is-correct', 'is-wrong');
     elements.feedback.hidden = true;
@@ -455,15 +474,6 @@
       elements.round.hidden = false;
       elements.round.textContent = 'Review from last time · ' + (round.index + 1) + ' of ' + round.ids.length;
       renderSign(sign, answered, true);
-      return;
-    }
-
-    if (day.answers.length >= DAILY_SIZE) {
-      elements.context.textContent = 'All done for today';
-      elements.sign.textContent = '✦';
-      elements.form.hidden = true;
-      const correct = day.answers.filter((answer) => answer.correct && !answer.assisted).length;
-      showFeedback(true, 'Ten signs done! 🎉', correct + ' / 10 correct without revealing the meaning. Come back tomorrow for fresh signs.');
       return;
     }
 
@@ -515,7 +525,6 @@
       render();
       return;
     }
-    if (day.answers.length >= DAILY_SIZE) return;
     const sign = SIGNS.find((entry) => entry.id === day.currentId);
     if (!sign) return;
     if (day.answers.some((answer) => answer.id === sign.id)) {
@@ -528,7 +537,7 @@
     if (!translation) return;
     const answer = makeAnswer(sign, translation);
     day.answers.push(answer);
-    if (day.answers.length === DAILY_SIZE && !state.completedDays.includes(day.date)) {
+    if (day.answers.length === STAMP_GOAL && !state.completedDays.includes(day.date)) {
       state.completedDays.push(day.date);
     }
     if (!answer.correct || answer.assisted) state.review.push(answer);
@@ -544,8 +553,7 @@
     const session = state.reviewSession || state.day;
     const id = state.reviewSession ? session.ids[session.index] : session.currentId;
     const sign = SIGNS.find((entry) => entry.id === id);
-    if (!sign || session.answers.some((answer) => answer.id === id)
-      || (!state.reviewSession && session.answers.length >= DAILY_SIZE)) return;
+    if (!sign || session.answers.some((answer) => answer.id === id)) return;
     const level = hintLevel(sign);
     if (level >= 3) return;
     session.hints = { ...session.hints, [id]: level + 1 };

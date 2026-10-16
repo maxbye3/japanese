@@ -110,7 +110,7 @@ test('midnight resets hints instead of applying a stale click to the next questi
   assert.equal(app.kanjiState().day.answers.length, 0);
 });
 
-test('all 120 signs have clues; hints stay hidden after completion and bank exhaustion', () => {
+test('all 120 signs have clues; hints stay hidden after answers and bank exhaustion', () => {
   const ids = [];
   for (let day = 0; day < 12; day += 1) {
     const saved = new Map([[kanjiKey, JSON.stringify({ usedIds: ids })]]);
@@ -127,7 +127,7 @@ test('all 120 signs have clues; hints stay hidden after completion and bank exha
       if (question < 9) submit(app);
     }
     assert.equal(app.els['kanji-hints'].hidden, true);
-    assert.match(app.els['kanji-feedback'].children[1].children[1].textContent, /0 \/ 10 correct without revealing/);
+    assert.match(app.els['kanji-score'].textContent, /0 \/ 10 correct without revealing/);
     assert.equal(app.kanjiState().review.length, 10);
     assert.equal(app.els['nav-stamp-count'].textContent, '1');
   }

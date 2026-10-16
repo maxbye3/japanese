@@ -92,9 +92,10 @@ test('120 new signs are introduced once; saved misses remain reviewable after ba
       if (count < 9) submit(app);
     }
     assert.equal(app.els['kanji-count'].textContent, '10');
-    assert.equal(app.els['kanji-form'].hidden, true);
-    assert.match(app.els['kanji-feedback'].children[1].children[0].textContent, /Ten signs done/);
-    submit(app);
+    assert.equal(app.els['kanji-form'].hidden, false);
+    assert.equal(app.els['kanji-input'].disabled, true);
+    assert.equal(app.els['kanji-reward'].hidden, false);
+    assert.equal(app.els['kanji-submit'].textContent, 'Keep going →');
     assert.equal(app.kanjiState().day.answers.length, 10);
   }
   assert.equal(seen.size, 120);
@@ -223,9 +224,12 @@ test('review is available after the daily ten and never adds to new-sign progres
   assert.equal(app.els['kanji-reading'].hidden, true);
   submit(app, 'exit');
   submit(app);
-  assert.equal(app.els['kanji-form'].hidden, true);
+  assert.equal(app.els['kanji-form'].hidden, false);
+  assert.equal(app.els['kanji-input'].disabled, false);
   assert.equal(app.kanjiState().review.length, 0);
-  assert.deepEqual(app.kanjiState().usedIds, ids);
+  assert.deepEqual(app.kanjiState().usedIds.slice(0, 10), ids);
+  assert.equal(app.kanjiState().usedIds.length, 11);
+  assert.equal(ids.includes(app.els['kanji-sign'].textContent), false);
   assert.equal(app.kanjiState().day.answers.length, 10);
   assert.equal(app.els['nav-stamp-count'].textContent, '1');
   assert.deepEqual(app.kanjiState().completedDays, ['2026-10-16']);
