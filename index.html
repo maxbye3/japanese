@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
-    <title>Katakana Quest — Daily Japanese practice</title>
+    <title>Katakana Quest</title>
     <link rel="stylesheet" href="katakana.css" />
   </head>
   <body>
@@ -14,14 +14,7 @@
           <span class="brand-mark" aria-hidden="true">カ</span>
           <span><strong>KATAKANA</strong><small>QUEST</small></span>
         </a>
-        <div class="header-note"><span class="status-dot"></span> daily practice</div>
       </header>
-
-      <section class="intro" aria-labelledby="page-title">
-        <p class="eyebrow">Small steps, every day</p>
-        <h1 id="page-title">Read it. Type it.<br /><em>Keep going.</em></h1>
-        <p class="intro-copy">Translate 10 katakana words into English. Every word is one-and-done, so each session keeps moving forward.</p>
-      </section>
 
       <nav class="view-tabs" aria-label="Practice views">
         <button class="view-tab is-active" type="button" data-view="quest" aria-selected="true">Today’s quest</button>
@@ -40,7 +33,7 @@
         <div class="progress-track" aria-label="Daily progress"><span id="progress-fill"></span></div>
 
         <div id="practice-card" class="practice-card">
-          <div class="card-meta"><span>Translate this word</span><span id="words-used">0 words used</span></div>
+          <div class="card-meta"><span id="card-prompt">Translate this word</span><span id="words-used">0 words used</span></div>
           <div class="kana-word" id="kana-word" lang="ja">—</div>
           <form id="answer-form" novalidate>
             <label for="answer-input">Your English answer</label>
@@ -51,6 +44,15 @@
           </form>
           <div id="feedback" class="feedback" role="status" aria-live="polite" hidden></div>
         </div>
+
+        <section class="review-section" aria-labelledby="review-title">
+          <div class="review-heading">
+            <h3 id="review-title">Review missed words</h3>
+            <span id="review-count" class="review-count">0 words</span>
+          </div>
+          <p id="review-empty" class="review-empty">Words you miss will appear here.</p>
+          <ul id="review-list" class="review-list"></ul>
+        </section>
 
         <p class="one-and-done"><span aria-hidden="true">✦</span> One-and-done words: wrong answers won’t come back.</p>
       </section>

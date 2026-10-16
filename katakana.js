@@ -102,6 +102,10 @@
     todayLabel: document.querySelector('#today-label'),
     correctCount: document.querySelector('#correct-count'),
     wordsUsed: document.querySelector('#words-used'),
+    cardPrompt: document.querySelector('#card-prompt'),
+    reviewCount: document.querySelector('#review-count'),
+    reviewEmpty: document.querySelector('#review-empty'),
+    reviewList: document.querySelector('#review-list'),
     progressFill: document.querySelector('#progress-fill'),
     practiceCard: document.querySelector('#practice-card'),
     kanaWord: document.querySelector('#kana-word'),
@@ -131,11 +135,12 @@
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
       return {
         usedWords: Array.isArray(saved.usedWords) ? saved.usedWords : [],
+        wrongAnswers: Array.isArray(saved.wrongAnswers) ? saved.wrongAnswers : [],
         days: saved.days && typeof saved.days === 'object' ? saved.days : {},
         currentQuestion: saved.currentQuestion && typeof saved.currentQuestion === 'object' ? saved.currentQuestion : null,
       };
     } catch {
-      return { usedWords: [], days: {}, currentQuestion: null };
+      return { usedWords: [], wrongAnswers: [], days: {}, currentQuestion: null };
     }
   }
 
@@ -195,17 +200,77 @@
     elements.completedDays.textContent = String(completed);
   }
 
+  function renderReview() {
+    const entries = state.wrongAnswers
+      .filter((entry) => entry && typeof entry.wordId === 'string')
+      .map((entry) => ({ entry, word: WORDS.find((word) => word.id === entry.wordId) }))
+      .filter(({ word }) => word)
+      .reverse();
+    elements.reviewCount.textContent = `${entries.length} word${entries.length === 1 ? '' : 's'}`;
+    elements.reviewEmpty.hidden = entries.length > 0;
+    elements.reviewList.replaceChildren();
+    entries.forEach(({ entry, word }) => {
+      const item = document.createElement('li');
+      item.className = 'review-item';
+      const kana = document.createElement('span');
+      kana.className = 'review-kana';
+      kana.lang = 'ja';
+      kana.textContent = word.kana;
+      const details = document.createElement('div');
+      details.className = 'review-details';
+      const answer = document.createElement('strong');
+      answer.textContent = word.english;
+      const attempt = document.createElement('span');
+      attempt.textContent = `You wrote: ${entry.givenAnswer || '—'}`;
+      details.append(answer, attempt);
+      item.append(kana, details);
+      elements.reviewList.appendChild(item);
+    });
+  }
+
+  function setFeedback(kind, title, message) {
+    elements.practiceCard.classList.remove('is-correct', 'is-wrong');
+    if (kind !== 'is-neutral') elements.practiceCard.classList.add(kind);
+    elements.feedback.hidden = false;
+    elements.feedback.className = `feedback ${kind}`;
+    const symbol = document.createElement('span');
+    symbol.className = 'feedback-symbol';
+    symbol.setAttribute('aria-hidden', 'true');
+    symbol.textContent = kind === 'is-correct' ? '✦' : kind === 'is-wrong' ? '✕' : '•';
+    const copy = document.createElement('div');
+    copy.className = 'feedback-copy';
+    const heading = document.createElement('strong');
+    heading.textContent = title;
+    const detail = document.createElement('span');
+    detail.textContent = message;
+    copy.append(heading, detail);
+    const flourish = document.createElement('span');
+    flourish.className = 'feedback-flourish';
+    flourish.setAttribute('aria-hidden', 'true');
+    flourish.textContent = kind === 'is-correct' ? '✦  ✧  ✦' : kind === 'is-wrong' ? '↺' : '';
+    elements.feedback.replaceChildren(symbol, copy, flourish);
+  }
+
   function renderQuestion() {
     const day = getToday();
     renderStats();
+    elements.cardPrompt.textContent = 'Translate this word';
+    elements.answerForm.hidden = false;
+    elements.practiceCard.classList.remove('is-correct', 'is-wrong');
     if (day.completed) {
-      setView('calendar');
+      elements.cardPrompt.textContent = 'All done for today';
+      elements.kanaWord.textContent = '✦';
+      elements.answerForm.hidden = true;
+      setFeedback('is-correct', 'Quest complete! 🎉', '10 right answers today. Your calendar is stamped.');
       return;
     }
     let word = currentWord();
     if (!word) word = chooseQuestion();
     if (!word) {
-      elements.practiceCard.innerHTML = '<div class="feedback"><strong>You reached the end of the word bank.</strong><span>Every available word has been used.</span></div>';
+      elements.cardPrompt.textContent = 'Practice complete';
+      elements.kanaWord.textContent = '—';
+      elements.answerForm.hidden = true;
+      setFeedback('is-neutral', 'Word bank complete', 'Every available word has been used.');
       return;
     }
     elements.kanaWord.textContent = word.kana;
@@ -219,11 +284,11 @@
   }
 
   function showFeedback(correct, word) {
-    elements.feedback.hidden = false;
-    elements.feedback.className = `feedback${correct ? '' : ' is-wrong'}`;
-    elements.feedback.innerHTML = correct
-      ? '<strong>Nice one.</strong><span>That word is safely logged.</span>'
-      : `<strong>Not quite.</strong><span>The answer was <strong>${word.english}</strong> — it won’t come back.</span>`;
+    setFeedback(
+      correct ? 'is-correct' : 'is-wrong',
+      correct ? 'Yes! You got it! 🎉' : 'Not this time',
+      correct ? 'Brilliant reading. Keep it going!' : `The answer is ${word.english}. Saved for review below.`,
+    );
     elements.answerInput.disabled = true;
     elements.submitAnswer.disabled = false;
     elements.submitAnswer.textContent = 'Next word  →';
@@ -234,12 +299,7 @@
     state.currentQuestion = null;
     saveState();
     renderStats();
-    elements.feedback.hidden = false;
-    elements.feedback.className = 'feedback';
-    elements.feedback.innerHTML = '<strong>Quest complete ✦</strong><span>Your calendar has been stamped.</span>';
-    elements.answerInput.disabled = true;
-    elements.submitAnswer.disabled = true;
-    window.setTimeout(() => setView('calendar'), 900);
+    renderQuestion();
   }
 
   function submitAnswer(event) {
@@ -254,6 +314,10 @@
     if (!word) return;
     const correct = word.answers.some((answer) => normalize(answer) === normalize(elements.answerInput.value));
     if (correct) getToday().correct += 1;
+    else {
+      state.wrongAnswers.push({ wordId: word.id, givenAnswer: elements.answerInput.value.trim() });
+      renderReview();
+    }
     state.currentQuestion = null;
     saveState();
     renderStats();
@@ -301,10 +365,12 @@
   elements.resetProgress.addEventListener('click', () => {
     if (!window.confirm('Reset all words and calendar stamps on this device?')) return;
     localStorage.removeItem(STORAGE_KEY);
-    state = { usedWords: [], days: {}, currentQuestion: null };
+    state = { usedWords: [], wrongAnswers: [], days: {}, currentQuestion: null };
     setView('quest');
+    renderReview();
     renderQuestion();
   });
 
+  renderReview();
   renderQuestion();
 })();

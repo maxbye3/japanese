@@ -4,7 +4,7 @@ A tiny, browser-only daily katakana practice site.
 
 ## Play online
 
-<https://maxbye3.github.io/japanese/>
+<https://maxbye.co/japanese/>
 
 ## Run locally
 
@@ -17,3 +17,4 @@ python3 -m http.server
 Then open <http://localhost:8000>.
 
 Progress is stored in `localStorage` on the current browser and device. A word is reserved as soon as it appears, so refreshing the page or answering incorrectly will never serve that word again.
+Missed words and the answers you typed stay in the review list until you reset progress.
