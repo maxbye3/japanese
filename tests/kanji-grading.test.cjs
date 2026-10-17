@@ -49,23 +49,25 @@ test('the next question can correct the previous grade while preserving its type
   assert.equal(app.els['kanji-grade-override'].hidden, true);
 });
 
-test('manual corrections on retests update review but do not change daily new-sign scores', () => {
+test('manual corrections on retests update the daily score without changing the earlier new-sign attempt', () => {
   const app = launch({ random: 0 });
   open(app);
   submit(app, 'wrong');
   app.tabs[0].listeners.click();
   open(app);
   submit(app, 'my paraphrase');
-  const before = app.kanjiState().dailyStats;
+  assert.deepEqual(app.kanjiState().dailyStats['2026-10-16'], { answered: 2, correct: 0 });
   override(app);
   assert.equal(app.kanjiState().review.length, 0);
   assert.equal(app.kanjiState().reviewSession.answers[0].correct, true);
+  assert.deepEqual(app.kanjiState().dailyStats['2026-10-16'], { answered: 2, correct: 1 });
   submit(app);
   assert.equal(app.kanjiState().reviewSession, null);
   assert.equal(app.els['kanji-sign'].textContent, '出口');
   override(app);
   assert.equal(app.kanjiState().review[0].id, '入口');
-  assert.deepEqual(app.kanjiState().dailyStats, before);
+  assert.deepEqual(app.kanjiState().dailyStats['2026-10-16'], { answered: 2, correct: 0 });
+  assert.equal(app.kanjiState().day.answers[0].correct, false);
 });
 
 test('a correction updates calendar totals without removing the earned stamp', () => {
@@ -81,7 +83,7 @@ test('a correction updates calendar totals without removing the earned stamp', (
   app.tabs[3].listeners.click();
   const cell = app.els['calendar-grid'].children.find((entry) => entry.dataset.date === '2026-10-16');
   assert.equal(cell.children[1].children[0].textContent, '漢 10');
-  assert.match(cell.attributes['aria-label'], /10 correct out of 11 new signs/);
+  assert.match(cell.attributes['aria-label'], /10 correct out of 11 signs practised/);
 });
 
 test('revealed meanings remain assisted and a stale correction cannot change a new day', () => {

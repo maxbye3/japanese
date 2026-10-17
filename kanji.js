@@ -270,21 +270,33 @@
   function loadState() {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      const day = saved.day && typeof saved.day === 'object' ? saved.day : null;
+      const reviewSession = saved.reviewSession && Array.isArray(saved.reviewSession.ids)
+        && Array.isArray(saved.reviewSession.answers) ? saved.reviewSession : null;
+      if (day) {
+        // Older versions kept only the current review round. Credit its surviving answers once.
+        if (!Array.isArray(day.reviewAnswers)) {
+          day.reviewAnswers = (reviewSession?.answers || []).map((answer, dailyReviewIndex) => ({ ...answer, dailyReviewIndex }));
+        }
+        if (reviewSession) {
+          reviewSession.answers = reviewSession.answers.map((answer, index) =>
+            day.reviewAnswers[answer.dailyReviewIndex ?? index] || answer);
+        }
+      }
       return {
         usedIds: Array.isArray(saved.usedIds) ? saved.usedIds : [],
         review: Array.isArray(saved.review) ? saved.review : [],
-        reviewSession: saved.reviewSession && Array.isArray(saved.reviewSession.ids)
-          && Array.isArray(saved.reviewSession.answers) ? saved.reviewSession : null,
+        reviewSession,
         completedDays: [...new Set([
           ...(Array.isArray(saved.completedDays) ? saved.completedDays : []),
-          ...(saved.day && Array.isArray(saved.day.answers) && saved.day.answers.length >= STAMP_GOAL ? [saved.day.date] : []),
+          ...(day && Array.isArray(day.answers) && summarizeDay(day).answered >= STAMP_GOAL ? [day.date] : []),
         ])].filter((date) => typeof date === 'string'),
         dailyStats: {
           ...(saved.dailyStats && typeof saved.dailyStats === 'object' && !Array.isArray(saved.dailyStats) ? saved.dailyStats : {}),
-          ...(saved.day && Array.isArray(saved.day.answers) ? { [saved.day.date]: summarizeDay(saved.day) } : {}),
+          ...(day && Array.isArray(day.answers) ? { [day.date]: summarizeDay(day) } : {}),
         },
         lastGrade: saved.lastGrade && saved.lastGrade.answer ? saved.lastGrade : null,
-        day: saved.day && typeof saved.day === 'object' ? saved.day : null,
+        day,
       };
     } catch {
       return { usedIds: [], review: [], reviewSession: null, completedDays: [], dailyStats: {}, day: null };
@@ -292,15 +304,22 @@
   }
 
   function save() {
-    if (state.day) state.dailyStats[state.day.date] = summarizeDay(state.day);
+    if (state.day) {
+      const stats = summarizeDay(state.day);
+      state.dailyStats[state.day.date] = stats;
+      if (stats.answered >= STAMP_GOAL && !state.completedDays.includes(state.day.date)) {
+        state.completedDays.push(state.day.date);
+      }
+    }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     window.dispatchEvent(new Event('kanji:progress'));
   }
 
   function summarizeDay(day) {
+    const answers = [...day.answers, ...(day.reviewAnswers || [])];
     return {
-      answered: day.answers.length,
-      correct: day.answers.filter((answer) => answer.correct && !answer.assisted).length,
+      answered: answers.length,
+      correct: answers.filter((answer) => answer.correct && !answer.assisted).length,
     };
   }
 
@@ -311,7 +330,7 @@
 
   function getDay() {
     if (!state.day || state.day.date !== dateKey()) {
-      state.day = { date: dateKey(), answers: [], currentId: null };
+      state.day = { date: dateKey(), answers: [], reviewAnswers: [], currentId: null };
       state.reviewSession = null;
       state.lastGrade = null;
       startReview();
@@ -457,7 +476,7 @@
     const lastReview = reviewing && state.reviewSession.index === state.reviewSession.ids.length - 1;
     elements.submit.textContent = answered
       ? (reviewing ? (lastReview ? 'Continue →' : 'Next review →')
-        : state.day.answers.length === STAMP_GOAL ? 'Keep going →' : 'Next sign →')
+        : summarizeDay(state.day).answered === STAMP_GOAL ? 'Keep going →' : 'Next sign →')
       : 'Check answer ↗';
     if (answered) {
       renderCorrection(answered, reviewing);
@@ -476,12 +495,12 @@
 
   function render() {
     const day = getDay();
-    elements.date.textContent = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());
-    elements.count.textContent = String(day.answers.length);
-    elements.goal.textContent = day.answers.length >= STAMP_GOAL ? 'new signs today' : '/ 10 for a stamp';
-    elements.progress.style.width = Math.min(day.answers.length / STAMP_GOAL, 1) * 100 + '%';
-    elements.reward.hidden = day.answers.length < STAMP_GOAL;
     const stats = summarizeDay(day);
+    elements.date.textContent = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());
+    elements.count.textContent = String(stats.answered);
+    elements.goal.textContent = stats.answered >= STAMP_GOAL ? 'signs practised today' : '/ 10 for a stamp';
+    elements.progress.style.width = Math.min(stats.answered / STAMP_GOAL, 1) * 100 + '%';
+    elements.reward.hidden = stats.answered < STAMP_GOAL;
     elements.score.textContent = stats.correct + ' / ' + stats.answered
       + ' correct without revealing the meaning. Keep going whenever you like!';
     elements.used.textContent = state.usedIds.length + ' / ' + SIGNS.length + ' seen';
@@ -491,8 +510,8 @@
     correctionTarget = null;
     const previous = state.lastGrade;
     if (previous && previous.date === day.date && previous.answer.correct) {
-      const answers = previous.reviewing ? state.reviewSession?.answers : day.answers;
-      const answer = answers?.find((entry) => entry.id === previous.answer.id) || previous.answer;
+      const answer = (previous.reviewing ? day.reviewAnswers[previous.answer.dailyReviewIndex]
+        : day.answers.find((entry) => entry.id === previous.answer.id)) || previous.answer;
       renderCorrection(answer, previous.reviewing);
     }
     elements.reading.hidden = true;
@@ -545,6 +564,7 @@
     const round = state.reviewSession;
     if (round) {
       const sign = SIGNS.find((entry) => entry.id === round.ids[round.index]);
+      let reading = null;
       if (round.answers.some((answer) => answer.id === sign.id)) {
         if (round.index + 1 < round.ids.length) round.index += 1;
         else state.reviewSession = null;
@@ -552,13 +572,17 @@
         const translation = elements.input.value.trim();
         if (!translation) return;
         const answer = makeAnswer(sign, translation);
+        answer.dailyReviewIndex = day.reviewAnswers.length;
+        day.reviewAnswers.push(answer);
         round.answers.push(answer);
         state.lastGrade = { date: day.date, reviewing: true, answer };
         state.review = state.review.filter((entry) => entry && entry.id !== sign.id);
         if (!answer.correct || answer.assisted) state.review.push(answer);
+        reading = sign.reading;
       }
       save();
       render();
+      if (reading) window.JapaneseAudio.speak(reading);
       return;
     }
     const sign = SIGNS.find((entry) => entry.id === day.currentId);
@@ -574,12 +598,10 @@
     const answer = makeAnswer(sign, translation);
     day.answers.push(answer);
     state.lastGrade = { date: day.date, reviewing: false, answer };
-    if (day.answers.length === STAMP_GOAL && !state.completedDays.includes(day.date)) {
-      state.completedDays.push(day.date);
-    }
     if (!answer.correct || answer.assisted) state.review.push(answer);
     save();
     render();
+    window.JapaneseAudio.speak(sign.reading);
   });
 
   elements['grade-override'].addEventListener('click', () => {

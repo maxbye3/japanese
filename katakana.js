@@ -236,7 +236,6 @@
   let calendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   let state = loadState();
   let listeningAttempt = null;
-  let activeUtterance = null;
 
   const elements = {
     questView: document.querySelector('#quest-view'),
@@ -365,7 +364,7 @@
       tab.classList.toggle('is-active', active);
       tab.setAttribute('aria-selected', String(active));
     });
-    if (view !== 'listening') stopListeningAudio();
+    stopListeningAudio();
     if (view === 'quest') refreshKatakanaDay();
     if (view === 'listening') refreshListeningDay();
     if (view === 'kanji') window.dispatchEvent(new Event('kanji:open'));
@@ -389,13 +388,14 @@
       kanjiDays = Array.isArray(kanji.completedDays) ? kanji.completedDays : [];
       kanjiStats = kanji.dailyStats && typeof kanji.dailyStats === 'object' ? { ...kanji.dailyStats } : {};
       if (kanji.day && Array.isArray(kanji.day.answers)) {
+        const reviewAnswers = Array.isArray(kanji.day.reviewAnswers) ? kanji.day.reviewAnswers
+          : (kanji.reviewSession && Array.isArray(kanji.reviewSession.answers) ? kanji.reviewSession.answers : []);
+        const answers = [...kanji.day.answers, ...reviewAnswers];
         kanjiStats[kanji.day.date] = {
-          answered: kanji.day.answers.length,
-          correct: kanji.day.answers.filter((answer) => answer.correct && !answer.assisted).length,
+          answered: answers.length,
+          correct: answers.filter((answer) => answer.correct && !answer.assisted).length,
         };
-      }
-      if (kanji.day && Array.isArray(kanji.day.answers) && kanji.day.answers.length >= 10) {
-        kanjiDays = [...kanjiDays, kanji.day.date];
+        if (answers.length >= 10) kanjiDays = [...kanjiDays, kanji.day.date];
       }
     } catch {
       // Katakana and listening stamps remain available if kanji storage cannot be read.
@@ -477,9 +477,7 @@
   }
 
   function stopListeningAudio() {
-    const wasPlaying = activeUtterance;
-    activeUtterance = null;
-    if (wasPlaying && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+    window.JapaneseAudio.stop();
   }
 
   function getListeningSession() {
@@ -539,40 +537,7 @@
   }
 
   function playListening(phrase) {
-    if (!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) {
-      setAudioStatus('Japanese audio is not supported in this browser.');
-      return;
-    }
-    const synth = window.speechSynthesis;
-    const voices = synth.getVoices();
-    const japaneseVoice = voices.find((voice) => /^ja(?:$|[-_])/i.test(voice.lang));
-    if (voices.length && !japaneseVoice) {
-      setAudioStatus('No Japanese voice is installed on this device.');
-      return;
-    }
-    stopListeningAudio();
-    const utterance = new window.SpeechSynthesisUtterance(phrase.japanese);
-    utterance.lang = 'ja-JP';
-    utterance.rate = 0.85;
-    if (japaneseVoice) utterance.voice = japaneseVoice;
-    activeUtterance = utterance;
-    utterance.onstart = () => {
-      if (activeUtterance === utterance) setAudioStatus('Playing Japanese audio…');
-    };
-    utterance.onend = () => {
-      if (activeUtterance === utterance) {
-        activeUtterance = null;
-        setAudioStatus('Tap play to listen again.');
-      }
-    };
-    utterance.onerror = () => {
-      if (activeUtterance === utterance) {
-        activeUtterance = null;
-        setAudioStatus('Audio could not play. Check that your device has a Japanese voice.');
-      }
-    };
-    setAudioStatus('Preparing Japanese audio…');
-    synth.speak(utterance);
+    window.JapaneseAudio.speak(phrase.japanese, setAudioStatus);
   }
 
   function renderListeningReview() {
@@ -755,6 +720,7 @@
         }
       }
     } else showFeedback(false, word);
+    window.JapaneseAudio.speak(word.kana);
   }
 
   function renderCalendar() {
@@ -788,7 +754,7 @@
           && Number.isInteger(kanjiStats.correct) && kanjiStats.correct >= 0 && kanjiStats.correct <= kanjiStats.answered;
         const label = dateLabel + (earned.length ? ', completed: ' + earned.map((type) =>
           type.label + (type.key === 'kanji' && showKanjiScore
-            ? ': ' + kanjiStats.correct + ' correct out of ' + kanjiStats.answered + ' new signs (without revealing the meaning)' : '')).join(', ') : '');
+            ? ': ' + kanjiStats.correct + ' correct out of ' + kanjiStats.answered + ' signs practised (including reviews, without revealing the meaning)' : '')).join(', ') : '');
         cell.setAttribute('aria-label', label);
         cell.setAttribute('title', label);
         if (earned.length) {

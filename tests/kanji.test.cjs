@@ -91,11 +91,11 @@ test('120 new signs are introduced once; saved misses remain reviewable after ba
       submit(app, 'not the meaning');
       if (count < 9) submit(app);
     }
-    assert.equal(app.els['kanji-count'].textContent, '10');
+    assert.equal(app.els['kanji-count'].textContent, String(day * 10 + 10));
     assert.equal(app.els['kanji-form'].hidden, false);
     assert.equal(app.els['kanji-input'].disabled, true);
     assert.equal(app.els['kanji-reward'].hidden, false);
-    assert.equal(app.els['kanji-submit'].textContent, 'Keep going →');
+    assert.equal(app.els['kanji-submit'].textContent, day === 0 ? 'Keep going →' : 'Next sign →');
     assert.equal(app.kanjiState().day.answers.length, 10);
   }
   assert.equal(seen.size, 120);
@@ -202,10 +202,10 @@ test('another miss waits for the next visit without duplicating the saved sign',
   submit(app);
   assert.equal(app.kanjiState().review.length, 0);
   assert.equal(app.kanjiState().usedIds.length, 2);
-  assert.equal(app.els['kanji-count'].textContent, '1');
+  assert.equal(app.els['kanji-count'].textContent, '3');
 });
 
-test('review is available after the daily ten and never adds to new-sign progress or stamps', () => {
+test('review after the daily ten adds to daily progress without consuming new signs or awarding extra stamps', () => {
   const ids = ['入口', '出口', '非常口', '押', '引', '開', '閉', '禁止', '注意', '危険'];
   const saved = new Map([[kanjiKey, JSON.stringify({
     usedIds: ids,
@@ -231,6 +231,8 @@ test('review is available after the daily ten and never adds to new-sign progres
   assert.equal(app.kanjiState().usedIds.length, 11);
   assert.equal(ids.includes(app.els['kanji-sign'].textContent), false);
   assert.equal(app.kanjiState().day.answers.length, 10);
+  assert.equal(app.els['kanji-count'].textContent, '12');
+  assert.deepEqual(app.kanjiState().dailyStats['2026-10-16'], { answered: 12, correct: 2 });
   assert.equal(app.els['nav-stamp-count'].textContent, '1');
   assert.deepEqual(app.kanjiState().completedDays, ['2026-10-16']);
 });

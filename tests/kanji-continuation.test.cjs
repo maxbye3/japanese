@@ -37,12 +37,12 @@ test('ten earns the reward and a single stamp; practice and hints continue beyon
     if (index === 9) assert.equal(app.els['kanji-submit'].textContent, 'Keep going →');
     if (index < 19) submit(app);
   }
-  assert.equal(app.els['kanji-goal'].textContent, 'new signs today');
+  assert.equal(app.els['kanji-goal'].textContent, 'signs practised today');
   assert.deepEqual(app.kanjiState().dailyStats['2026-10-16'], { answered: 20, correct: 20 });
   assert.deepEqual(app.kanjiState().completedDays, ['2026-10-16']);
   const day = stamp(app, '2026-10-16');
   assert.equal(day.text, '漢 20');
-  assert.match(day.label, /20 correct out of 20 new signs/);
+  assert.match(day.label, /20 correct out of 20 signs practised/);
   open(app);
   submit(app);
   assert.equal(app.kanjiState().usedIds.length, 21);
@@ -67,14 +67,13 @@ test('calendar shows the correct total after ten attempts, excludes misses and r
   assert.equal(stamp(app, '2026-10-16').text, '漢 10');
   assert.deepEqual(app.kanjiState().dailyStats['2026-10-16'], { answered: 12, correct: 10 });
   assert.equal(app.kanjiState().review.length, 2);
-  const before = app.kanjiState().dailyStats;
   open(app);
   submit(app, 'entrance');
   submit(app);
   submit(app, 'no entry');
   submit(app);
-  assert.deepEqual(app.kanjiState().dailyStats, before);
-  assert.equal(stamp(app, '2026-10-16').text, '漢 10');
+  assert.deepEqual(app.kanjiState().dailyStats['2026-10-16'], { answered: 14, correct: 12 });
+  assert.equal(stamp(app, '2026-10-16').text, '漢 12');
   assert.equal(app.els['nav-stamp-count'].textContent, '1');
 });
 

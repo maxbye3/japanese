@@ -4,7 +4,7 @@ const vm = require('node:vm');
 
 const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const sources = ['kanji-meanings.js', 'kanji-tooltips.js', 'katakana.js', 'kanji.js'].map((file) => fs.readFileSync(path.join(root, file), 'utf8'));
+const sources = ['kanji-meanings.js', 'kanji-tooltips.js', 'japanese-audio.js', 'katakana.js', 'kanji.js'].map((file) => fs.readFileSync(path.join(root, file), 'utf8'));
 const key = 'katakana-quest-progress-v1';
 const kanjiKey = 'katakana-quest-kanji-v1';
 const localDay = (offset, hour = 12, minute = 0) => new Date(2026, 9, 16 + offset, hour, minute).getTime();
@@ -52,7 +52,7 @@ function element() {
   return item;
 }
 
-function launch({ saved = new Map(), clock = { now: localDay(0) }, random = 0.37, voice = 'ja-JP' } = {}) {
+function launch({ saved = new Map(), clock = { now: localDay(0) }, random = 0.37, voice = 'ja-JP', speech = true, autoFinishSpeech = true } = {}) {
   const tags = [...html.matchAll(/<[^>]*\bid="([^"]+)"[^>]*>/g)];
   const els = Object.fromEntries(tags.map((match) => {
     const item = element();
@@ -78,11 +78,12 @@ function launch({ saved = new Map(), clock = { now: localDay(0) }, random = 0.37
   };
   const synth = {
     getVoices: () => [{ lang: voice }],
-    cancel() {},
+    cancellations: 0,
+    cancel() { this.cancellations += 1; },
     speak(utterance) {
       spoken.push(utterance);
       utterance.onstart();
-      utterance.onend();
+      if (autoFinishSpeech) utterance.onend();
     },
   };
   class Utterance {
@@ -104,10 +105,9 @@ function launch({ saved = new Map(), clock = { now: localDay(0) }, random = 0.37
   const window = Object.assign(eventTarget(), {
     innerWidth: 375, innerHeight: 900,
     confirm: () => true,
-    speechSynthesis: synth,
-    SpeechSynthesisUtterance: Utterance,
     setInterval: (callback) => intervals.push(callback),
   });
+  if (speech) Object.assign(window, { speechSynthesis: synth, SpeechSynthesisUtterance: Utterance });
   const context = vm.createContext({
     document, window, localStorage: storage, Date: ClockDate, Intl, Event,
     Math: Object.assign(Object.create(Math), { random: () => random }),
@@ -115,7 +115,7 @@ function launch({ saved = new Map(), clock = { now: localDay(0) }, random = 0.37
   });
   sources.forEach((source) => vm.runInContext(source, context));
   return {
-    els, marks, tabs, spoken, clock, saved, intervals,
+    els, marks, tabs, spoken, synth, clock, saved, intervals,
     windowEvents: window.listeners, documentEvents: document.listeners,
     state: () => JSON.parse(saved.get(key)),
     kanjiState: () => JSON.parse(saved.get(kanjiKey) || 'null'),
