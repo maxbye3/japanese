@@ -1,4 +1,4 @@
-# Max's Japanese Learning
+# Max's Japanese Listening Website
 
 A tiny, browser-only site for katakana, Japanese listening, and everyday kanji practice.
 
