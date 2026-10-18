@@ -81,7 +81,8 @@ test('midnight discards an old pending answer and preserves review', () => {
   assert.equal(session.answers.length, 0);
   assert.equal(app.els['listening-feedback'].hidden, true);
   assert.equal(app.els['listening-review-count'].textContent, '1 phrase');
-  assert(session.phraseIds.every((id) => !yesterday.includes(id)));
+  assert.equal(session.phraseIds[0], yesterday[0]);
+  assert(session.phraseIds.slice(1).every((id) => !yesterday.includes(id)));
   answer(app);
   assert.equal(app.state().listeningSession.answers[0].id, session.phraseIds[0]);
   clock.now = localDay(2);
@@ -95,14 +96,14 @@ test('midnight discards an old pending answer and preserves review', () => {
   assert.equal(app.state().listeningSession.date, '2026-10-20');
 });
 
-test('the former five phrase quiz migrates without losing review or repeating answered phrases', () => {
+test('the former five phrase quiz migrates with saved misses first and understood phrases excluded', () => {
   const saved = new Map([[key, JSON.stringify({
     usedWords: ['word-1'],
     listeningAnswers: [{ id: 'repeat', gotIt: false }, { id: 'station', gotIt: true }],
     listeningReview: [{ id: 'repeat', translation: 'My old attempt' }],
   })]]);
   const app = launch({ saved });
-  assert(!app.state().listeningSession.phraseIds.includes('repeat'));
+  assert.equal(app.state().listeningSession.phraseIds[0], 'repeat');
   assert(!app.state().listeningSession.phraseIds.includes('station'));
   assert.equal(app.els['listening-review-count'].textContent, '1 phrase');
   assert(app.state().usedWords.includes('word-1'));

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
     <title>Max's Japanese Listening Website</title>
-    <link rel="stylesheet" href="katakana.css?v=kanji-tooltips" />
+    <link rel="stylesheet" href="katakana.css?v=grade-and-review" />
   </head>
   <body>
     <main class="app-shell">
@@ -43,7 +43,10 @@
               <button class="primary-button" id="submit-answer" type="submit">Check answer <span aria-hidden="true">↗</span></button>
             </div>
           </form>
-          <div id="feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          <div class="answer-feedback-row">
+            <div id="feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+            <button id="katakana-grade-override" class="grade-override" type="button" hidden>I got this right</button>
+          </div>
         </div>
 
         <section class="review-section" aria-labelledby="review-title">
@@ -106,6 +109,8 @@
             <button class="primary-button" id="listening-restart" type="button">Practise today’s set again ↗</button>
           </div>
         </div>
+
+        <p class="one-and-done">Saved misses come first in each new daily set and count towards your ten phrases.</p>
 
         <section class="review-section" aria-labelledby="listening-review-title">
           <div class="review-heading">
@@ -211,7 +216,7 @@
     <script src="kanji-meanings.js?v=kanji-tooltips"></script>
     <script src="kanji-tooltips.js?v=kanji-tooltips"></script>
     <script src="japanese-audio.js?v=answer-audio"></script>
-    <script src="katakana.js?v=answer-audio"></script>
-    <script src="kanji.js?v=answer-audio"></script>
+    <script src="katakana.js?v=grade-and-review"></script>
+    <script src="kanji.js?v=grade-and-review"></script>
   </body>
 </html>

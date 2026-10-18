@@ -46,7 +46,27 @@ test('the next question can correct the previous grade while preserving its type
   assert.equal(app.kanjiState().day.answers[0].correct, false);
   assert.equal(app.kanjiState().review[0].id, '入口');
   assert.equal(app.kanjiState().dailyStats['2026-10-16'].correct, 0);
-  assert.equal(app.els['kanji-grade-override'].hidden, true);
+  assert.equal(app.els['kanji-grade-override'].hidden, false);
+  assert.equal(app.els['kanji-grade-override'].textContent, 'I got this right');
+  override(app);
+  assert.equal(app.kanjiState().dailyStats['2026-10-16'].correct, 1);
+  assert.equal(app.els['kanji-input'].value, 'unfinished answer');
+});
+
+test('a missed kanji answer can still be corrected after Next without answering or replacing the next sign', () => {
+  const app = launch({ random: 0 });
+  open(app);
+  submit(app, 'my paraphrase');
+  submit(app);
+  assert.equal(app.els['kanji-grade-override'].hidden, false);
+  assert.equal(app.els['kanji-grade-override'].textContent, 'I got this right');
+  app.els['kanji-input'].value = 'partly typed translation';
+  override(app);
+  assert.equal(app.kanjiState().review.length, 0);
+  assert.deepEqual(app.kanjiState().dailyStats['2026-10-16'], { answered: 1, correct: 1 });
+  assert.equal(app.els['kanji-sign'].textContent, '出口');
+  assert.equal(app.els['kanji-input'].value, 'partly typed translation');
+  assert.equal(app.els['kanji-input'].disabled, false);
 });
 
 test('manual corrections on retests update the daily score without changing the earlier new-sign attempt', () => {

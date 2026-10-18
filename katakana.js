@@ -257,6 +257,7 @@
     answerInput: document.querySelector('#answer-input'),
     submitAnswer: document.querySelector('#submit-answer'),
     feedback: document.querySelector('#feedback'),
+    gradeOverride: document.querySelector('#katakana-grade-override'),
     listeningCount: document.querySelector('#listening-count'),
     listeningProgress: document.querySelector('#listening-progress'),
     listeningStep: document.querySelector('#listening-step'),
@@ -303,6 +304,7 @@
       return {
         usedWords: Array.isArray(saved.usedWords) ? saved.usedWords : [],
         wrongAnswers: Array.isArray(saved.wrongAnswers) ? saved.wrongAnswers : [],
+        lastKatakanaGrade: saved.lastKatakanaGrade && typeof saved.lastKatakanaGrade === 'object' ? saved.lastKatakanaGrade : null,
         listeningSession: saved.listeningSession && typeof saved.listeningSession === 'object' ? saved.listeningSession : null,
         usedListeningPhrases: Array.isArray(saved.usedListeningPhrases)
           ? saved.usedListeningPhrases
@@ -317,7 +319,7 @@
         currentQuestion: saved.currentQuestion && typeof saved.currentQuestion === 'object' ? saved.currentQuestion : null,
       };
     } catch {
-      return { usedWords: [], wrongAnswers: [], listeningSession: null, usedListeningPhrases: [], listeningReview: [], listeningCompletedDays: [], days: {}, currentQuestion: null };
+      return { usedWords: [], wrongAnswers: [], lastKatakanaGrade: null, listeningSession: null, usedListeningPhrases: [], listeningReview: [], listeningCompletedDays: [], days: {}, currentQuestion: null };
     }
   }
 
@@ -377,7 +379,20 @@
     elements.correctCount.textContent = String(day.correct);
     elements.progressFill.style.width = `${Math.min(day.correct / QUEST_SIZE, 1) * 100}%`;
     elements.wordsUsed.textContent = `${state.usedWords.length} word${state.usedWords.length === 1 ? '' : 's'} used`;
+    renderKatakanaCorrection();
     renderCalendarStats();
+  }
+
+  function correctableKatakanaWord() {
+    const grade = state.lastKatakanaGrade;
+    if (!grade || grade.date !== today || grade.correct !== false) return null;
+    return WORDS.find((word) => word.id === grade.wordId) || null;
+  }
+
+  function renderKatakanaCorrection() {
+    const word = correctableKatakanaWord();
+    elements.gradeOverride.hidden = !word;
+    if (word) elements.gradeOverride.setAttribute('aria-label', `I got this right: ${word.kana}`);
   }
 
   function getCalendarCompletions() {
@@ -493,7 +508,10 @@
     stopListeningAudio();
     listeningAttempt = null;
     let used = new Set(state.usedListeningPhrases.filter((id) => phraseIds.has(id)));
-    const selected = [];
+    // Most recently missed phrases lead the daily ten, even if used in this cycle.
+    const selected = [...new Set(state.listeningReview.filter(Boolean).map((answer) => answer.id).reverse())]
+      .filter((id) => phraseIds.has(id)).slice(0, LISTENING_SIZE);
+    selected.forEach((id) => used.add(id));
     while (selected.length < LISTENING_SIZE) {
       let available = PHRASES.filter((phrase) => !used.has(phrase.id));
       if (!available.length) {
@@ -687,6 +705,16 @@
     renderQuestion();
   }
 
+  function advanceAfterCorrectKatakana(word) {
+    if (getToday().correct >= QUEST_SIZE) completeToday();
+    else {
+      renderQuestion();
+      if (state.currentQuestion) {
+        setFeedback('is-correct', 'Yes! You got it! 🎉', `${word.kana} = ${word.english}. Next word is ready!`);
+      }
+    }
+  }
+
   function submitAnswer(event) {
     event.preventDefault();
     if (refreshKatakanaDay()) return;
@@ -703,6 +731,7 @@
       return;
     }
     const correct = word.answers.some((answer) => normalize(answer) === normalize(elements.answerInput.value));
+    state.lastKatakanaGrade = { date: today, wordId: word.id, givenAnswer: elements.answerInput.value.trim(), correct };
     if (correct) getToday().correct += 1;
     else {
       state.wrongAnswers.push({ wordId: word.id, givenAnswer: elements.answerInput.value.trim() });
@@ -711,17 +740,28 @@
     state.currentQuestion = null;
     saveState();
     renderStats();
-    if (correct) {
-      if (getToday().correct >= QUEST_SIZE) completeToday();
-      else {
-        renderQuestion();
-        if (state.currentQuestion) {
-          setFeedback('is-correct', 'Yes! You got it! 🎉', `${word.kana} = ${word.english}. Next word is ready!`);
-        }
-      }
-    } else showFeedback(false, word);
+    if (correct) advanceAfterCorrectKatakana(word);
+    else showFeedback(false, word);
     window.JapaneseAudio.speak(word.kana);
   }
+
+  elements.gradeOverride.addEventListener('click', () => {
+    if (refreshKatakanaDay()) return;
+    const word = correctableKatakanaWord();
+    if (!word) return;
+    state.lastKatakanaGrade.correct = true;
+    state.lastKatakanaGrade.manuallyGraded = true;
+    getToday().correct += 1;
+    state.wrongAnswers = state.wrongAnswers.filter((answer) => answer && answer.wordId !== word.id);
+    saveState();
+    renderReview();
+    renderStats();
+    if (!currentWord() || getToday().correct >= QUEST_SIZE) advanceAfterCorrectKatakana(word);
+    else {
+      setFeedback('is-correct', 'Marked as correct', `${word.kana} = ${word.english}. Your previous answer now counts towards today’s ten.`);
+      elements.answerInput.focus();
+    }
+  });
 
   function renderCalendar() {
     const year = calendarMonth.getFullYear();
@@ -804,7 +844,7 @@
     localStorage.removeItem(STORAGE_KEY);
     stopListeningAudio();
     listeningAttempt = null;
-    state = { usedWords: [], wrongAnswers: [], listeningSession: null, usedListeningPhrases: [], listeningReview: [], listeningCompletedDays: [], days: {}, currentQuestion: null };
+    state = { usedWords: [], wrongAnswers: [], lastKatakanaGrade: null, listeningSession: null, usedListeningPhrases: [], listeningReview: [], listeningCompletedDays: [], days: {}, currentQuestion: null };
     setView('quest');
     renderReview();
     renderQuestion();
