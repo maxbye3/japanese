@@ -91,8 +91,9 @@ test('today stays available to continue yesterday’s streak; a missed day reset
   assert.deepEqual(collection(app).rewards.sushi, reward);
   app.els['reset-progress'].listeners.click();
   app = launch({ saved, clock });
-  assert.equal(app.els['sushi-status'].textContent, 'Collected');
-  assert.equal(app.els['sushi-food'].hidden, false);
+  assert.equal(app.els['sushi-status'].textContent, 'Locked');
+  assert.equal(app.els['sushi-name'].textContent, 'Salmon avocado roll');
+  assert.equal(app.els['sushi-collection'].children.length, 1);
   assert.deepEqual(collection(app).rewards.sushi, reward);
 });
 

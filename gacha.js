@@ -19,6 +19,7 @@
   };
   let state = load();
   let currentStreak = 0;
+  let currentStreakStart = null;
   let shownSushiDate = null;
   let previewNextSushi = false;
 
@@ -104,17 +105,20 @@
   }
 
   function nextRollIndex() {
-    return state.sushiWeeks.reduce((next, reward) => Math.max(next, reward.rollIndex + 1), 0);
+    return Math.floor(currentStreak / 7);
   }
 
   function renderSushi() {
     const pending = state.sushiWeeks.find((reward) => !reward.openedOn);
+    const latest = state.sushiWeeks.at(-1);
+    const latestInCurrentStreak = currentStreakStart !== null && latest
+      && dayNumber(latest.unlockedOn) >= currentStreakStart ? latest : null;
     const reward = state.sushiWeeks.find((entry) => entry.unlockedOn === shownSushiDate)
-      || pending || (previewNextSushi ? null : state.sushiWeeks.at(-1));
+      || pending || (previewNextSushi ? null : latestInCurrentStreak);
     shownSushiDate = reward?.unlockedOn || null;
     const collectible = reward ? roll(reward) : window.SushiRolls.get(nextRollIndex());
     const target = (Math.floor(currentStreak / 7) + 1) * 7;
-    const milestone = reward ? 'Sushi capsule ' + (reward.rollIndex + 1) : target + ' days in a row';
+    const milestone = reward ? 'Week ' + (reward.rollIndex + 1) + ' sushi' : target + ' days in a row';
     document.querySelector('#sushi-name').textContent = collectible.name;
     document.querySelector('#sushi-milestone').textContent = milestone;
     document.querySelector('#sushi-food').setAttribute('src', collectible.src);
@@ -136,7 +140,7 @@
       const label = document.createElement('strong');
       label.textContent = collectible.name;
       const number = document.createElement('span');
-      number.textContent = 'Sushi capsule ' + (entry.rollIndex + 1);
+      number.textContent = 'Week ' + (entry.rollIndex + 1) + ' reward';
       item.append(illustration, label, number);
       elements.sushiList.appendChild(item);
     });
@@ -173,12 +177,19 @@
         changed = true;
       }
       if (run % 7 === 0 && !earnedWeeks.has(key)) {
-        const reward = { unlockedOn: key, openedOn: null, rollIndex: nextRollIndex(), legacy: false };
+        const reward = { unlockedOn: key, openedOn: null, rollIndex: run / 7 - 1, legacy: false };
         state.sushiWeeks.push(reward);
         earnedWeeks.add(key);
         if (!sushiUnlocked) shownSushiDate = key;
         sushiUnlocked += 1;
         changed = true;
+      }
+      if (run % 7 === 0) {
+        const earned = state.sushiWeeks.find((reward) => reward.unlockedOn === key);
+        if (earned && !earned.openedOn && earned.rollIndex !== run / 7 - 1) {
+          earned.rollIndex = run / 7 - 1;
+          changed = true;
+        }
       }
       REWARDS.forEach(({ id, days, name }) => {
         if (run >= days && !state.rewards[id]) {
@@ -189,7 +200,14 @@
       });
     });
     if (changed) save();
-    render(previous !== null && previous >= today - 1 ? run : 0);
+    const current = previous !== null && previous >= today - 1 ? run : 0;
+    const start = current ? previous - current + 1 : null;
+    if (currentStreakStart !== start) {
+      shownSushiDate = null;
+      previewNextSushi = false;
+    }
+    currentStreakStart = start;
+    render(current);
     const rewardCount = sushiUnlocked + unlocked.length;
     if (sushiUnlocked) unlocked.unshift(sushiUnlocked === 1 ? 'Sushi' : sushiUnlocked + ' sushi');
     if (unlocked.length) announce('Achievement unlocked! ' + unlocked.join(' and ') + ' capsule' + (rewardCount > 1 ? 's are' : ' is') + ' ready to open.');

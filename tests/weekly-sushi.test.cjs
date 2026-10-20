@@ -57,7 +57,7 @@ test('queued sushi capsules open individually into distinct rolls, and the shelf
   assert.equal(app.els['sushi-collection'].children.length, 4);
 });
 
-test('a new seven-day streak earns the next roll after a gap without combining incomplete weeks', () => {
+test('a new seven-day streak restarts at the first roll after a gap without combining incomplete weeks', () => {
   const history = [...dates(7, -10), ...dates(7)];
   let app = launch({ saved: savedDays(history) });
   assert.equal(app.els['practice-streak'].textContent, '7 day streak');
@@ -65,7 +65,8 @@ test('a new seven-day streak earns the next roll after a gap without combining i
   assert.equal(collection(app).rewards.ramen, undefined);
   open(app);
   next(app);
-  assert.equal(app.els['sushi-name'].textContent, 'Tuna roll');
+  assert.equal(app.els['sushi-name'].textContent, 'Salmon avocado roll');
+  assert.deepEqual(collection(app).sushiWeeks.map((reward) => reward.rollIndex), [0, 0]);
   app = launch({ saved: savedDays([...dates(6, -10), ...dates(6)]) });
   assert.equal(collection(app).sushiWeeks.length, 0);
 });
@@ -136,4 +137,65 @@ test('two tabs cannot overwrite another tab’s opened weekly rolls', () => {
   first.windowEvents.storage({ key: gachaKey });
   assert.equal(first.els['sushi-collection'].children.length, 2);
   assert.equal(collection(first).sushiWeeks.filter((entry) => entry.openedOn).length, 2);
+});
+
+test('a missed whole day resets the live sushi preview and a new stamp starts day one while keeping the shelf', () => {
+  const clock = { now: localDay(0, 23, 59) };
+  const saved = savedDays(dates(14, -1));
+  let app = launch({ saved, clock });
+  open(app);
+  next(app);
+  open(app);
+  assert.equal(app.els['sushi-name'].textContent, 'Tuna roll');
+  assert.equal(app.els['practice-streak'].textContent, '14 day streak');
+  const before = collection(app);
+  clock.now = localDay(1, 0, 1);
+  app.windowEvents.focus();
+  assert.equal(app.els['practice-streak'].textContent, '0 day streak');
+  assert.equal(app.els['sushi-name'].textContent, 'Salmon avocado roll');
+  assert.equal(app.els['sushi-capsule'].disabled, true);
+  assert.equal(app.els['sushi-milestone'].textContent, '7 days in a row');
+  assert.equal(app.els['best-streak'].textContent, 'Best: 14 days');
+  assert.equal(app.els['sushi-collection'].children.length, 2);
+  for (let i = 0; i < 10; i += 1) {
+    app.els['listening-input'].value = 'my translation';
+    app.els['listening-form'].listeners.submit({ preventDefault() {} });
+    app.marks[0].listeners.click();
+  }
+  assert.equal(app.els['practice-streak'].textContent, '1 day streak');
+  app = launch({ saved, clock });
+  assert.equal(app.els['practice-streak'].textContent, '1 day streak');
+  assert.equal(app.els['sushi-name'].textContent, 'Salmon avocado roll');
+  assert.deepEqual(collection(app).sushiWeeks, before.sushiWeeks);
+  assert.deepEqual(collection(app).rewards.ramen, before.rewards.ramen);
+});
+
+for (const [days, reward] of [[14, 'ramen'], [30, 'fuji'], [60, 'ikebana']]) {
+  test('separate incomplete streaks cannot combine to unlock the ' + days + '-day ' + reward + ' reward', () => {
+    const history = [...dates(days - 1, -(days + 1)), ...dates(days - 1)];
+    const app = launch({ saved: savedDays(history) });
+    assert.equal(app.els['practice-streak'].textContent, (days - 1) + ' day streak');
+    assert.equal(collection(app).rewards[reward], undefined);
+    assert.equal(app.els[reward + '-capsule'].disabled, true);
+  });
+}
+
+test('the restart rule updates unopened sushi from older saves while preserving already collected artwork', () => {
+  const history = [...dates(7, -20), ...dates(7, -10), ...dates(7)];
+  const saved = savedDays(history);
+  saved.set(gachaKey, JSON.stringify({
+    version: 2, bestStreak: 7, rewards: {},
+    sushiWeeks: [
+      { unlockedOn: history[6], openedOn: history[6], rollIndex: 0 },
+      { unlockedOn: history[13], openedOn: history[13], rollIndex: 1 },
+      { unlockedOn: history[20], openedOn: null, rollIndex: 2 },
+    ],
+  }));
+  let app = launch({ saved });
+  assert.deepEqual(collection(app).sushiWeeks.map((reward) => reward.rollIndex), [0, 1, 0]);
+  assert.equal(app.els['sushi-name'].textContent, 'Salmon avocado roll');
+  assert.deepEqual(app.els['sushi-collection'].children.map((item) => item.children[1].textContent), ['Salmon avocado roll', 'Tuna roll']);
+  app = launch({ saved });
+  assert.equal(collection(app).sushiWeeks.length, 3);
+  assert.deepEqual(collection(app).sushiWeeks.map((reward) => reward.rollIndex), [0, 1, 0]);
 });
