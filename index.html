@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
     <title>Max's Japanese Listening Website</title>
-    <link rel="stylesheet" href="katakana.css?v=streak-capsules" />
+    <link rel="stylesheet" href="katakana.css?v=fuji-capsule" />
   </head>
   <body>
     <main class="app-shell">
@@ -211,7 +211,7 @@
       <section id="gacha-collection" class="gacha-collection" aria-labelledby="gacha-title">
         <div class="gacha-heading">
           <div>
-            <p class="eyebrow">Small steps. Tasty rewards.</p>
+            <p class="eyebrow">Small steps. Little treasures.</p>
             <h2 id="gacha-title">Your capsule collection</h2>
           </div>
           <span class="gacha-seal" aria-hidden="true">ごほうび</span>
@@ -234,6 +234,14 @@
             <span class="gacha-copy"><span class="gacha-milestone">14 days in a row</span><strong>Ramen capsule</strong><span id="ramen-detail">14 days in a row to unlock.</span></span>
             <span id="ramen-status" class="gacha-status">Locked</span>
           </button>
+          <button id="fuji-capsule" class="gacha-card gacha-fuji" type="button" disabled aria-describedby="fuji-detail">
+            <span class="gacha-visual" aria-hidden="true">
+              <span class="capsule-half capsule-top"></span><span class="capsule-half capsule-bottom"></span>
+              <span class="capsule-emblem">✦</span><img id="fuji-food" class="capsule-food" src="assets/fuji.svg" alt="" width="108" height="108" hidden />
+            </span>
+            <span class="gacha-copy"><span class="gacha-milestone">30 days in a row</span><strong>Mount Fuji capsule</strong><span id="fuji-detail">30 days in a row to unlock.</span></span>
+            <span id="fuji-status" class="gacha-status">Locked</span>
+          </button>
         </div>
         <p id="gacha-announcement" class="gacha-announcement" role="status" aria-live="polite" tabindex="-1" hidden></p>
         <p class="gacha-footnote">Yours to keep on this browser. Each milestone unlocks once; your collection stays even if your streak breaks.</p>
@@ -252,7 +260,7 @@
     <script src="kanji-meanings.js?v=kanji-tooltips"></script>
     <script src="kanji-tooltips.js?v=kanji-tooltips"></script>
     <script src="japanese-audio.js?v=answer-audio"></script>
-    <script src="gacha.js?v=streak-capsules"></script>
+    <script src="gacha.js?v=fuji-capsule"></script>
     <script src="katakana.js?v=streak-capsules"></script>
     <script src="kanji.js?v=grade-and-review"></script>
   </body>

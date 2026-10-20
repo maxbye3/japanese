@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" fill="none">
+  <circle cx="119" cy="39" r="17" fill="#E98B74"/>
+  <path d="M20 48H43M32 42H52M106 69H139" stroke="#DEDACD" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="80" cy="135" rx="63" ry="9" fill="#D4BE91" opacity=".3"/>
+  <path d="M16 126L66 40C68 36 72 34 77 34H88C93 34 97 37 99 41L146 126H16Z" fill="#7D98B6" stroke="#4B6A83" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M84 35L69 126H146L99 41C97 37 93 35 88 35H84Z" fill="#617F9D"/>
+  <path d="M66 40C68 36 72 34 77 34H88C93 34 97 37 99 41L113 66L96 60L88 71L78 58L66 68L54 61L66 40Z" fill="#FFFEF4" stroke="#4B6A83" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M50 86L36 111M71 77L65 95M110 86L120 105" stroke="#B8CCDC" stroke-width="3" stroke-linecap="round"/>
+  <path d="M15 122C33 110 49 120 65 124C85 129 101 116 118 118C130 119 140 124 147 129L144 136H17L15 122Z" fill="#7E9C7D" stroke="#4D755D" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M19 132C44 123 56 137 80 132C105 127 120 128 140 133" stroke="#AFC1A1" stroke-width="3" stroke-linecap="round"/>
+  <path d="M39 24L41 17L43 24L50 26L43 28L41 35L39 28L32 26L39 24Z" fill="#E4B649"/>
+</svg>

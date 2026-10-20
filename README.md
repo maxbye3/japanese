@@ -34,7 +34,7 @@ Listening and kanji completions are archived by local date, so stamps remain aft
 
 ## Streak capsules
 
-Earn a calendar stamp in any practice mode on seven consecutive local dates to unlock a sushi capsule (🍣). Fourteen consecutive dates unlock a ramen capsule (🍜). A date counts once even if you earn all three category stamps, and you can switch modes from day to day. The streak strip shows your current and best streak; today remains available to continue a streak ending yesterday. Missing a whole day resets the current streak.
+Earn a calendar stamp in any practice mode on seven consecutive local dates to unlock a sushi capsule (🍣). Fourteen consecutive dates unlock a ramen capsule (🍜). A month of practice, defined as 30 consecutive dates, unlocks a little Mount Fuji. A date counts once even if you earn all three category stamps, and you can switch modes from day to day. The streak strip shows your current and best streak; today remains available to continue a streak ending yesterday. Missing a whole day resets the current streak.
 
 Your capsule collection appears below the practice area. Click an unlocked capsule, or focus it and press Enter or Space, to reveal its collectible. Each milestone unlocks once. Earned capsules, unopened rewards, opened collectibles, and your best streak are stored separately in `localStorage` under `katakana-quest-gacha-v1`, survive reloads, and stay earned after a streak breaks or katakana/listening practice is reset. Clearing browser data removes them; the collection is local to this browser and device. Existing saved stamped dates count automatically, including older qualifying streaks.
 

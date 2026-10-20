@@ -96,18 +96,46 @@ test('today stays available to continue yesterday’s streak; a missed day reset
   assert.deepEqual(collection(app).rewards.sushi, reward);
 });
 
-test('a seventh-day katakana correction unlocks sushi immediately when it earns the daily stamp', () => {
-  const saved = savedDays(history(6, -1));
+for (const [days, reward] of [[7, 'sushi'], [30, 'fuji']]) test('a day-' + days + ' katakana correction unlocks ' + reward + ' immediately when it earns the daily stamp', () => {
+  const saved = savedDays(history(days - 1, -1));
   const progress = JSON.parse(saved.get(key));
   progress.days['2026-10-16'] = { correct: 9, completed: false };
   saved.set(key, JSON.stringify(progress));
   const app = launch({ saved, random: 0 });
   app.els['answer-input'].value = 'my paraphrase';
   app.els['answer-form'].listeners.submit({ preventDefault() {} });
-  assert.equal(app.els['sushi-capsule'].disabled, true);
+  assert.equal(app.els[reward + '-capsule'].disabled, true);
   app.els['katakana-grade-override'].listeners.click();
-  assert.equal(app.els['sushi-capsule'].disabled, false);
-  assert.equal(app.els['practice-streak'].textContent, '7 day streak');
+  assert.equal(app.els[reward + '-capsule'].disabled, false);
+  assert.equal(app.els['practice-streak'].textContent, days + ' day streak');
+});
+
+test('Mount Fuji stays locked at 29 days and is backfilled at 30 without changing existing collectibles', () => {
+  let app = launch({ saved: savedDays(history(29)) });
+  assert.equal(app.els['fuji-capsule'].disabled, true);
+  open(app, 'fuji');
+  assert.equal(collection(app).rewards.fuji, undefined);
+  const saved = savedDays(history(30));
+  const existing = {
+    sushi: { unlockedOn: '2026-09-23', openedOn: '2026-09-23' },
+    ramen: { unlockedOn: '2026-09-30', openedOn: '2026-10-01' },
+  };
+  saved.set(gachaKey, JSON.stringify({ bestStreak: 30, rewards: existing }));
+  app = launch({ saved });
+  assert.equal(app.els['fuji-capsule'].disabled, false);
+  assert.equal(app.els['fuji-food'].hidden, true);
+  assert.deepEqual(collection(app).rewards.sushi, existing.sushi);
+  assert.deepEqual(collection(app).rewards.ramen, existing.ramen);
+  assert.deepEqual(collection(app).rewards.fuji, { unlockedOn: '2026-10-16', openedOn: null });
+  open(app, 'fuji');
+  assert.equal(app.els['fuji-status'].textContent, 'Collected');
+  assert.equal(app.els['fuji-food'].hidden, false);
+  const reward = collection(app).rewards.fuji;
+  app.els['reset-progress'].listeners.click();
+  app = launch({ saved, clock: { now: localDay(3) } });
+  assert.equal(app.els['fuji-status'].textContent, 'Collected');
+  open(app, 'fuji');
+  assert.deepEqual(collection(app).rewards.fuji, reward);
 });
 
 test('finishing the daily listening ten unlocks sushi in the same session', () => {
