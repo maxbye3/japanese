@@ -96,7 +96,7 @@ test('today stays available to continue yesterday’s streak; a missed day reset
   assert.deepEqual(collection(app).rewards.sushi, reward);
 });
 
-for (const [days, reward] of [[7, 'sushi'], [30, 'fuji']]) test('a day-' + days + ' katakana correction unlocks ' + reward + ' immediately when it earns the daily stamp', () => {
+for (const [days, reward] of [[7, 'sushi'], [30, 'fuji'], [60, 'ikebana']]) test('a day-' + days + ' katakana correction unlocks ' + reward + ' immediately when it earns the daily stamp', () => {
   const saved = savedDays(history(days - 1, -1));
   const progress = JSON.parse(saved.get(key));
   progress.days['2026-10-16'] = { correct: 9, completed: false };
@@ -136,6 +136,35 @@ test('Mount Fuji stays locked at 29 days and is backfilled at 30 without changin
   assert.equal(app.els['fuji-status'].textContent, 'Collected');
   open(app, 'fuji');
   assert.deepEqual(collection(app).rewards.fuji, reward);
+});
+
+test('ikebana unlocks at 60 days and stays collected across reloads and resets without changing earlier rewards', () => {
+  let app = launch({ saved: savedDays(history(59, -1)) });
+  assert.equal(app.els['ikebana-capsule'].disabled, true);
+  open(app, 'ikebana');
+  assert.equal(collection(app).rewards.ikebana, undefined);
+  open(app, 'sushi');
+  open(app, 'ramen');
+  open(app, 'fuji');
+  const earlier = collection(app);
+  const sixtyDays = JSON.parse(savedDays(history(60)).get(key));
+  app.saved.set(key, JSON.stringify(sixtyDays));
+  app = launch({ saved: app.saved });
+  assert.deepEqual(collection(app).rewards.sushi, earlier.rewards.sushi);
+  assert.deepEqual(collection(app).rewards.ramen, earlier.rewards.ramen);
+  assert.deepEqual(collection(app).rewards.fuji, earlier.rewards.fuji);
+  assert.equal(app.els['ikebana-capsule'].disabled, false);
+  assert.equal(app.els['ikebana-food'].hidden, true);
+  assert.deepEqual(collection(app).rewards.ikebana, { unlockedOn: '2026-10-16', openedOn: null });
+  open(app, 'ikebana');
+  assert.equal(app.els['ikebana-status'].textContent, 'Collected');
+  assert.equal(app.els['ikebana-food'].hidden, false);
+  const reward = collection(app).rewards.ikebana;
+  app.els['reset-progress'].listeners.click();
+  app = launch({ saved: app.saved, clock: { now: localDay(3) } });
+  assert.equal(app.els['ikebana-status'].textContent, 'Collected');
+  open(app, 'ikebana');
+  assert.deepEqual(collection(app).rewards.ikebana, reward);
 });
 
 test('finishing the daily listening ten unlocks sushi in the same session', () => {

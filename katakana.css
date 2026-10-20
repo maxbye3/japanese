@@ -284,10 +284,11 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
 .gacha-heading h2 { font-size: clamp(23px, 4vw, 31px); line-height: 1.15; letter-spacing: -.04em; }
 .gacha-seal { flex-shrink: 0; padding: 8px; border: 1px solid var(--coral); border-radius: 7px; color: #ad4c3c; font-size: 11px; writing-mode: vertical-rl; letter-spacing: .12em; transform: rotate(7deg); }
 .gacha-intro { max-width: 560px; margin: 14px 0 22px; color: var(--muted); font-size: 13px; line-height: 1.65; }
-.gacha-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.gacha-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .gacha-card { --capsule-colour: var(--coral); position: relative; display: flex; min-width: 0; align-items: center; flex-direction: column; gap: 12px; padding: 22px 16px 18px; border: 1px solid var(--line); border-radius: 14px; color: var(--ink); background: rgb(255 255 255 / 65%); text-align: center; overflow-wrap: anywhere; }
 .gacha-ramen { --capsule-colour: var(--teal); }
 .gacha-fuji { --capsule-colour: #7d92b0; }
+.gacha-ikebana { --capsule-colour: #b18caa; }
 .gacha-card:disabled { cursor: default; opacity: 1; }
 .gacha-card.is-ready { border-color: var(--capsule-colour); box-shadow: 0 5px 18px rgb(32 59 57 / 7%); }
 .gacha-card.is-ready:hover { background: #fffdf7; }

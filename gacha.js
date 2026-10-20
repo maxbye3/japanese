@@ -5,6 +5,7 @@
   const REWARDS = [
     { id: 'ramen', days: 14, name: 'Ramen' },
     { id: 'fuji', days: 30, name: 'Mount Fuji' },
+    { id: 'ikebana', days: 60, name: 'Ikebana' },
   ];
   const elements = {
     streak: document.querySelector('#practice-streak'),

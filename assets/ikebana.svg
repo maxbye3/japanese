@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" fill="none">
+  <defs>
+    <g id="blossom" fill="#E8A4A0" stroke="#C37C7B" stroke-width="1">
+      <ellipse cy="-8" rx="6" ry="9"/>
+      <ellipse cy="-8" rx="6" ry="9" transform="rotate(72)"/>
+      <ellipse cy="-8" rx="6" ry="9" transform="rotate(144)"/>
+      <ellipse cy="-8" rx="6" ry="9" transform="rotate(216)"/>
+      <ellipse cy="-8" rx="6" ry="9" transform="rotate(288)"/>
+      <circle r="4" fill="#EDC568" stroke="#D3A84A"/>
+    </g>
+  </defs>
+  <ellipse cx="80" cy="140" rx="49" ry="8" fill="#D4BE91" opacity=".3"/>
+  <path d="M81 118C84 91 86 58 77 28M82 118C91 92 105 79 125 62M80 118C68 96 55 82 34 75" stroke="#6F7954" stroke-width="3" stroke-linecap="round"/>
+  <path d="M84 75C99 74 105 63 102 51C91 54 84 62 84 75ZM80 59C67 61 58 54 55 43C69 42 77 47 80 59ZM104 82C119 87 132 82 138 72C123 66 111 72 104 82ZM61 93C48 99 35 96 30 88C42 81 53 85 61 93Z" fill="#80A077" stroke="#527B59" stroke-width="1.5"/>
+  <use href="#blossom" transform="translate(77 29)"/>
+  <use href="#blossom" transform="translate(125 61) scale(.78)"/>
+  <use href="#blossom" transform="translate(34 75) scale(.65)"/>
+  <path d="M36 116H125L119 129C115 138 48 138 43 129L36 116Z" fill="#56857D" stroke="#315F58" stroke-width="2.5" stroke-linejoin="round"/>
+  <ellipse cx="80.5" cy="116" rx="44.5" ry="7" fill="#B7C9B1" stroke="#315F58" stroke-width="2.5"/>
+  <ellipse cx="80.5" cy="116" rx="33" ry="3.5" fill="#527462"/>
+  <path d="M54 128C66 131 96 132 108 128" stroke="#99B5A1" stroke-width="2" stroke-linecap="round"/>
+  <path d="M118 28L120 21L122 28L129 30L122 32L120 39L118 32L111 30Z" fill="#E4B649"/>
+</svg>
