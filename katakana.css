@@ -314,6 +314,13 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
 .gacha-announcement { margin: 18px 0 0; padding: 14px 16px; border: 1px solid #e3ca8b; border-radius: 10px; color: #715015; background: #fff0c7; font-size: 13px; line-height: 1.6; }
 .gacha-announcement:focus { outline: 2px solid var(--teal); outline-offset: 3px; }
 .gacha-footnote { margin: 18px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+.sushi-next { margin-top: 14px; min-height: 44px; }
+.sushi-shelf { margin-top: 26px; padding-top: 24px; border-top: 1px solid var(--line); }
+.sushi-collection { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 135px), 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+.sushi-collection li { display: grid; min-width: 0; justify-items: center; align-content: start; gap: 5px; padding: 12px 10px; border: 1px solid var(--line); border-radius: 12px; background: rgb(255 255 255 / 50%); text-align: center; overflow-wrap: anywhere; }
+.sushi-collection img { width: 80px; height: 80px; }
+.sushi-collection strong { font-size: 12px; line-height: 1.4; }
+.sushi-collection span { color: var(--muted); font-size: 10px; }
 @keyframes collectible-pop { 0% { transform: scale(.35) rotate(-15deg); opacity: 0; } 65% { transform: scale(1.12) rotate(5deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
 @media (max-width: 700px) {
   .gacha-grid { grid-template-columns: minmax(0, 1fr); }

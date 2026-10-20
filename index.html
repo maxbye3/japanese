@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
     <title>Max's Japanese Listening Website</title>
-    <link rel="stylesheet" href="katakana.css?v=fuji-capsule" />
+    <link rel="stylesheet" href="katakana.css?v=weekly-sushi" />
   </head>
   <body>
     <main class="app-shell">
@@ -216,14 +216,14 @@
           </div>
           <span class="gacha-seal" aria-hidden="true">ごほうび</span>
         </div>
-        <p class="gacha-intro">Earn a stamp in any mode each day to build your streak. Unlock a capsule, then tap to reveal your little keepsake.</p>
+        <p class="gacha-intro">Every complete week of your streak earns a different sushi roll. Keep going for ramen at 14 days and Mount Fuji at 30. Tap each earned capsule to reveal your keepsake.</p>
         <div class="gacha-grid">
           <button id="sushi-capsule" class="gacha-card gacha-sushi" type="button" disabled aria-describedby="sushi-detail">
             <span class="gacha-visual" aria-hidden="true">
               <span class="capsule-half capsule-top"></span><span class="capsule-half capsule-bottom"></span>
               <span class="capsule-emblem">✦</span><img id="sushi-food" class="capsule-food" src="assets/sushi.svg" alt="" width="108" height="108" hidden />
             </span>
-            <span class="gacha-copy"><span class="gacha-milestone">7 days in a row</span><strong>Sushi capsule</strong><span id="sushi-detail">7 days in a row to unlock.</span></span>
+            <span class="gacha-copy"><span id="sushi-milestone" class="gacha-milestone">7 days in a row</span><strong id="sushi-name">Salmon avocado roll</strong><span id="sushi-detail">A different roll every 7-day streak week.</span></span>
             <span id="sushi-status" class="gacha-status">Locked</span>
           </button>
           <button id="ramen-capsule" class="gacha-card gacha-ramen" type="button" disabled aria-describedby="ramen-detail">
@@ -243,8 +243,13 @@
             <span id="fuji-status" class="gacha-status">Locked</span>
           </button>
         </div>
+        <button id="sushi-next" class="text-button sushi-next" type="button" hidden>Next sushi capsule →</button>
         <p id="gacha-announcement" class="gacha-announcement" role="status" aria-live="polite" tabindex="-1" hidden></p>
-        <p class="gacha-footnote">Yours to keep on this browser. Each milestone unlocks once; your collection stays even if your streak breaks.</p>
+        <section id="sushi-shelf" class="sushi-shelf" aria-labelledby="sushi-shelf-title" hidden>
+          <div class="review-heading"><h3 id="sushi-shelf-title">Your sushi shelf</h3><span id="sushi-collected-count" class="review-count">0 rolls</span></div>
+          <ul id="sushi-collection" class="sushi-collection"></ul>
+        </section>
+        <p class="gacha-footnote">Yours to keep on this browser. Sushi continues every full streak week, including after starting a new streak. Ramen and Mount Fuji unlock once.</p>
       </section>
 
       <footer class="site-footer">
@@ -260,7 +265,8 @@
     <script src="kanji-meanings.js?v=kanji-tooltips"></script>
     <script src="kanji-tooltips.js?v=kanji-tooltips"></script>
     <script src="japanese-audio.js?v=answer-audio"></script>
-    <script src="gacha.js?v=fuji-capsule"></script>
+    <script src="sushi-rolls.js?v=weekly-sushi"></script>
+    <script src="gacha.js?v=weekly-sushi"></script>
     <script src="katakana.js?v=streak-capsules"></script>
     <script src="kanji.js?v=grade-and-review"></script>
   </body>
