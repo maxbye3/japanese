@@ -4,7 +4,7 @@ const vm = require('node:vm');
 
 const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const sources = ['kanji-meanings.js', 'kanji-tooltips.js', 'japanese-audio.js', 'katakana.js', 'kanji.js'].map((file) => fs.readFileSync(path.join(root, file), 'utf8'));
+const sources = ['kanji-meanings.js', 'kanji-tooltips.js', 'japanese-audio.js', 'gacha.js', 'katakana.js', 'kanji.js'].map((file) => fs.readFileSync(path.join(root, file), 'utf8'));
 const key = 'katakana-quest-progress-v1';
 const kanjiKey = 'katakana-quest-kanji-v1';
 const localDay = (offset, hour = 12, minute = 0) => new Date(2026, 9, 16 + offset, hour, minute).getTime();

@@ -428,6 +428,7 @@
     const total = STAMP_TYPES.reduce((sum, type) => sum + completions[type.key].size, 0);
     elements.navStampCount.textContent = String(total);
     elements.stampTotal.textContent = String(total);
+    window.PracticeGacha.update(completions);
   }
 
   function refreshCalendar() {

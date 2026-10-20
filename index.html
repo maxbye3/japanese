@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
     <title>Max's Japanese Listening Website</title>
-    <link rel="stylesheet" href="katakana.css?v=grade-and-review" />
+    <link rel="stylesheet" href="katakana.css?v=streak-capsules" />
   </head>
   <body>
     <main class="app-shell">
@@ -22,6 +22,11 @@
         <button class="view-tab" type="button" data-view="kanji" aria-selected="false">Everyday kanji</button>
         <button class="view-tab" type="button" data-view="calendar" aria-selected="false">Calendar <span id="nav-stamp-count">0</span></button>
       </nav>
+
+      <div class="streak-strip" aria-label="Practice streak and rewards">
+        <span><span class="streak-spark" aria-hidden="true">✦</span> <strong id="practice-streak">0 day streak</strong> <span id="best-streak">Best: 0 days</span></span>
+        <a id="gacha-link" href="#gacha-collection">Your capsule collection ↘</a>
+      </div>
 
       <section id="quest-view" class="view-panel" aria-label="Katakana practice">
         <div class="quest-topline">
@@ -203,6 +208,37 @@
         <button class="text-button" type="button" id="back-to-quest">← Back to today’s quest</button>
       </section>
 
+      <section id="gacha-collection" class="gacha-collection" aria-labelledby="gacha-title">
+        <div class="gacha-heading">
+          <div>
+            <p class="eyebrow">Small steps. Tasty rewards.</p>
+            <h2 id="gacha-title">Your capsule collection</h2>
+          </div>
+          <span class="gacha-seal" aria-hidden="true">ごほうび</span>
+        </div>
+        <p class="gacha-intro">Earn a stamp in any mode each day to build your streak. Unlock a capsule, then tap to reveal your little keepsake.</p>
+        <div class="gacha-grid">
+          <button id="sushi-capsule" class="gacha-card gacha-sushi" type="button" disabled aria-describedby="sushi-detail">
+            <span class="gacha-visual" aria-hidden="true">
+              <span class="capsule-half capsule-top"></span><span class="capsule-half capsule-bottom"></span>
+              <span class="capsule-emblem">✦</span><img id="sushi-food" class="capsule-food" src="assets/sushi.svg" alt="" width="108" height="108" hidden />
+            </span>
+            <span class="gacha-copy"><span class="gacha-milestone">7 days in a row</span><strong>Sushi capsule</strong><span id="sushi-detail">7 days in a row to unlock.</span></span>
+            <span id="sushi-status" class="gacha-status">Locked</span>
+          </button>
+          <button id="ramen-capsule" class="gacha-card gacha-ramen" type="button" disabled aria-describedby="ramen-detail">
+            <span class="gacha-visual" aria-hidden="true">
+              <span class="capsule-half capsule-top"></span><span class="capsule-half capsule-bottom"></span>
+              <span class="capsule-emblem">✦</span><img id="ramen-food" class="capsule-food" src="assets/ramen.svg" alt="" width="108" height="108" hidden />
+            </span>
+            <span class="gacha-copy"><span class="gacha-milestone">14 days in a row</span><strong>Ramen capsule</strong><span id="ramen-detail">14 days in a row to unlock.</span></span>
+            <span id="ramen-status" class="gacha-status">Locked</span>
+          </button>
+        </div>
+        <p id="gacha-announcement" class="gacha-announcement" role="status" aria-live="polite" tabindex="-1" hidden></p>
+        <p class="gacha-footnote">Yours to keep on this browser. Each milestone unlocks once; your collection stays even if your streak breaks.</p>
+      </section>
+
       <footer class="site-footer">
         <span>Progress stays on this device.<br />Kanji meanings: <a href="https://www.edrdg.org/wiki/KANJIDIC_Project.html">KANJIDIC2 / EDRDG</a> · <a href="https://www.edrdg.org/edrdg/licence.html">CC BY-SA 4.0</a>.</span>
         <button class="reset-button" id="reset-progress" type="button">Reset katakana &amp; listening</button>
@@ -216,7 +252,8 @@
     <script src="kanji-meanings.js?v=kanji-tooltips"></script>
     <script src="kanji-tooltips.js?v=kanji-tooltips"></script>
     <script src="japanese-audio.js?v=answer-audio"></script>
-    <script src="katakana.js?v=grade-and-review"></script>
+    <script src="gacha.js?v=streak-capsules"></script>
+    <script src="katakana.js?v=streak-capsules"></script>
     <script src="kanji.js?v=grade-and-review"></script>
   </body>
 </html>
