@@ -16,12 +16,19 @@
     sushiNext: document.querySelector('#sushi-next'),
     sushiShelf: document.querySelector('#sushi-shelf'),
     sushiList: document.querySelector('#sushi-collection'),
+    celebration: document.querySelector('#capsule-celebration'),
+    celebrationTitle: document.querySelector('#celebration-title'),
+    celebrationMessage: document.querySelector('#celebration-message'),
+    celebrationDismiss: document.querySelector('#celebration-dismiss'),
+    celebrationView: document.querySelector('#celebration-view'),
   };
   let state = load();
   let currentStreak = 0;
   let currentStreakStart = null;
   let shownSushiDate = null;
   let previewNextSushi = false;
+  let hasUpdated = false;
+  let celebrationTimeout = null;
 
   function dayNumber(key) {
     if (typeof key !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(key)) return null;
@@ -84,6 +91,45 @@
     elements.announcement.textContent = message;
     elements.announcement.hidden = false;
   }
+
+  function hideCelebration() {
+    elements.celebration.hidden = true;
+    if (celebrationTimeout !== null) window.clearTimeout(celebrationTimeout);
+    celebrationTimeout = null;
+  }
+
+  function celebrate(count, names, streak) {
+    hideCelebration();
+    elements.celebrationTitle.textContent = count === 1 ? 'Capsule unlocked!' : count + ' capsules unlocked!';
+    elements.celebrationMessage.textContent = names.join(' + ') + ' · ' + streak + '-day streak';
+    elements.celebration.hidden = false;
+    celebrationTimeout = window.setTimeout(() => {
+      // Keep the buttons available while someone is using the notification by keyboard.
+      if (!elements.celebration.contains(document.activeElement)) hideCelebration();
+    }, 6500);
+  }
+
+  function openCalendar() {
+    hideCelebration();
+    window.dispatchEvent(new Event('gacha:calendar'));
+  }
+
+  elements.link.addEventListener('click', (event) => {
+    event.preventDefault();
+    openCalendar();
+  });
+  elements.celebrationView.addEventListener('click', openCalendar);
+  elements.celebrationDismiss.addEventListener('click', () => {
+    hideCelebration();
+    elements.link.focus();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !elements.celebration.hidden) {
+      const wasFocused = elements.celebration.contains(document.activeElement);
+      hideCelebration();
+      if (wasFocused) elements.link.focus();
+    }
+  });
 
   function roll(reward) {
     return reward.legacy ? { name: 'Salmon nigiri', src: 'assets/sushi.svg' } : window.SushiRolls.get(reward.rollIndex);
@@ -152,7 +198,7 @@
     elements.best.textContent = 'Best: ' + state.bestStreak + (state.bestStreak === 1 ? ' day' : ' days');
     const ready = REWARDS.filter(({ id }) => state.rewards[id] && !state.rewards[id].openedOn).length
       + state.sushiWeeks.filter((reward) => !reward.openedOn).length;
-    elements.link.textContent = ready ? 'Capsules · ' + ready + ' to open ↘' : 'Your capsule collection ↘';
+    elements.link.textContent = ready ? 'Calendar · ' + ready + ' to open ↗' : 'Calendar rewards ↗';
     renderSushi();
     REWARDS.forEach(({ id, days, name }) => renderCard(id, state.rewards[id], name, days + '-day streak reward', days + ' days in a row to unlock.'));
   }
@@ -210,7 +256,11 @@
     render(current);
     const rewardCount = sushiUnlocked + unlocked.length;
     if (sushiUnlocked) unlocked.unshift(sushiUnlocked === 1 ? 'Sushi' : sushiUnlocked + ' sushi');
-    if (unlocked.length) announce('Achievement unlocked! ' + unlocked.join(' and ') + ' capsule' + (rewardCount > 1 ? 's are' : ' is') + ' ready to open.');
+    if (unlocked.length) {
+      if (hasUpdated) celebrate(rewardCount, unlocked, current);
+      else announce('Achievement unlocked! ' + unlocked.join(' and ') + ' capsule' + (rewardCount > 1 ? 's are' : ' is') + ' ready to open.');
+    }
+    hasUpdated = true;
   }
 
   elements.sushi.addEventListener('click', () => {

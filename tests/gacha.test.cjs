@@ -178,6 +178,7 @@ test('finishing the daily listening ten unlocks sushi in the same session', () =
     assert.equal(app.els['sushi-capsule'].disabled, i < 9);
   }
   assert.equal(app.els['practice-streak'].textContent, '7 day streak');
+  assert.equal(app.els['capsule-celebration'].hidden, false);
 });
 
 test('kanji review completing day fourteen unlocks ramen immediately', () => {

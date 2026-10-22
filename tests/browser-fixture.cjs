@@ -71,6 +71,8 @@ function launch({ saved = new Map(), clock = { now: localDay(0) }, random = 0.37
   });
   const spoken = [];
   const intervals = [];
+  const timeouts = new Map();
+  let timeoutId = 0;
   const storage = {
     getItem: (name) => saved.get(name) ?? null,
     setItem: (name, value) => saved.set(name, value),
@@ -106,6 +108,8 @@ function launch({ saved = new Map(), clock = { now: localDay(0) }, random = 0.37
     innerWidth: 375, innerHeight: 900,
     confirm: () => true,
     setInterval: (callback) => intervals.push(callback),
+    setTimeout: (callback) => { const id = ++timeoutId; timeouts.set(id, callback); return id; },
+    clearTimeout: (id) => timeouts.delete(id),
   });
   if (speech) Object.assign(window, { speechSynthesis: synth, SpeechSynthesisUtterance: Utterance });
   const context = vm.createContext({
@@ -115,7 +119,7 @@ function launch({ saved = new Map(), clock = { now: localDay(0) }, random = 0.37
   });
   sources.forEach((source) => vm.runInContext(source, context));
   return {
-    els, marks, tabs, spoken, synth, clock, saved, intervals,
+    els, marks, tabs, spoken, synth, clock, saved, intervals, timeouts,
     windowEvents: window.listeners, documentEvents: document.listeners,
     state: () => JSON.parse(saved.get(key)),
     kanjiState: () => JSON.parse(saved.get(kanjiKey) || 'null'),

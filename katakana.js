@@ -1073,6 +1073,14 @@
   renderQuestion();
   renderListening();
   window.addEventListener('kanji:progress', refreshCalendar);
+  window.addEventListener('gacha:calendar', () => {
+    setView('calendar');
+    requestAnimationFrame(() => {
+      const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.querySelector('#gacha-collection').scrollIntoView?.({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+      document.querySelector('#gacha-title').focus({ preventScroll: true });
+    });
+  });
   window.addEventListener('focus', refreshDailyPractice);
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) refreshDailyPractice();

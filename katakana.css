@@ -338,3 +338,26 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
   .capsule-half, .capsule-emblem, .gacha-visual { transition: none; }
   .is-opened .capsule-food { animation: none; }
 }
+
+.capsule-celebration { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 18px; overflow: hidden; pointer-events: none; background: radial-gradient(ellipse at center, rgb(255 236 186 / 28%), transparent 70%); }
+.celebration-card { position: relative; width: min(100%, 390px); max-height: calc(100dvh - 36px); overflow: auto; padding: 24px 24px 28px; border: 1px solid #e3ca8b; border-radius: 24px; background: #fffbf2; box-shadow: 0 18px 90px rgb(32 59 57 / 25%); text-align: center; pointer-events: auto; animation: celebration-arrive .55s cubic-bezier(.2,.9,.3,1.2) both; }
+.celebration-dismiss { position: absolute; top: 8px; right: 8px; z-index: 2; width: 44px; height: 44px; border: 0; border-radius: 50%; color: var(--teal); background: transparent; font-size: 28px; cursor: pointer; }
+.celebration-dismiss:focus-visible { outline: 3px solid var(--yellow); }
+.celebration-orbit { position: relative; display: grid; place-items: center; width: 180px; height: 180px; margin: 0 auto 10px; }
+.celebration-orbit::before { position: absolute; inset: 0; border-radius: 50%; background: repeating-conic-gradient(from 0deg, #f3d895 0deg 12deg, transparent 12deg 30deg); mask-image: radial-gradient(circle, transparent 20%, #000 21%, transparent 70%); content: ''; animation: celebration-rays 3s ease-out both; }
+.celebration-capsule { --capsule-colour: var(--coral); animation: celebration-bounce 1.7s cubic-bezier(.2,.7,.3,1) both; }
+.celebration-card .eyebrow { font-size: 10px; line-height: 1.6; }
+.celebration-card h2 { margin: 10px 0; color: var(--teal-dark); font-size: clamp(24px, 6vw, 32px); letter-spacing: -.04em; }
+.celebration-message { margin: 0 0 22px; color: var(--muted); font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+.celebration-confetti { position: absolute; inset: 0; z-index: 1; }
+.celebration-confetti span { position: absolute; top: 50%; left: 50%; width: 8px; height: 15px; border-radius: 2px; background: var(--coral); animation: celebration-confetti 1.8s .15s ease-out both; }
+.celebration-confetti span:nth-child(3n) { background: var(--teal); }
+.celebration-confetti span:nth-child(3n + 1) { background: var(--yellow); }
+@keyframes celebration-arrive { from { opacity: 0; transform: translateY(35px) scale(.85); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes celebration-bounce { 0% { transform: translateY(-90px) scale(.6) rotate(-25deg); opacity: 0; } 35% { transform: translateY(14px) scale(1.08,.9) rotate(12deg); opacity: 1; } 55% { transform: translateY(-23px) rotate(-12deg); } 72% { transform: translateY(5px) rotate(8deg); } 85% { transform: translateY(-5px) rotate(-4deg); } 100% { transform: translateY(0) rotate(0); opacity: 1; } }
+@keyframes celebration-rays { from { transform: rotate(-35deg) scale(.4); opacity: 0; } 30% { opacity: 1; } to { transform: rotate(25deg) scale(1); opacity: .7; } }
+@keyframes celebration-confetti { 0% { transform: translate(0, 0) rotate(0); opacity: 0; } 15% { opacity: 1; } 70% { opacity: 1; } 100% { transform: translate(var(--x), var(--y)) rotate(var(--turn)); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .celebration-card, .celebration-capsule, .celebration-orbit::before { animation: none; }
+  .celebration-confetti { display: none; }
+}

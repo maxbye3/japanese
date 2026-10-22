@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
     <title>Max's Japanese Listening Website</title>
-    <link rel="stylesheet" href="katakana.css?v=ikebana-capsule" />
+    <link rel="stylesheet" href="katakana.css?v=calendar-celebration" />
   </head>
   <body>
     <main class="app-shell">
@@ -25,7 +25,7 @@
 
       <div class="streak-strip" aria-label="Practice streak and rewards">
         <span><span class="streak-spark" aria-hidden="true">✦</span> <strong id="practice-streak">0 day streak</strong> <span id="best-streak">Best: 0 days</span></span>
-        <a id="gacha-link" href="#gacha-collection">Your capsule collection ↘</a>
+        <a id="gacha-link" href="#gacha-collection">Calendar rewards ↗</a>
       </div>
 
       <section id="quest-view" class="view-panel" aria-label="Katakana practice">
@@ -205,66 +205,89 @@
           </div>
         </div>
 
+        <section id="gacha-collection" class="gacha-collection" aria-labelledby="gacha-title">
+          <div class="gacha-heading">
+            <div>
+              <p class="eyebrow">Small steps. Little treasures.</p>
+              <h2 id="gacha-title" tabindex="-1">Your capsule collection</h2>
+            </div>
+            <span class="gacha-seal" aria-hidden="true">ごほうび</span>
+          </div>
+          <p class="gacha-intro">Every complete week of your streak earns a different sushi roll. Keep going for ramen at 14 days, Mount Fuji at 30, and ikebana at 60. Tap each earned capsule to reveal your keepsake.</p>
+          <div class="gacha-grid">
+            <button id="sushi-capsule" class="gacha-card gacha-sushi" type="button" disabled aria-describedby="sushi-detail">
+              <span class="gacha-visual" aria-hidden="true">
+                <span class="capsule-half capsule-top"></span><span class="capsule-half capsule-bottom"></span>
+                <span class="capsule-emblem">✦</span><img id="sushi-food" class="capsule-food" src="assets/sushi.svg" alt="" width="108" height="108" hidden />
+              </span>
+              <span class="gacha-copy"><span id="sushi-milestone" class="gacha-milestone">7 days in a row</span><strong id="sushi-name">Salmon avocado roll</strong><span id="sushi-detail">A different roll every 7-day streak week.</span></span>
+              <span id="sushi-status" class="gacha-status">Locked</span>
+            </button>
+            <button id="ramen-capsule" class="gacha-card gacha-ramen" type="button" disabled aria-describedby="ramen-detail">
+              <span class="gacha-visual" aria-hidden="true">
+                <span class="capsule-half capsule-top"></span><span class="capsule-half capsule-bottom"></span>
+                <span class="capsule-emblem">✦</span><img id="ramen-food" class="capsule-food" src="assets/ramen.svg" alt="" width="108" height="108" hidden />
+              </span>
+              <span class="gacha-copy"><span class="gacha-milestone">14 days in a row</span><strong>Ramen capsule</strong><span id="ramen-detail">14 days in a row to unlock.</span></span>
+              <span id="ramen-status" class="gacha-status">Locked</span>
+            </button>
+            <button id="fuji-capsule" class="gacha-card gacha-fuji" type="button" disabled aria-describedby="fuji-detail">
+              <span class="gacha-visual" aria-hidden="true">
+                <span class="capsule-half capsule-top"></span><span class="capsule-half capsule-bottom"></span>
+                <span class="capsule-emblem">✦</span><img id="fuji-food" class="capsule-food" src="assets/fuji.svg" alt="" width="108" height="108" hidden />
+              </span>
+              <span class="gacha-copy"><span class="gacha-milestone">30 days in a row</span><strong>Mount Fuji capsule</strong><span id="fuji-detail">30 days in a row to unlock.</span></span>
+              <span id="fuji-status" class="gacha-status">Locked</span>
+            </button>
+            <button id="ikebana-capsule" class="gacha-card gacha-ikebana" type="button" disabled aria-describedby="ikebana-detail">
+              <span class="gacha-visual" aria-hidden="true">
+                <span class="capsule-half capsule-top"></span><span class="capsule-half capsule-bottom"></span>
+                <span class="capsule-emblem">✦</span><img id="ikebana-food" class="capsule-food" src="assets/ikebana.svg" alt="" width="108" height="108" hidden />
+              </span>
+              <span class="gacha-copy"><span class="gacha-milestone">60 days in a row</span><strong>Ikebana capsule</strong><span id="ikebana-detail">60 days in a row to unlock.</span></span>
+              <span id="ikebana-status" class="gacha-status">Locked</span>
+            </button>
+          </div>
+          <button id="sushi-next" class="text-button sushi-next" type="button" hidden>Next sushi capsule →</button>
+          <p id="gacha-announcement" class="gacha-announcement" role="status" aria-live="polite" tabindex="-1" hidden></p>
+          <section id="sushi-shelf" class="sushi-shelf" aria-labelledby="sushi-shelf-title" hidden>
+            <div class="review-heading"><h3 id="sushi-shelf-title">Your sushi shelf</h3><span id="sushi-collected-count" class="review-count">0 rolls</span></div>
+            <ul id="sushi-collection" class="sushi-collection"></ul>
+          </section>
+          <p class="gacha-footnote">Miss a whole day and your streak starts again from day one, including the weekly sushi order. Earned collectibles stay yours. Ramen, Mount Fuji, and ikebana unlock once.</p>
+        </section>
+
         <button class="text-button" type="button" id="back-to-quest">← Back to today’s quest</button>
       </section>
 
-      <section id="gacha-collection" class="gacha-collection" aria-labelledby="gacha-title">
-        <div class="gacha-heading">
-          <div>
-            <p class="eyebrow">Small steps. Little treasures.</p>
-            <h2 id="gacha-title">Your capsule collection</h2>
-          </div>
-          <span class="gacha-seal" aria-hidden="true">ごほうび</span>
-        </div>
-        <p class="gacha-intro">Every complete week of your streak earns a different sushi roll. Keep going for ramen at 14 days, Mount Fuji at 30, and ikebana at 60. Tap each earned capsule to reveal your keepsake.</p>
-        <div class="gacha-grid">
-          <button id="sushi-capsule" class="gacha-card gacha-sushi" type="button" disabled aria-describedby="sushi-detail">
-            <span class="gacha-visual" aria-hidden="true">
-              <span class="capsule-half capsule-top"></span><span class="capsule-half capsule-bottom"></span>
-              <span class="capsule-emblem">✦</span><img id="sushi-food" class="capsule-food" src="assets/sushi.svg" alt="" width="108" height="108" hidden />
-            </span>
-            <span class="gacha-copy"><span id="sushi-milestone" class="gacha-milestone">7 days in a row</span><strong id="sushi-name">Salmon avocado roll</strong><span id="sushi-detail">A different roll every 7-day streak week.</span></span>
-            <span id="sushi-status" class="gacha-status">Locked</span>
-          </button>
-          <button id="ramen-capsule" class="gacha-card gacha-ramen" type="button" disabled aria-describedby="ramen-detail">
-            <span class="gacha-visual" aria-hidden="true">
-              <span class="capsule-half capsule-top"></span><span class="capsule-half capsule-bottom"></span>
-              <span class="capsule-emblem">✦</span><img id="ramen-food" class="capsule-food" src="assets/ramen.svg" alt="" width="108" height="108" hidden />
-            </span>
-            <span class="gacha-copy"><span class="gacha-milestone">14 days in a row</span><strong>Ramen capsule</strong><span id="ramen-detail">14 days in a row to unlock.</span></span>
-            <span id="ramen-status" class="gacha-status">Locked</span>
-          </button>
-          <button id="fuji-capsule" class="gacha-card gacha-fuji" type="button" disabled aria-describedby="fuji-detail">
-            <span class="gacha-visual" aria-hidden="true">
-              <span class="capsule-half capsule-top"></span><span class="capsule-half capsule-bottom"></span>
-              <span class="capsule-emblem">✦</span><img id="fuji-food" class="capsule-food" src="assets/fuji.svg" alt="" width="108" height="108" hidden />
-            </span>
-            <span class="gacha-copy"><span class="gacha-milestone">30 days in a row</span><strong>Mount Fuji capsule</strong><span id="fuji-detail">30 days in a row to unlock.</span></span>
-            <span id="fuji-status" class="gacha-status">Locked</span>
-          </button>
-          <button id="ikebana-capsule" class="gacha-card gacha-ikebana" type="button" disabled aria-describedby="ikebana-detail">
-            <span class="gacha-visual" aria-hidden="true">
-              <span class="capsule-half capsule-top"></span><span class="capsule-half capsule-bottom"></span>
-              <span class="capsule-emblem">✦</span><img id="ikebana-food" class="capsule-food" src="assets/ikebana.svg" alt="" width="108" height="108" hidden />
-            </span>
-            <span class="gacha-copy"><span class="gacha-milestone">60 days in a row</span><strong>Ikebana capsule</strong><span id="ikebana-detail">60 days in a row to unlock.</span></span>
-            <span id="ikebana-status" class="gacha-status">Locked</span>
-          </button>
-        </div>
-        <button id="sushi-next" class="text-button sushi-next" type="button" hidden>Next sushi capsule →</button>
-        <p id="gacha-announcement" class="gacha-announcement" role="status" aria-live="polite" tabindex="-1" hidden></p>
-        <section id="sushi-shelf" class="sushi-shelf" aria-labelledby="sushi-shelf-title" hidden>
-          <div class="review-heading"><h3 id="sushi-shelf-title">Your sushi shelf</h3><span id="sushi-collected-count" class="review-count">0 rolls</span></div>
-          <ul id="sushi-collection" class="sushi-collection"></ul>
-        </section>
-        <p class="gacha-footnote">Miss a whole day and your streak starts again from day one, including the weekly sushi order. Earned collectibles stay yours. Ramen, Mount Fuji, and ikebana unlock once.</p>
-      </section>
 
       <footer class="site-footer">
         <span>Progress stays on this device.<br />Kanji meanings: <a href="https://www.edrdg.org/wiki/KANJIDIC_Project.html">KANJIDIC2 / EDRDG</a> · <a href="https://www.edrdg.org/edrdg/licence.html">CC BY-SA 4.0</a>.</span>
         <button class="reset-button" id="reset-progress" type="button">Reset katakana &amp; listening</button>
       </footer>
     </main>
+    <div id="capsule-celebration" class="capsule-celebration" hidden>
+      <div class="celebration-confetti" aria-hidden="true">
+        <span style="--x:-145px;--y:-200px;--turn:-190deg"></span><span style="--x:130px;--y:-210px;--turn:240deg"></span>
+        <span style="--x:-195px;--y:-95px;--turn:140deg"></span><span style="--x:185px;--y:-70px;--turn:-210deg"></span>
+        <span style="--x:-140px;--y:110px;--turn:280deg"></span><span style="--x:150px;--y:120px;--turn:-250deg"></span>
+        <span style="--x:-55px;--y:-235px;--turn:180deg"></span><span style="--x:60px;--y:-230px;--turn:-180deg"></span>
+        <span style="--x:-215px;--y:30px;--turn:-320deg"></span><span style="--x:220px;--y:40px;--turn:320deg"></span>
+        <span style="--x:-65px;--y:190px;--turn:230deg"></span><span style="--x:75px;--y:185px;--turn:-230deg"></span>
+      </div>
+      <div class="celebration-card">
+        <button id="celebration-dismiss" class="celebration-dismiss" type="button" aria-label="Dismiss capsule celebration">×</button>
+        <div class="celebration-orbit" aria-hidden="true">
+          <span class="gacha-visual celebration-capsule"><span class="capsule-half capsule-top"></span><span class="capsule-half capsule-bottom"></span><span class="capsule-emblem">✦</span></span>
+        </div>
+        <div role="status" aria-live="polite" aria-atomic="true">
+          <p class="eyebrow">A little reward for showing up</p>
+          <h2 id="celebration-title">Capsule unlocked!</h2>
+          <p id="celebration-message" class="celebration-message"></p>
+        </div>
+        <button id="celebration-view" class="primary-button" type="button">See it in Calendar ↗</button>
+      </div>
+    </div>
     <div id="kanji-tooltip" class="kanji-tooltip" role="tooltip" lang="en" hidden>
       <strong id="kanji-tooltip-character" lang="ja"></strong>
       <span id="kanji-tooltip-meaning"></span>
@@ -274,8 +297,8 @@
     <script src="kanji-tooltips.js?v=kanji-tooltips"></script>
     <script src="japanese-audio.js?v=answer-audio"></script>
     <script src="sushi-rolls.js?v=weekly-sushi"></script>
-    <script src="gacha.js?v=streak-restart"></script>
-    <script src="katakana.js?v=expanded-katakana"></script>
+    <script src="gacha.js?v=calendar-celebration"></script>
+    <script src="katakana.js?v=calendar-celebration"></script>
     <script src="kanji.js?v=grade-and-review"></script>
   </body>
 </html>
