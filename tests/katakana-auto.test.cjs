@@ -1,6 +1,7 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
 const { launch, key, localDay } = require('./browser-fixture.cjs');
+const words = require('./katakana-bank.cjs');
 
 function submit(app, answer) {
   if (answer !== undefined) app.els['answer-input'].value = answer;
@@ -77,12 +78,12 @@ test('midnight discards the stale answer instead of auto-advancing or crediting 
 });
 
 test('exhausting the word bank keeps the completion message instead of showing a phantom next question', () => {
-  const usedWords = Array.from({ length: 82 }, (_, index) => 'word-' + (index + 1));
+  const usedWords = words.slice(0, -1).map((word) => word.id);
   const saved = new Map([[key, JSON.stringify({ usedWords })]]);
   const app = launch({ saved, random: 0 });
-  assert.equal(app.els['kana-word'].textContent, 'ポスト');
-  submit(app, 'postbox');
-  assert.equal(app.state().usedWords.length, 83);
+  assert.equal(app.els['kana-word'].textContent, words.at(-1).kana);
+  submit(app, words.at(-1).english);
+  assert.equal(app.state().usedWords.length, words.length);
   assert.equal(app.state().currentQuestion, null);
   assert.equal(app.els['answer-form'].hidden, true);
   assert.match(app.els['feedback'].children[1].children[0].textContent, /Word bank complete/);

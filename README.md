@@ -2,6 +2,8 @@
 
 A tiny, browser-only site for katakana, Japanese listening, and everyday kanji practice.
 
+Katakana practice has 283 words, including food, travel, clothing, household items, technology, and leisure. The original 83 entries keep their saved IDs, so an exhausted older word bank continues with 200 new words after refreshing. Used-word history, missed answers, stamps, streaks, and collectibles stay saved.
+
 Correct katakana answers automatically show the next unused word, clear and focus the input, and keep a success message identifying the answer just checked. Wrong answers keep their correction on screen until you tap “Next word”. Blank submissions do not advance. The tenth correct answer still finishes the daily quest and awards its stamp rather than introducing another word.
 
 If katakana grading rejects an answer you know was right, choose “I got this right” beside the feedback. It credits the answer once, removes that word from review, and can earn the tenth-answer stamp. The button remains available after Next or a reload until you check another answer or the day changes. Correcting a previous answer preserves the next question and any translation being typed.

@@ -1,6 +1,7 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
 const { launch, key, localDay } = require('./browser-fixture.cjs');
+const words = require('./katakana-bank.cjs');
 
 function submit(app, answer) {
   if (answer !== undefined) app.els['answer-input'].value = answer;
@@ -83,12 +84,12 @@ test('a new checked answer, a new day, or reset prevents correcting an older kat
 });
 
 test('correcting the last word in the bank keeps the bank complete without a phantom question', () => {
-  const saved = new Map([[key, JSON.stringify({ usedWords: Array.from({ length: 82 }, (_, i) => `word-${i + 1}`) })]]);
+  const saved = new Map([[key, JSON.stringify({ usedWords: words.slice(0, -1).map((word) => word.id) })]]);
   const app = launch({ saved, random: 0 });
-  submit(app, 'my postbox paraphrase');
+  submit(app, 'my paraphrase of the last word');
   correct(app);
   assert.equal(app.els['correct-count'].textContent, '1');
   assert.equal(app.els['answer-form'].hidden, true);
-  assert.equal(app.state().usedWords.length, 83);
+  assert.equal(app.state().usedWords.length, words.length);
   assert.match(app.els['feedback'].textContent, /Word bank complete/);
 });
