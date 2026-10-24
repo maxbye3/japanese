@@ -451,7 +451,7 @@
   function renderCorrection(answer, reviewing) {
     correctionTarget = { answer, reviewing };
     elements['grade-override'].hidden = false;
-    elements['grade-override'].textContent = answer.correct ? 'Mark previous as wrong' : 'I got this right';
+    elements['grade-override'].textContent = answer.correct ? 'Actually... I got this wrong' : 'Actually... I got this right';
     elements['grade-override'].setAttribute('aria-label', elements['grade-override'].textContent + ': ' + answer.id);
   }
 

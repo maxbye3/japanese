@@ -50,7 +50,7 @@
           </form>
           <div class="answer-feedback-row">
             <div id="feedback" class="feedback" role="status" aria-live="polite" hidden></div>
-            <button id="katakana-grade-override" class="grade-override" type="button" hidden>I got this right</button>
+            <button id="katakana-grade-override" class="grade-override" type="button" hidden></button>
           </div>
         </div>
 
@@ -103,10 +103,11 @@
             <p>Your translation <span id="listening-attempt"></span></p>
             <p class="translation-hint">Did your answer convey the same meaning?</p>
             <div class="mark-actions">
-              <button class="mark-got" type="button" data-listening-mark="got">Yes, I got it</button>
-              <button class="mark-review" type="button" data-listening-mark="review">Save for review</button>
+              <button class="mark-got" type="button" data-listening-mark="got">Correct</button>
+              <button class="mark-review" type="button" data-listening-mark="review">Wrong</button>
             </div>
           </div>
+          <button id="listening-grade-override" class="grade-override" type="button" hidden></button>
           <div id="listening-done" class="listening-done" hidden>
             <span class="done-mark" aria-hidden="true">✦</span>
             <h3>Today’s ten complete!</h3>
@@ -298,7 +299,7 @@
     <script src="japanese-audio.js?v=answer-audio"></script>
     <script src="sushi-rolls.js?v=weekly-sushi"></script>
     <script src="gacha.js?v=calendar-celebration"></script>
-    <script src="katakana.js?v=calendar-celebration"></script>
-    <script src="kanji.js?v=grade-and-review"></script>
+    <script src="katakana.js?v=bidirectional-grading"></script>
+    <script src="kanji.js?v=bidirectional-grading"></script>
   </body>
 </html>
