@@ -2,9 +2,9 @@
   'use strict';
   const text = typeof module === 'object' && module.exports ? require('./speech.js') : root.GettysburgText;
   function tokens(value) {
-    return String(value).normalize('NFKC').toLowerCase()
+    return String(value).replace(/\p{N}+/gu, '').normalize('NFKC').toLowerCase()
       .replace(/\bcannot\b/g, 'can not').replace(/\bbattle[-\u2010\u2011]field\b/g, 'battlefield')
-      .match(/[a-z0-9]+/g) || [];
+      .match(/[a-z]+/g) || [];
   }
   const words = tokens(text);
   function inspect(value) {

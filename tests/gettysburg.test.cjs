@@ -104,3 +104,25 @@ test('calendar date keys use local dates at midnight, year boundaries and daylig
   assert.equal(core.dayKey(new Date(2026,9,25,23,59)),'2026-10-25');
   assert.equal(core.dayKey(new Date(2027,0,1,0,1)),'2027-01-01');
 });
+
+
+test('extra numbers are ignored throughout the speech without changing the words or progress', () => {
+  const numbered = core.words.map((word, i) => `${i + 1}. ${word.toUpperCase()}`).join(' ');
+  assert.equal(core.inspect(numbered).complete, true);
+  assert.equal(core.inspect('1863 Four score 123 and seven 2026').matched, 4);
+  assert.equal(core.inspect('fo1ur score and seven').matched, 4);
+  assert.equal(core.inspect('１２３ Four ٤٥ score ⑥ and seven').matched, 4);
+  assert.equal(core.inspect(core.text + ' 123').complete, true);
+});
+
+test('ignoring numbers never hides wrong or missing words or awards a numbers-only attempt', () => {
+  const state = core.restore(null);
+  state.draft.text = '123 ٤٥ ⑥';
+  assert.equal(core.check(state).empty, true);
+  assert.equal(state.completions.length, 0);
+  assert.equal(core.inspect('4 score and 7 years ago').complete, false);
+  const wrong = core.inspect('123 Four score 456 and eight');
+  assert.equal(wrong.wrong, true);
+  assert.equal(wrong.matched, 3);
+  assert.deepEqual(wrong.next, ['seven', 'years']);
+});
