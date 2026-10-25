@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f7f3eb" />
+  <meta name="description" content="Learn the Gettysburg Address by writing it from memory. Two-word hints when you stumble, a top hat for every completed recitation." />
+  <title>Four Score · Gettysburg practice</title>
+  <link rel="icon" href="top-hat.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="gettysburg.css?v=1" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="site-header">
+      <a class="brand" href="./"><span class="brand-mark"><img src="top-hat.svg" alt="" width="40" height="40" /></span><span><strong>Four Score</strong><small>A little practice. A lasting memory.</small></span></a>
+      <a class="back-link" href="../">Japanese practice ↗</a>
+    </header>
+    <nav class="mode-nav" aria-label="Practice modes">
+      <button id="practice-tab" type="button" aria-pressed="true" aria-controls="practice-view">Write from memory</button>
+      <button id="calendar-tab" type="button" aria-pressed="false" aria-controls="calendar-view">Calendar <span id="hat-total" class="nav-count">0</span></button>
+    </nav>
+    <p id="storage-notice" class="notice" role="status" hidden>Your browser could not save this session. Keep this page open to continue.</p>
+    <section id="practice-view" aria-labelledby="practice-title">
+      <div class="quest-topline"><div><p class="eyebrow">Abraham Lincoln · November 19, 1863</p><h1 id="practice-title">The Gettysburg Address</h1></div><span class="edition">The Bliss text</span></div>
+      <p class="intro">Write the address from memory, a few words or a whole passage at a time. If you stumble, the next two words are yours.</p>
+      <div class="progress-heading"><span id="progress-description">Begin with the opening words.</span><span><strong id="word-count">0</strong> / <span id="word-total">271</span> words</span></div>
+      <div id="progress-track" class="progress-track" role="progressbar" aria-label="Words checked in order" aria-valuemin="0" aria-valuemax="271" aria-valuenow="0"><span id="progress-fill"></span></div>
+      <div id="writing-card" class="writing-card">
+        <div class="card-meta"><span>Write it. Remember it.</span><span id="hint-count">0 hints used</span></div>
+        <form id="recitation-form">
+          <label for="recitation">Your address</label>
+          <p id="writing-help" class="field-help">Start at the beginning and keep adding to your text. Capital letters, punctuation, and line breaks don’t affect your score.</p>
+          <textarea id="recitation" name="recitation" rows="10" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="writing-help" placeholder="Take a breath. How does it begin?"></textarea>
+          <div class="form-actions"><button id="check-answer" class="primary-button" type="submit">Check my words <span aria-hidden="true">↗</span></button><span class="keyboard-tip">Ctrl / ⌘ + Enter to check</span></div>
+        </form>
+        <div id="answer-feedback" class="answer-feedback" role="status" aria-live="polite" aria-atomic="true" hidden>
+          <strong id="feedback-title"></strong><p id="feedback-message"></p>
+          <div id="two-word-hint" class="two-word-hint" hidden><span>Your next two words</span><strong id="hint-words"></strong><small>Type them yourself, then keep going.</small></div>
+        </div>
+        <div id="completion" class="completion" role="status" aria-live="polite" hidden>
+          <img class="earned-hat" src="top-hat.svg" width="110" height="110" alt="" />
+          <p class="eyebrow">Hats off to you</p><h2>The whole address. From you.</h2>
+          <p id="completion-message"></p>
+          <div class="completion-actions"><button id="write-again" class="primary-button" type="button">Write it again ↗</button><button id="see-calendar" class="text-button" type="button">See my top hats →</button></div>
+        </div>
+      </div>
+      <p class="practice-note"><span aria-hidden="true">✦</span> One full recitation earns one top hat. Hints are welcome. Every finish counts.</p>
+      <div class="practice-options"><button id="start-over" class="text-button" type="button">Start this attempt over</button><span>Your draft saves as you type.</span></div>
+    </section>
+    <section id="calendar-view" aria-labelledby="calendar-title" hidden>
+      <div class="calendar-heading"><div><p class="eyebrow">A habit worth tipping your hat to</p><h1 id="calendar-title" tabindex="-1">Your practice calendar</h1></div><div class="calendar-total"><strong id="completion-total">0</strong><span>top hats earned</span></div></div>
+      <p class="intro">Every full recitation leaves a top hat here. Finish twice in a day, earn two hats.</p>
+      <div class="calendar-card"><div class="month-toolbar"><button id="previous-month" class="icon-button" type="button" aria-label="Previous month">←</button><h2 id="month-label"></h2><button id="next-month" class="icon-button" type="button" aria-label="Next month">→</button></div><div class="weekday-row" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div><div id="calendar-grid" class="calendar-grid" role="list" aria-label="Recitations by date"></div></div>
+      <p id="calendar-empty" class="empty-message">Your first top hat is waiting. Finish the address to earn it.</p>
+      <button id="back-to-writing" class="text-button" type="button">← Back to writing</button>
+    </section>
+    <footer class="site-footer"><span>Progress stays on this browser and device.</span><span>Public-domain <a href="https://www.nps.gov/linc/learn/historyculture/gettysburgaddress.htm" target="_blank" rel="noopener noreferrer">Bliss text · National Park Service ↗</a></span></footer>
+  </main>
+  <script src="speech.js?v=1"></script><script src="core.js?v=1"></script><script src="gettysburg.js?v=1"></script>
+</body>
+</html>

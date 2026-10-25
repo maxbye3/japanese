@@ -62,3 +62,7 @@ Missed katakana words and the answers you typed stay in the review list until yo
 Run `node --test tests/*.test.cjs` to check daily selection, saved progress, rollover, retesting, migration, bank exhaustion, no repeats among new kanji, and calendar stamps for all three categories.
 
 Listening uses “Correct” and “Wrong” for the initial self-grade after comparing translations. A single “Actually...” correction button then toggles the latest grade in either direction, updating understood totals and the review queue without adding another attempt or clearing the next translation. It persists across reloads, is hidden while comparing a new answer, and resets with a new day or restarted set. Listening completion counts attempts, so corrections preserve its ten-phrase stamp.
+
+## Gettysburg Address version
+
+[Four Score](gettysburg/) is a separate writing-from-memory version: type the speech, receive the next two words after a mistake, and earn a top-hat calendar stamp for every full recitation. Its draft and history use separate browser storage. See [its README](gettysburg/README.md).
