@@ -361,3 +361,8 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
   .celebration-card, .celebration-capsule, .celebration-orbit::before { animation: none; }
   .celebration-confetti { display: none; }
 }
+
+.listening-result-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.listening-result-actions .grade-override { margin-top: 0; }
+.listening-result-actions .primary-button { min-height: 44px; }
+.listening-grade-status { color: var(--teal-dark); font-weight: 750; }

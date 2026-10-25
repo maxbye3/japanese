@@ -3,6 +3,7 @@ const test = require('node:test');
 const { launch, key, localDay } = require('./browser-fixture.cjs');
 
 function answer(app, gotIt) {
+  if (app.state().listeningSession.showGradedAnswer) app.els['listening-next'].listeners.click();
   app.els['listening-input'].value = 'My translation';
   app.els['listening-form'].listeners.submit({ preventDefault() {} });
   app.marks[gotIt ? 0 : 1].listeners.click();
@@ -47,6 +48,7 @@ test('a review backlog is capped at ten distinct valid phrases, newest misses fi
   assert.deepEqual(selected, [all[0], all[12], all[11], all[10], all[9], all[8], all[7], all[6], all[5], all[4]]);
   assert.equal(new Set(selected).size, 10);
   for (let index = 0; index < 10; index += 1) answer(app, false);
+  app.els['listening-next'].listeners.click();
   assert.equal(app.els['listening-done'].hidden, false);
   assert.equal(app.els['nav-stamp-count'].textContent, '1');
 });

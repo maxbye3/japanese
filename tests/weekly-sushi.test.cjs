@@ -161,6 +161,7 @@ test('a missed whole day resets the live sushi preview and a new stamp starts da
     app.els['listening-input'].value = 'my translation';
     app.els['listening-form'].listeners.submit({ preventDefault() {} });
     app.marks[0].listeners.click();
+    if (i < 9) app.els['listening-next'].listeners.click();
   }
   assert.equal(app.els['practice-streak'].textContent, '1 day streak');
   app = launch({ saved, clock });

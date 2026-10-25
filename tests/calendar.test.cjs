@@ -19,6 +19,7 @@ function listeningAnswer(app) {
   app.els['listening-input'].value = 'My translation';
   submit(app, 'listening-form');
   app.marks[0].listeners.click();
+  app.els['listening-next'].listeners.click();
 }
 
 test('each category earns one distinct stamp only when its daily set is complete', () => {
@@ -27,6 +28,7 @@ test('each category earns one distinct stamp only when its daily set is complete
     'air conditioner', 'elevator', 'orange', 'camera', 'calendar'];
   meanings.forEach((meaning, index) => {
     app.els['answer-input'].value = meaning;
+    submit(app, 'answer-form');
     submit(app, 'answer-form');
     if (index < 9) {
       assert.equal(app.els['nav-stamp-count'].textContent, '0');
@@ -124,6 +126,7 @@ test('katakana completion after midnight belongs to the new local day', () => {
     'elevator', 'orange', 'camera', 'calendar', 'guitar'];
   meanings.forEach((meaning) => {
     app.els['answer-input'].value = meaning;
+    submit(app, 'answer-form');
     submit(app, 'answer-form');
   });
   app.tabs[3].listeners.click();

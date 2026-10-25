@@ -5,6 +5,7 @@ const { launch, key, localDay } = require('./browser-fixture.cjs');
 const words = require('./katakana-bank.cjs');
 
 function submit(app, answer) {
+  if (app.els['answer-input'].disabled) app.els['answer-form'].listeners.submit({ preventDefault() {} });
   app.els['answer-input'].value = answer;
   app.els['answer-form'].listeners.submit({ preventDefault() {} });
 }
@@ -46,6 +47,7 @@ test('an exhausted original save resumes with new words while keeping misses, st
   submit(app, 'bus');
   assert.equal(app.spoken.at(-1).text, 'バス');
   assert.equal(app.els['correct-count'].textContent, '3');
+  app.els['answer-form'].listeners.submit({ preventDefault() {} });
   assert.equal(app.state().currentQuestion.wordId, 'word-85');
   app = launch({ saved, random: 0.9 });
   assert.equal(app.state().currentQuestion.wordId, 'word-85');
@@ -69,6 +71,7 @@ test('all added words can be answered across daily quests without returning to a
     assert.equal(introduced.has(word.id), false);
     introduced.add(word.id);
     submit(app, word.english);
+    app.els['answer-form'].listeners.submit({ preventDefault() {} });
     assert.equal(app.els['correct-count'].textContent, String(index % 10 + 1));
   });
   assert.equal(introduced.size, words.length - 83);

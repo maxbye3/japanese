@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
     <title>Max's Japanese Listening Website</title>
-    <link rel="stylesheet" href="katakana.css?v=calendar-celebration" />
+    <link rel="stylesheet" href="katakana.css?v=answer-screens" />
+    <link rel="stylesheet" href="practice-switcher.css?v=1" />
   </head>
   <body>
     <main class="app-shell">
@@ -15,6 +16,11 @@
           <span><strong>Max's Japanese Listening Website</strong><small>Everyday new katakana, listening and kanji!</small></span>
         </a>
       </header>
+
+      <nav class="practice-switcher" aria-label="Choose what to learn">
+        <a href="./" aria-current="page"><span class="practice-switch-icon" aria-hidden="true">カ</span><span>Japanese</span></a>
+        <a href="gettysburg/"><span class="practice-switch-icon" aria-hidden="true"><img src="gettysburg/top-hat.svg" width="26" height="26" alt="" /></span><span>Gettysburg Address</span></a>
+      </nav>
 
       <nav class="view-tabs" aria-label="Practice views">
         <button class="view-tab is-active" type="button" data-view="quest" aria-selected="true">Katakana</button>
@@ -101,13 +107,17 @@
           <div id="listening-feedback" class="translation-feedback" role="status" aria-live="polite" hidden>
             <p>Suggested meaning <strong id="listening-meaning"></strong></p>
             <p>Your translation <span id="listening-attempt"></span></p>
-            <p class="translation-hint">Did your answer convey the same meaning?</p>
-            <div class="mark-actions">
+            <p class="translation-hint" id="listening-grade-prompt">Did your answer convey the same meaning?</p>
+            <div class="mark-actions" id="listening-mark-actions">
               <button class="mark-got" type="button" data-listening-mark="got">Correct</button>
               <button class="mark-review" type="button" data-listening-mark="review">Wrong</button>
             </div>
+            <p id="listening-grade-status" class="listening-grade-status" hidden></p>
+            <div class="listening-result-actions">
+              <button id="listening-grade-override" class="grade-override" type="button" hidden></button>
+              <button id="listening-next" class="primary-button" type="button" hidden>Next phrase →</button>
+            </div>
           </div>
-          <button id="listening-grade-override" class="grade-override" type="button" hidden></button>
           <div id="listening-done" class="listening-done" hidden>
             <span class="done-mark" aria-hidden="true">✦</span>
             <h3>Today’s ten complete!</h3>
@@ -299,7 +309,7 @@
     <script src="japanese-audio.js?v=answer-audio"></script>
     <script src="sushi-rolls.js?v=weekly-sushi"></script>
     <script src="gacha.js?v=calendar-celebration"></script>
-    <script src="katakana.js?v=bidirectional-grading"></script>
-    <script src="kanji.js?v=bidirectional-grading"></script>
+    <script src="katakana.js?v=answer-screens"></script>
+    <script src="kanji.js?v=answer-screens"></script>
   </body>
 </html>

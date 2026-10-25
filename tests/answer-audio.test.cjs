@@ -4,6 +4,7 @@ const { launch } = require('./browser-fixture.cjs');
 
 function submit(app, mode, answer) {
   const prefix = mode === 'kanji' ? 'kanji' : 'answer';
+  if (mode !== 'kanji' && answer !== undefined && app.els['answer-input'].disabled) app.els['answer-form'].listeners.submit({ preventDefault() {} });
   if (answer !== undefined) app.els[prefix + '-input'].value = answer;
   app.els[prefix + '-form'].listeners.submit({ preventDefault() {} });
 }
@@ -14,7 +15,8 @@ test('katakana speaks the checked word on correct and wrong guesses, without spe
   submit(app, 'katakana', '   ');
   assert.equal(app.spoken.length, 0);
   submit(app, 'katakana', 'ice cream');
-  assert.equal(app.els['kana-word'].textContent, 'アニメ');
+  assert.equal(app.els['kana-word'].textContent, 'アイス');
+  assert.equal(app.els['answer-input'].disabled, true);
   assert.equal(app.spoken[0].text, 'アイス');
   assert.equal(app.spoken[0].lang, 'ja-JP');
   assert.equal(app.spoken[0].voice.lang, 'ja-JP');
@@ -31,6 +33,7 @@ test('katakana still speaks the tenth answer when the daily quest finishes', () 
   const meanings = ['ice cream', 'anime', 'apartment', 'america', 'album',
     'air conditioner', 'elevator', 'orange', 'camera', 'calendar'];
   meanings.forEach((meaning) => submit(app, 'katakana', meaning));
+  submit(app, 'katakana');
   assert.equal(app.els['answer-form'].hidden, true);
   assert.equal(app.spoken.length, 10);
   assert.equal(app.spoken.at(-1).text, 'カレンダー');

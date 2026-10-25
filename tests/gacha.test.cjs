@@ -175,6 +175,7 @@ test('finishing the daily listening ten unlocks sushi in the same session', () =
     app.els['listening-input'].value = 'my translation';
     app.els['listening-form'].listeners.submit({ preventDefault() {} });
     app.marks[0].listeners.click();
+    if (i < 9) app.els['listening-next'].listeners.click();
     assert.equal(app.els['sushi-capsule'].disabled, i < 9);
   }
   assert.equal(app.els['practice-streak'].textContent, '7 day streak');

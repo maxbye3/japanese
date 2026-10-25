@@ -8,13 +8,17 @@
   <title>Four Score · Gettysburg practice</title>
   <link rel="icon" href="top-hat.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="gettysburg.css?v=1" />
+  <link rel="stylesheet" href="../practice-switcher.css?v=1" />
 </head>
 <body>
   <main class="app-shell">
     <header class="site-header">
       <a class="brand" href="./"><span class="brand-mark"><img src="top-hat.svg" alt="" width="40" height="40" /></span><span><strong>Four Score</strong><small>A little practice. A lasting memory.</small></span></a>
-      <a class="back-link" href="../">Japanese practice ↗</a>
     </header>
+    <nav class="practice-switcher" aria-label="Choose what to learn">
+      <a href="../"><span class="practice-switch-icon" aria-hidden="true">カ</span><span>Japanese</span></a>
+      <a href="./" aria-current="page"><span class="practice-switch-icon" aria-hidden="true"><img src="top-hat.svg" width="26" height="26" alt="" /></span><span>Gettysburg Address</span></a>
+    </nav>
     <nav class="mode-nav" aria-label="Practice modes">
       <button id="practice-tab" type="button" aria-pressed="true" aria-controls="practice-view">Write from memory</button>
       <button id="calendar-tab" type="button" aria-pressed="false" aria-controls="calendar-view">Calendar <span id="hat-total" class="nav-count">0</span></button>

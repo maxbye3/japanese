@@ -508,12 +508,6 @@
     elements.feedback.hidden = true;
     elements['grade-override'].hidden = true;
     correctionTarget = null;
-    const previous = state.lastGrade;
-    if (previous && previous.date === day.date) {
-      const answer = (previous.reviewing ? day.reviewAnswers[previous.answer.dailyReviewIndex]
-        : day.answers.find((entry) => entry.id === previous.answer.id)) || previous.answer;
-      renderCorrection(answer, previous.reviewing);
-    }
     elements.reading.hidden = true;
     elements.round.hidden = true;
     elements.hints.hidden = true;

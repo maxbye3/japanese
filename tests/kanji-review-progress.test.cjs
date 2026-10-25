@@ -81,7 +81,7 @@ test('mixed new signs and reviews reach ten together and their totals survive da
   assert.equal(app.els['nav-stamp-count'].textContent, '1');
 });
 
-test('legacy saved review answers are credited once and corrections remain linked after reload and round completion', () => {
+test('legacy saved review answers are credited once and corrections remain linked after reload but close on round completion', () => {
   let app = launch({ saved: savedState({
     review: [],
     reviewSession: { ids: ['入口'], index: 0, answers: [{ id: '入口', correct: true, translation: 'entrance' }] },
@@ -96,13 +96,14 @@ test('legacy saved review answers are credited once and corrections remain linke
   assert.equal(app.kanjiState().reviewSession.answers[0].correct, false);
   assert.deepEqual(app.kanjiState().dailyStats['2026-10-16'], { answered: 10, correct: 9 });
   app.els['kanji-grade-override'].listeners.click();
-  submit(app); // End the round; the last grade remains available on the next sign.
+  submit(app); // End the round; the correction closes before the next sign.
   app = launch({ saved: app.saved, random: 0 });
   open(app);
   app.els['kanji-input'].value = 'unfinished translation';
   app.els['kanji-grade-override'].listeners.click();
   assert.equal(app.els['kanji-input'].value, 'unfinished translation');
-  assert.equal(app.kanjiState().day.reviewAnswers[0].correct, false);
-  assert.deepEqual(app.kanjiState().dailyStats['2026-10-16'], { answered: 10, correct: 9 });
+  assert.equal(app.els['kanji-grade-override'].hidden, true);
+  assert.equal(app.kanjiState().day.reviewAnswers[0].correct, true);
+  assert.deepEqual(app.kanjiState().dailyStats['2026-10-16'], { answered: 10, correct: 10 });
   assert.equal(app.els['nav-stamp-count'].textContent, '1');
 });

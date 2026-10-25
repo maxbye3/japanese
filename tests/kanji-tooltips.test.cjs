@@ -125,6 +125,7 @@ test('kana and punctuation stay plain; listening kanji are tappable after compar
   assert.match(app.els['kanji-tooltip-meaning'].textContent, /one/);
   assert.deepEqual(app.state(), before);
   app.marks[0].listeners.click();
+  app.els['listening-next'].listeners.click();
   assert.equal(app.els['kanji-tooltip'].hidden, true);
   assert.equal(app.els['listening-japanese'].textContent, '');
 });

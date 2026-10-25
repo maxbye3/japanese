@@ -3,6 +3,7 @@ const test = require('node:test');
 const { html, key, localDay, launch } = require('./browser-fixture.cjs');
 
 function compare(app, translation = 'My English translation') {
+  if (app.state().listeningSession.showGradedAnswer) app.els['listening-next'].listeners.click();
   app.els['listening-input'].value = translation;
   app.els['listening-form'].listeners.submit({ preventDefault() {} });
 }
@@ -10,6 +11,7 @@ function compare(app, translation = 'My English translation') {
 function answer(app, gotIt = true) {
   compare(app);
   app.marks[gotIt ? 0 : 1].listeners.click();
+  app.els['listening-next'].listeners.click();
 }
 
 test('today has ten fixed phrases, saved progress, and replay without rerolling', () => {

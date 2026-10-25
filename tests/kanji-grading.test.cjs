@@ -27,46 +27,25 @@ test('a rejected answer can be accepted manually, correcting score and review wi
   assert.equal(app.kanjiState().review.length, 1);
 });
 
-test('the next question can correct the previous grade while preserving its typed answer and progress', () => {
-  let app = launch({ random: 0 });
-  open(app);
-  submit(app, 'entrance');
-  submit(app);
-  app = launch({ saved: app.saved, random: 0 });
-  open(app);
-  const before = app.kanjiState();
-  assert.equal(app.els['kanji-grade-override'].textContent, 'Actually... I got this wrong');
-  assert.match(app.els['kanji-grade-override'].attributes['aria-label'], /入口/);
-  app.els['kanji-input'].value = 'unfinished answer';
-  override(app);
-  assert.equal(app.els['kanji-input'].value, 'unfinished answer');
-  assert.equal(app.els['kanji-sign'].textContent, '出口');
-  assert.deepEqual(app.kanjiState().usedIds, before.usedIds);
-  assert.equal(app.kanjiState().day.answers.length, 1);
-  assert.equal(app.kanjiState().day.answers[0].correct, false);
-  assert.equal(app.kanjiState().review[0].id, '入口');
-  assert.equal(app.kanjiState().dailyStats['2026-10-16'].correct, 0);
-  assert.equal(app.els['kanji-grade-override'].hidden, false);
-  assert.equal(app.els['kanji-grade-override'].textContent, 'Actually... I got this right');
-  override(app);
-  assert.equal(app.kanjiState().dailyStats['2026-10-16'].correct, 1);
-  assert.equal(app.els['kanji-input'].value, 'unfinished answer');
+test('Next hides the prior correction and a stale click preserves the fresh sign and typed answer', () => {
+  let app = launch({ random: 0 }); open(app); submit(app, 'entrance'); submit(app);
+  assert.equal(app.els['kanji-grade-override'].hidden, true);
+  app.els['kanji-input'].value = 'unfinished exit';
+  const before = app.kanjiState(); override(app);
+  assert.deepEqual(app.kanjiState(), before);
+  assert.equal(app.els['kanji-input'].value, 'unfinished exit');
+  app = launch({ saved: app.saved, random: 0 }); open(app);
+  assert.equal(app.els['kanji-grade-override'].hidden, true);
+  override(app); assert.deepEqual(app.kanjiState(), before);
 });
 
-test('a missed kanji answer can still be corrected after Next without answering or replacing the next sign', () => {
-  const app = launch({ random: 0 });
-  open(app);
-  submit(app, 'my paraphrase');
-  submit(app);
+test('a missed sign has a correction until Next, then the fresh prompt has none', () => {
+  const app = launch({ random: 0 }); open(app); submit(app, 'my wording');
   assert.equal(app.els['kanji-grade-override'].hidden, false);
-  assert.equal(app.els['kanji-grade-override'].textContent, 'Actually... I got this right');
-  app.els['kanji-input'].value = 'partly typed translation';
-  override(app);
-  assert.equal(app.kanjiState().review.length, 0);
+  override(app); assert.equal(app.kanjiState().review.length, 0);
+  submit(app); assert.equal(app.els['kanji-sign'].textContent, '出口');
+  assert.equal(app.els['kanji-grade-override'].hidden, true);
   assert.deepEqual(app.kanjiState().dailyStats['2026-10-16'], { answered: 1, correct: 1 });
-  assert.equal(app.els['kanji-sign'].textContent, '出口');
-  assert.equal(app.els['kanji-input'].value, 'partly typed translation');
-  assert.equal(app.els['kanji-input'].disabled, false);
 });
 
 test('manual corrections on retests update the daily score without changing the earlier new-sign attempt', () => {
@@ -84,9 +63,10 @@ test('manual corrections on retests update the daily score without changing the 
   submit(app);
   assert.equal(app.kanjiState().reviewSession, null);
   assert.equal(app.els['kanji-sign'].textContent, '出口');
+  assert.equal(app.els['kanji-grade-override'].hidden, true);
   override(app);
-  assert.equal(app.kanjiState().review[0].id, '入口');
-  assert.deepEqual(app.kanjiState().dailyStats['2026-10-16'], { answered: 2, correct: 0 });
+  assert.equal(app.kanjiState().review.length, 0);
+  assert.deepEqual(app.kanjiState().dailyStats['2026-10-16'], { answered: 2, correct: 1 });
   assert.equal(app.kanjiState().day.answers[0].correct, false);
 });
 

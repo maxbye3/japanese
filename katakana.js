@@ -491,6 +491,10 @@
     listeningAttempt: document.querySelector('#listening-attempt'),
     listeningMarks: [...document.querySelectorAll('[data-listening-mark]')],
     listeningGradeOverride: document.querySelector('#listening-grade-override'),
+    listeningNext: document.querySelector('#listening-next'),
+    listeningMarkActions: document.querySelector('#listening-mark-actions'),
+    listeningGradePrompt: document.querySelector('#listening-grade-prompt'),
+    listeningGradeStatus: document.querySelector('#listening-grade-status'),
     listeningJapanese: document.querySelector('#listening-japanese'),
     listeningDone: document.querySelector('#listening-done'),
     listeningSummary: document.querySelector('#listening-summary'),
@@ -603,7 +607,7 @@
 
   function correctableKatakanaWord() {
     const grade = state.lastKatakanaGrade;
-    if (!grade || grade.date !== today || typeof grade.correct !== 'boolean') return null;
+    if (!grade || grade.date !== today || !grade.showResult || typeof grade.correct !== 'boolean') return null;
     return WORDS.find((word) => word.id === grade.wordId) || null;
   }
 
@@ -753,7 +757,8 @@
 
   function currentListeningPhrase() {
     const session = getListeningSession();
-    return PHRASES.find((phrase) => phrase.id === session.phraseIds[session.answers.length]);
+    const index = session.showGradedAnswer ? session.answers.length - 1 : session.answers.length;
+    return PHRASES.find((phrase) => phrase.id === session.phraseIds[index]);
   }
 
   function refreshListeningDay() {
@@ -812,7 +817,7 @@
   function renderListeningCorrection() {
     const session = getListeningSession();
     const answer = session.answers.at(-1);
-    elements.listeningGradeOverride.hidden = !answer || listeningAttempt !== null;
+    elements.listeningGradeOverride.hidden = !session.showGradedAnswer || !answer || listeningAttempt !== null;
     if (answer) {
       elements.listeningGradeOverride.textContent = answer.gotIt ? 'Actually... I got this wrong' : 'Actually... I got this right';
       const phrase = PHRASES.find((entry) => entry.id === answer.id);
@@ -821,7 +826,7 @@
   }
 
   elements.listeningGradeOverride.addEventListener('click', () => {
-    if (refreshListeningDay() || listeningAttempt !== null) return;
+    if (refreshListeningDay() || listeningAttempt !== null || !getListeningSession().showGradedAnswer) return;
     const session = getListeningSession();
     const answer = session.answers.at(-1);
     if (!answer) return;
@@ -830,8 +835,7 @@
     state.listeningReview = state.listeningReview.filter((entry) => entry && entry.id !== answer.id);
     if (!answer.gotIt) state.listeningReview.push({ id: answer.id, translation: answer.translation });
     saveState();
-    renderListeningCorrection();
-    renderListeningReview();
+    renderListening();
     if (session.answers.length === LISTENING_SIZE) {
       const understood = session.answers.filter((entry) => entry.gotIt).length;
       elements.listeningSummary.textContent = `You marked ${understood} of ${LISTENING_SIZE} as understood. Come back tomorrow for a new set, or replay saved phrases below.`;
@@ -841,15 +845,20 @@
   function renderListening() {
     const session = getListeningSession();
     const count = session.answers.length;
-    const done = count === LISTENING_SIZE;
+    const graded = Boolean(session.showGradedAnswer && count);
+    const done = count === LISTENING_SIZE && !graded;
     elements.listeningDate.textContent = formatToday();
     elements.listeningCount.textContent = String(count);
     elements.listeningProgress.style.width = `${count / LISTENING_SIZE * 100}%`;
-    elements.listeningStep.textContent = done ? 'Complete' : `Phrase ${count + 1} of ${LISTENING_SIZE}`;
+    elements.listeningStep.textContent = done ? 'Complete' : `Phrase ${graded ? count : count + 1} of ${LISTENING_SIZE}`;
     elements.listeningPrompt.hidden = done;
     elements.listeningInstruction.textContent = 'Listen as often as you like, then translate into English.';
-    elements.listeningForm.hidden = done;
+    elements.listeningForm.hidden = done || graded;
     elements.listeningFeedback.hidden = true;
+    elements.listeningNext.hidden = !graded;
+    elements.listeningMarkActions.hidden = graded;
+    elements.listeningGradePrompt.hidden = graded;
+    elements.listeningGradeStatus.hidden = !graded;
     elements.listeningTranscript.hidden = true;
     window.KanjiTooltips.render(elements.listeningJapanese, '');
     elements.listeningDone.hidden = !done;
@@ -859,13 +868,25 @@
       const understood = session.answers.filter((answer) => answer && answer.gotIt).length;
       elements.listeningSummary.textContent = `You marked ${understood} of ${LISTENING_SIZE} as understood. Come back tomorrow for a new set, or replay saved phrases below.`;
     }
+    if (graded) {
+      const answer = session.answers.at(-1);
+      const phrase = currentListeningPhrase();
+      elements.listeningMeaning.textContent = phrase.meaning;
+      elements.listeningAttempt.textContent = answer.translation || 'Not sure';
+      window.KanjiTooltips.render(elements.listeningJapanese, phrase.japanese);
+      elements.listeningTranscript.hidden = false;
+      elements.listeningFeedback.hidden = false;
+      elements.listeningInstruction.textContent = 'Answer checked. Correct the grade if needed, then continue.';
+      elements.listeningGradeStatus.textContent = answer.gotIt ? 'Marked as correct.' : 'Marked as wrong. Saved for review.';
+      elements.listeningNext.textContent = count === LISTENING_SIZE ? 'See today’s result →' : 'Next phrase →';
+    }
     renderListeningCorrection();
     renderListeningReview();
   }
 
   function submitListening(event, allowBlank = false) {
     event.preventDefault();
-    if (refreshListeningDay()) return;
+    if (refreshListeningDay() || getListeningSession().showGradedAnswer) return;
     const phrase = currentListeningPhrase();
     if (!phrase) return;
     const translation = elements.listeningInput.value.trim();
@@ -886,7 +907,7 @@
 
   function markListening(gotIt) {
     if (refreshListeningDay()) return;
-    if (listeningAttempt === null) return;
+    if (listeningAttempt === null || getListeningSession().showGradedAnswer) return;
     const phrase = currentListeningPhrase();
     if (!phrase) return;
     const session = getListeningSession();
@@ -897,12 +918,12 @@
     state.listeningReview = state.listeningReview.filter((answer) => answer && answer.id !== phrase.id);
     if (!gotIt) state.listeningReview.push({ id: phrase.id, translation: listeningAttempt });
     listeningAttempt = null;
+    session.showGradedAnswer = true;
     saveState();
     stopListeningAudio();
     renderListening();
     refreshCalendar();
-    if (session.answers.length === LISTENING_SIZE) elements.listeningRestart.focus();
-    else elements.listeningPlay.focus();
+    elements.listeningNext.focus();
   }
 
   function renderQuestion() {
@@ -911,6 +932,14 @@
     elements.cardPrompt.textContent = 'Translate this word';
     elements.answerForm.hidden = false;
     elements.practiceCard.classList.remove('is-correct', 'is-wrong');
+    const gradedWord = correctableKatakanaWord();
+    if (gradedWord) {
+      elements.kanaWord.textContent = gradedWord.kana;
+      elements.answerInput.value = state.lastKatakanaGrade.givenAnswer || '';
+      showFeedback(state.lastKatakanaGrade.correct, gradedWord);
+      if (day.completed) elements.submitAnswer.textContent = 'Finish today’s quest →';
+      return;
+    }
     if (day.completed) {
       elements.cardPrompt.textContent = 'All done for today';
       elements.kanaWord.textContent = '✦';
@@ -943,35 +972,18 @@
     setFeedback(
       correct ? 'is-correct' : 'is-wrong',
       correct ? 'Yes! You got it! 🎉' : 'Not this time',
-      correct ? 'Brilliant reading. Keep it going!' : `The answer is ${word.english}. Saved for review below.`,
+      correct ? `${word.kana} = ${word.english}. Great reading!` : `The answer is ${word.english}. Saved for review below.`,
     );
     elements.answerInput.disabled = true;
     elements.submitAnswer.disabled = false;
     elements.submitAnswer.textContent = 'Next word  →';
   }
 
-  function completeToday() {
-    getToday().completed = true;
-    state.currentQuestion = null;
-    saveState();
-    renderStats();
-    renderQuestion();
-  }
-
-  function advanceAfterCorrectKatakana(word) {
-    if (getToday().correct >= QUEST_SIZE) completeToday();
-    else {
-      renderQuestion();
-      if (state.currentQuestion) {
-        setFeedback('is-correct', 'Yes! You got it! 🎉', `${word.kana} = ${word.english}. Next word is ready!`);
-      }
-    }
-  }
-
   function submitAnswer(event) {
     event.preventDefault();
     if (refreshKatakanaDay()) return;
     if (elements.answerInput.disabled) {
+      if (state.lastKatakanaGrade) state.lastKatakanaGrade.showResult = false;
       state.currentQuestion = null;
       saveState();
       renderQuestion();
@@ -984,17 +996,16 @@
       return;
     }
     const correct = word.answers.some((answer) => normalize(answer) === normalize(elements.answerInput.value));
-    state.lastKatakanaGrade = { date: today, wordId: word.id, givenAnswer: elements.answerInput.value.trim(), correct };
+    state.lastKatakanaGrade = { date: today, wordId: word.id, givenAnswer: elements.answerInput.value.trim(), correct, showResult: true };
     if (correct) getToday().correct += 1;
     else {
       state.wrongAnswers.push({ wordId: word.id, givenAnswer: elements.answerInput.value.trim() });
       renderReview();
     }
     state.currentQuestion = null;
+    getToday().completed = getToday().correct >= QUEST_SIZE;
     saveState();
-    renderStats();
-    if (correct) advanceAfterCorrectKatakana(word);
-    else showFeedback(false, word);
+    renderQuestion();
     window.JapaneseAudio.speak(word.kana);
   }
 
@@ -1003,8 +1014,6 @@
     const word = correctableKatakanaWord();
     if (!word) return;
     const grade = state.lastKatakanaGrade;
-    const typed = elements.answerInput.value;
-    const hadQuestion = Boolean(currentWord());
     grade.correct = !grade.correct;
     grade.manuallyGraded = true;
     const day = getToday();
@@ -1014,12 +1023,7 @@
     if (!grade.correct) state.wrongAnswers.push({ wordId: word.id, givenAnswer: grade.givenAnswer });
     saveState();
     renderReview();
-    renderStats();
-    if (!hadQuestion || day.completed) renderQuestion();
-    if (!elements.answerInput.disabled && hadQuestion && !day.completed) elements.answerInput.value = typed;
-    if (!elements.answerForm.hidden || day.completed) setFeedback(grade.correct ? 'is-correct' : 'is-wrong', grade.correct ? 'Marked as correct' : 'Marked as wrong',
-      `${word.kana} = ${word.english}. ${grade.correct ? 'Your previous answer now counts towards today’s ten.' : 'Your previous answer is saved for review.'}`);
-    if (!elements.answerForm.hidden && !elements.answerInput.disabled) elements.answerInput.focus();
+    renderQuestion();
   });
 
   function renderCalendar() {
@@ -1087,10 +1091,22 @@
   elements.listeningForm.addEventListener('submit', submitListening);
   elements.listeningNotSure.addEventListener('click', (event) => submitListening(event, true));
   elements.listeningMarks.forEach((button) => button.addEventListener('click', () => markListening(button.dataset.listeningMark === 'got')));
+  elements.listeningNext.addEventListener('click', () => {
+    if (refreshListeningDay()) return;
+    const session = getListeningSession();
+    if (!session.showGradedAnswer) return;
+    session.showGradedAnswer = false;
+    saveState();
+    stopListeningAudio();
+    renderListening();
+    if (session.answers.length === LISTENING_SIZE) elements.listeningRestart.focus();
+    else elements.listeningPlay.focus();
+  });
   elements.listeningRestart.addEventListener('click', () => {
     stopListeningAudio();
     const session = getListeningSession();
     session.answers = [];
+    session.showGradedAnswer = false;
     listeningAttempt = null;
     saveState();
     renderListening();
