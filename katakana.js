@@ -526,6 +526,7 @@
       return {
         usedWords: Array.isArray(saved.usedWords) ? saved.usedWords : [],
         wrongAnswers: Array.isArray(saved.wrongAnswers) ? saved.wrongAnswers : [],
+        katakanaReviewQueue: Array.isArray(saved.katakanaReviewQueue) ? saved.katakanaReviewQueue : [],
         lastKatakanaGrade: saved.lastKatakanaGrade && typeof saved.lastKatakanaGrade === 'object' ? saved.lastKatakanaGrade : null,
         listeningSession: saved.listeningSession && typeof saved.listeningSession === 'object' ? saved.listeningSession : null,
         usedListeningPhrases: Array.isArray(saved.usedListeningPhrases)
@@ -556,7 +557,17 @@
 
   function chooseQuestion() {
     const available = WORDS.filter((word) => !state.usedWords.includes(word.id));
-    if (!available.length) return null;
+    if (!available.length) {
+      const missed = new Set(state.wrongAnswers.filter(Boolean).map((entry) => entry.wordId));
+      state.katakanaReviewQueue = (state.katakanaReviewQueue || []).filter((id) => missed.has(id) && WORDS.some((word) => word.id === id));
+      if (!state.katakanaReviewQueue.length) state.katakanaReviewQueue = [...missed].filter((id) => WORDS.some((word) => word.id === id));
+      const nextId = state.katakanaReviewQueue.shift();
+      const word = WORDS.find((entry) => entry.id === nextId);
+      if (!word) return null;
+      state.currentQuestion = { date: today, wordId: word.id, review: true };
+      saveState();
+      return word;
+    }
     const word = available[Math.floor(Math.random() * available.length)];
     state.usedWords.push(word.id);
     state.currentQuestion = { date: today, wordId: word.id };
@@ -918,12 +929,13 @@
     state.listeningReview = state.listeningReview.filter((answer) => answer && answer.id !== phrase.id);
     if (!gotIt) state.listeningReview.push({ id: phrase.id, translation: listeningAttempt });
     listeningAttempt = null;
-    session.showGradedAnswer = true;
+    session.showGradedAnswer = false;
     saveState();
     stopListeningAudio();
     renderListening();
     refreshCalendar();
-    elements.listeningNext.focus();
+    if (session.answers.length === LISTENING_SIZE) elements.listeningRestart.focus();
+    else elements.listeningPlay.focus();
   }
 
   function renderQuestion() {
@@ -936,6 +948,7 @@
     if (gradedWord) {
       elements.kanaWord.textContent = gradedWord.kana;
       elements.answerInput.value = state.lastKatakanaGrade.givenAnswer || '';
+      elements.cardPrompt.textContent = state.lastKatakanaGrade.reviewing ? 'Review a missed word' : 'Translate this word';
       showFeedback(state.lastKatakanaGrade.correct, gradedWord);
       if (day.completed) elements.submitAnswer.textContent = 'Finish today’s quest →';
       return;
@@ -953,9 +966,10 @@
       elements.cardPrompt.textContent = 'Practice complete';
       elements.kanaWord.textContent = '—';
       elements.answerForm.hidden = true;
-      setFeedback('is-neutral', 'Word bank complete', 'Every available word has been used.');
+      setFeedback('is-neutral', 'Word bank complete', 'Every available word has been used and no missed words are waiting for review.');
       return;
     }
+    elements.cardPrompt.textContent = state.currentQuestion?.review ? 'Review a missed word' : 'Translate this word';
     elements.kanaWord.textContent = word.kana;
     elements.answerInput.value = '';
     elements.answerInput.disabled = false;
@@ -996,8 +1010,13 @@
       return;
     }
     const correct = word.answers.some((answer) => normalize(answer) === normalize(elements.answerInput.value));
-    state.lastKatakanaGrade = { date: today, wordId: word.id, givenAnswer: elements.answerInput.value.trim(), correct, showResult: true };
-    if (correct) getToday().correct += 1;
+    const reviewing = Boolean(state.currentQuestion?.review);
+    state.lastKatakanaGrade = { date: today, wordId: word.id, givenAnswer: elements.answerInput.value.trim(), correct, reviewing, showResult: true };
+    state.wrongAnswers = state.wrongAnswers.filter((answer) => answer && answer.wordId !== word.id);
+    if (correct) {
+      getToday().correct += 1;
+      renderReview();
+    }
     else {
       state.wrongAnswers.push({ wordId: word.id, givenAnswer: elements.answerInput.value.trim() });
       renderReview();

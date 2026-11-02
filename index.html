@@ -69,7 +69,7 @@
           <ul id="review-list" class="review-list"></ul>
         </section>
 
-        <p class="one-and-done"><span aria-hidden="true">✦</span> One-and-done words: wrong answers won’t come back.</p>
+        <p class="one-and-done"><span aria-hidden="true">✦</span> When the word bank runs out, missed words return for review.</p>
       </section>
 
       <section id="listening-view" class="view-panel" aria-labelledby="listening-title" hidden>
@@ -109,8 +109,8 @@
             <p>Your translation <span id="listening-attempt"></span></p>
             <p class="translation-hint" id="listening-grade-prompt">Did your answer convey the same meaning?</p>
             <div class="mark-actions" id="listening-mark-actions">
-              <button class="mark-got" type="button" data-listening-mark="got">Correct</button>
-              <button class="mark-review" type="button" data-listening-mark="review">Wrong</button>
+              <button class="mark-got" type="button" data-listening-mark="got">Correct · next →</button>
+              <button class="mark-review" type="button" data-listening-mark="review">Wrong · next →</button>
             </div>
             <p id="listening-grade-status" class="listening-grade-status" hidden></p>
             <div class="listening-result-actions">
@@ -309,7 +309,7 @@
     <script src="japanese-audio.js?v=answer-audio"></script>
     <script src="sushi-rolls.js?v=weekly-sushi"></script>
     <script src="gacha.js?v=calendar-celebration"></script>
-    <script src="katakana.js?v=answer-screens"></script>
+    <script src="katakana.js?v=missed-word-review"></script>
     <script src="kanji.js?v=answer-screens"></script>
   </body>
 </html>
