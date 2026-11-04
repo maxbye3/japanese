@@ -77,7 +77,7 @@ test('misses added during an existing set do not reroll it, and stay prioritised
 
 test('review priority still keeps each daily set distinct at a fresh-phrase cycle boundary', () => {
   const saved = new Map();
-  for (let day = 0; day < 12; day += 1) launch({ saved, clock: { now: localDay(day) }, random: 0 });
+  for (let day = 0; day < 13; day += 1) launch({ saved, clock: { now: localDay(day) }, random: 0 });
   const all = JSON.parse(saved.get(key)).usedListeningPhrases;
   const reviewId = all[0];
   saved.set(key, JSON.stringify({

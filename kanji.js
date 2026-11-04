@@ -128,6 +128,18 @@
     ['休憩所', 'きゅうけいじょ', 'rest area', 'Public facilities', ['resting area', 'rest stop', 'resting place']],
     ['忘れ物', 'わすれもの', 'lost property', 'Public facilities', ['lost items', 'lost belongings', 'lost and found', 'forgotten items']],
     ['避難所', 'ひなんじょ', 'evacuation shelter', 'Public notices', ['evacuation centre', 'evacuation center', 'emergency shelter', 'shelter']],
+
+    // A few N5-style basics alongside the everyday signs.
+    ['学校', 'がっこう', 'school', 'N5 basics', ["a school"]],
+    ['先生', 'せんせい', 'teacher', 'N5 basics', ["a teacher"]],
+    ['学生', 'がくせい', 'student', 'N5 basics', ["a student", "pupil"]],
+    ['日本', 'にほん', 'Japan', 'N5 basics', []],
+    ['山', 'やま', 'mountain', 'N5 basics', ["a mountain"]],
+    ['川', 'かわ', 'river', 'N5 basics', ["a river"]],
+    ['人', 'ひと', 'person', 'N5 basics', ["a person", "human"]],
+    ['本', 'ほん', 'book', 'N5 basics', ["a book"]],
+    ['犬', 'いぬ', 'dog', 'N5 basics', ["a dog"]],
+    ['猫', 'ねこ', 'cat', 'N5 basics', ["a cat"]],
   ].map(([text, reading, meaning, context, alternatives]) => ({
     id: text, text, reading, meaning, context, answers: [meaning, ...alternatives],
   }));
@@ -254,6 +266,16 @@
     '休憩所': 'A place to sit down and take a break.',
     '忘れ物': 'Belongings that someone accidentally left behind.',
     '避難所': 'A safe place to go during a disaster.',
+    '学校': 'Children go here to take lessons.',
+    '先生': 'The person who teaches a class.',
+    '学生': 'A person who studies at a school or university.',
+    '日本': 'The country where Tokyo is the capital.',
+    '山': 'A very high natural landform, like Fuji.',
+    '川': 'A long stream of water flowing towards the sea.',
+    '人': 'One human being, rather than an animal.',
+    '本': 'Pages bound together for you to read.',
+    '犬': 'A pet that barks and wags its tail.',
+    '猫': 'A pet that meows and likes to purr.',
   };
   const STAMP_GOAL = 10;
   const view = document.querySelector('#kanji-view');

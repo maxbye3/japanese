@@ -110,9 +110,9 @@ test('midnight resets hints instead of applying a stale click to the next questi
   assert.equal(app.kanjiState().day.answers.length, 0);
 });
 
-test('all 120 signs have clues; hints stay hidden after answers and bank exhaustion', () => {
+test('all 130 signs have clues; hints stay hidden after answers and bank exhaustion', () => {
   const ids = [];
-  for (let day = 0; day < 12; day += 1) {
+  for (let day = 0; day < 13; day += 1) {
     const saved = new Map([[kanjiKey, JSON.stringify({ usedIds: ids })]]);
     const app = launch({ saved, clock: { now: localDay(day) }, random: 0 });
     open(app);

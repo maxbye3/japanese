@@ -120,21 +120,21 @@ test('legacy completed sessions migrate their score, but old symbol-only stamps 
   assert.equal(app.els['nav-stamp-count'].textContent, '2');
 });
 
-test('a single day can consume all 120 unique signs without recycling or extra stamps', () => {
+test('a single day can consume all 130 unique signs without recycling or extra stamps', () => {
   const app = launch({ random: 0 });
   open(app);
   const seen = new Set();
-  for (let index = 0; index < 120; index += 1) {
+  for (let index = 0; index < 130; index += 1) {
     const id = app.els['kanji-sign'].textContent;
     assert.equal(seen.has(id), false);
     seen.add(id);
     submit(app, 'still learning');
     submit(app);
   }
-  assert.equal(seen.size, 120);
+  assert.equal(seen.size, 130);
   assert.equal(app.els['kanji-form'].hidden, true);
   assert.equal(app.els['kanji-context'].textContent, 'Bank complete');
-  assert.deepEqual(app.kanjiState().dailyStats['2026-10-16'], { answered: 120, correct: 0 });
+  assert.deepEqual(app.kanjiState().dailyStats['2026-10-16'], { answered: 130, correct: 0 });
   assert.equal(stamp(app, '2026-10-16').text, '漢 0');
   assert.equal(app.els['stamp-total'].textContent, '1');
 });

@@ -14,7 +14,7 @@ function submit(app, translation) {
 function finishReview(app) {
   let tested = 0;
   while (app.kanjiState().reviewSession) {
-    assert(tested < 120, 'A review round should ask each saved sign only once');
+    assert(tested < 130, 'A review round should ask each saved sign only once');
     const before = app.kanjiState();
     if (!app.els['kanji-input'].disabled) submit(app, 'still learning');
     assert.deepEqual(app.kanjiState().usedIds, before.usedIds);
@@ -76,10 +76,10 @@ test('missed signs stay in review and the katakana/listening reset preserves kan
   assert.equal(app.els['kanji-review-count'].textContent, '0 signs');
 });
 
-test('120 new signs are introduced once; saved misses remain reviewable after bank exhaustion', () => {
+test('130 new signs are introduced once; saved misses remain reviewable after bank exhaustion', () => {
   const saved = new Map();
   const seen = new Set();
-  for (let day = 0; day < 12; day += 1) {
+  for (let day = 0; day < 13; day += 1) {
     const app = launch({ saved, clock: { now: localDay(day) } });
     open(app);
     finishReview(app);
@@ -98,16 +98,16 @@ test('120 new signs are introduced once; saved misses remain reviewable after ba
     assert.equal(app.els['kanji-submit'].textContent, day === 0 ? 'Keep going →' : 'Next sign →');
     assert.equal(app.kanjiState().day.answers.length, 10);
   }
-  assert.equal(seen.size, 120);
-  for (const day of [12, 13, 30]) {
+  assert.equal(seen.size, 130);
+  for (const day of [13, 14, 30]) {
     const app = launch({ saved, clock: { now: localDay(day) } });
     open(app);
     assert.equal(app.els['kanji-round'].hidden, false);
     finishReview(app);
     assert.equal(app.els['kanji-form'].hidden, true);
     assert.equal(app.els['kanji-context'].textContent, 'Bank complete');
-    assert.equal(app.kanjiState().usedIds.length, 120);
-    assert.equal(app.els['kanji-review-count'].textContent, '120 signs');
+    assert.equal(app.kanjiState().usedIds.length, 130);
+    assert.equal(app.els['kanji-review-count'].textContent, '130 signs');
   }
 
   const ids = [...seen];
@@ -120,7 +120,7 @@ test('120 new signs are introduced once; saved misses remain reviewable after ba
   assert.equal(app.els['kanji-form'].hidden, true);
   assert.equal(app.els['kanji-context'].textContent, 'Bank complete');
   assert.equal(app.els['kanji-count'].textContent, '1');
-  assert.equal(app.kanjiState().usedIds.length, 120);
+  assert.equal(app.kanjiState().usedIds.length, 130);
 });
 
 test('midnight discards a stale answer and never repeats an abandoned sign', () => {

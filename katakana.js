@@ -439,6 +439,18 @@
     { id: 'read-book', japanese: 'この本は読みやすいので、おすすめです。', meaning: "This book is easy to read, so I recommend it." },
     { id: 'cook-able', japanese: '簡単な料理なら、作ることができます。', meaning: 'I can cook simple dishes.' },
     { id: 'practice-daily', japanese: '毎日練習すれば、少しずつ上手になります。', meaning: "If you practise every day, you'll gradually improve." },
+
+    // A small helping of short, N5-style beginner phrases.
+    { id: 'n5-student', japanese: '私は学生です。', meaning: 'I am a student.' },
+    { id: 'n5-book', japanese: 'これは本です。', meaning: 'This is a book.' },
+    { id: 'n5-water', japanese: '水をください。', meaning: 'Please give me some water.' },
+    { id: 'n5-time', japanese: '今、何時ですか。', meaning: 'What time is it now?' },
+    { id: 'n5-cat', japanese: '猫がいます。', meaning: 'There is a cat.' },
+    { id: 'n5-bread', japanese: 'パンを食べます。', meaning: 'I eat bread.' },
+    { id: 'n5-school', japanese: '毎日、学校へ行きます。', meaning: 'I go to school every day.' },
+    { id: 'n5-hot', japanese: '今日は暑いです。', meaning: 'It is hot today.' },
+    { id: 'n5-station', japanese: '駅はどこですか。', meaning: 'Where is the station?' },
+    { id: 'n5-coffee', japanese: 'コーヒーが好きです。', meaning: 'I like coffee.' },
   ];
 
   const STORAGE_KEY = 'katakana-quest-progress-v1';

@@ -41,11 +41,11 @@ test('today has ten fixed phrases, saved progress, and replay without rerolling'
   assert.equal(app.els['listening-review-count'].textContent, '1 phrase');
 });
 
-test('twelve daily sets cover 120 distinct prompts before the bank cycles', () => {
+test('thirteen daily sets cover 130 distinct prompts before the bank cycles', () => {
   const saved = new Map();
   const ids = new Set();
   const japanese = new Set();
-  for (let day = 0; day < 12; day += 1) {
+  for (let day = 0; day < 13; day += 1) {
     const app = launch({ saved, clock: { now: localDay(day) } });
     const selected = app.state().listeningSession.phraseIds;
     assert.equal(selected.length, 10);
@@ -62,8 +62,8 @@ test('twelve daily sets cover 120 distinct prompts before the bank cycles', () =
     }
     assert.equal(app.els['listening-count'].textContent, '10');
   }
-  assert.equal(ids.size, 120);
-  assert.equal(japanese.size, 120);
+  assert.equal(ids.size, 130);
+  assert.equal(japanese.size, 130);
   const nextCycle = launch({ saved, clock: { now: localDay(12) } });
   const selected = nextCycle.state().listeningSession.phraseIds;
   assert.equal(new Set(selected).size, 10);
@@ -116,9 +116,9 @@ test('the former five phrase quiz migrates with saved misses first and understoo
 
 test('a cycle boundary mid-set still produces ten distinct prompts', () => {
   const saved = new Map();
-  for (let day = 0; day < 12; day += 1) launch({ saved, clock: { now: localDay(day) } });
+  for (let day = 0; day < 13; day += 1) launch({ saved, clock: { now: localDay(day) } });
   const all = JSON.parse(saved.get(key)).usedListeningPhrases;
-  assert.equal(all.length, 120);
+  assert.equal(all.length, 130);
   const lastThree = all.slice(-3);
   saved.set(key, JSON.stringify({ usedListeningPhrases: all.slice(0, -3) }));
   const app = launch({ saved });
