@@ -206,7 +206,7 @@
   function update(completions) {
     state = load();
     const today = dayNumber(dateKey());
-    const dates = [...new Set([...completions.katakana, ...completions.listening, ...completions.kanji])]
+    const dates = [...new Set([...completions.katakana, ...completions.listening, ...completions.kanji, ...(completions.gettysburg || [])])]
       .filter((key) => dayNumber(key) !== null && dayNumber(key) <= today).sort();
     const earnedWeeks = new Set(state.sushiWeeks.map((reward) => reward.unlockedOn));
     let run = 0;

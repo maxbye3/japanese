@@ -1,0 +1,7 @@
+
+.answer-win { position: fixed; z-index: 100; top: 20px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100vw - 32px); text-align: center; padding: 18px 28px; border-radius: 24px; background: #225943; color: #fff8dc; box-shadow: 0 8px 32px #22594344; font-size: 1.4rem; font-weight: 800; pointer-events: none; }
+.play-win { animation: answer-win-pop 1.3s ease both; }
+@keyframes answer-win-pop { 0% { transform: translate(-50%, -30px) scale(.65); opacity: 0; } 20% { transform: translate(-50%, 0) scale(1.12); opacity: 1; } 40%, 80% { transform: translate(-50%, 0) scale(1); opacity: 1; } 100% { transform: translate(-50%, -12px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .play-win { animation: none; } }
+
+.answer-win.is-learning { background: #f7f3eb; color: #403c34; font-size: 1.05rem; border: 1px solid #d9d2c3; }

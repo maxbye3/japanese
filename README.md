@@ -38,6 +38,16 @@ Earn a calendar stamp in any practice mode to build a streak. Every complete sev
 
 Your capsule collection appears only in Calendar mode, below the calendar. The streak strip links straight to it. Earning a new capsule during practice plays a short capsule bounce with confetti and a “See it in Calendar” button, without opening the reward or interrupting the current mode. Close it with × or Escape; it disappears after 6.5 seconds unless a button has keyboard focus. Reduced-motion preferences show a static notification. Reloads and historical reward backfills do not replay the celebration. Click an unlocked capsule, or focus it and press Enter or Space, to reveal its collectible. Open queued sushi rewards one at a time with “Next sushi capsule”; opened rolls stay on your sushi shelf. Each completed streak week earns one sushi capsule, even when several categories are completed on the same date. Ramen, Mount Fuji, and ikebana remain one-time milestone rewards. Existing saved weeks are credited automatically; your original opened sushi keeps its original illustration. Earned capsules, unopened rewards, opened collectibles, and your best streak are stored separately in `localStorage` under `katakana-quest-gacha-v1`, survive reloads, and stay earned after a streak breaks or katakana/listening practice is reset. Clearing browser data removes them; the collection is local to this browser and device. Existing saved stamped dates count automatically, including older qualifying streaks.
 
+## Current practice flow
+
+Katakana and kanji now check and advance in one click. Listening offers direct **Correct · next** / **Wrong · next** grading, with optional **Compare translation** before you decide. Every Japanese mode has **I don’t know**, which records a miss and advances. The previous answer can be marked wrong from the next question, including after reload, without losing the answer currently being typed. Correct answers show a brief celebration; reduced-motion settings are respected. Wrong answers briefly show the meaning and remain in review.
+
+There are now 30 beginner N5-style listening phrases and 30 beginner kanji entries. Fresh selection favours basics with a 70% chance whenever eligible basics remain. Listening basics can recur on later days, with ten distinct phrases per daily set; existing daily sets stay unchanged. Kanji continues to avoid repeats among new signs, and saved misses return in review.
+
+Both apps open the same calendar. Any nonblank writing in Gettysburg earns a daily top hat, alongside Japanese stamps, and counts towards the shared practice streak. Old completed-recitation records remain saved and contribute their dates. Drafts and Japanese answers still use separate storage. No hat is awarded merely for opening the page or checking an empty draft.
+
+Run `node --test tests/practice-flow.test.cjs` for the new answer-flow regression checks. Older tests describing a separate result/Next screen or the smaller beginner bank predate this flow.
+
 ## Play online
 
 <https://maxbye.co/japanese/>

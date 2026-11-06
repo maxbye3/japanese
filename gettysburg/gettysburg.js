@@ -15,13 +15,14 @@
   const now = new Date();
   let month = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  function save() {
+  function save(recordActivity = false) {
     try {
       try {
         const latest = core.restore(JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'));
         state.completions = [...new Map([...latest.completions, ...state.completions].map((entry) => [entry.id, entry])).values()];
       } catch { /* Replace unreadable saved data with the current valid state. */ }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      if (recordActivity) window.PracticeUI.recordWriting(state.draft.text);
       el['storage-notice'].hidden = true;
     } catch { el['storage-notice'].hidden = false; }
   }
@@ -35,7 +36,7 @@
     el['progress-fill'].style.width = `${result.matched / result.total * 100}%`;
     el['progress-description'].textContent = result.matched ? 'Words remembered, in order.' : 'Begin with the opening words.';
     el['hint-count'].textContent = state.draft.hints + (state.draft.hints === 1 ? ' hint used' : ' hints used');
-    el['hat-total'].textContent = String(state.completions.length);
+    el['hat-total'].textContent = String(window.PracticeUI.hats().size);
   }
 
   function showFeedback(result) {
@@ -84,10 +85,11 @@
     if (finished()) return;
     state.draft.text = el.recitation.value;
     const result = core.check(state);
-    save();
+    save(true);
     renderProgress(result);
     showFeedback(result);
     renderCompletion(result.awarded);
+    if (result.matched && !result.wrong) window.PracticeUI.win(result.complete ? 'Address complete! 🎩' : 'Every word so far is right! ✦');
     if (result.awarded) {
       el['feedback-title'].textContent = 'Address complete! One top hat earned.';
       el['write-again'].focus();
@@ -109,7 +111,8 @@
   }
 
   function setView(view) {
-    const calendar = view === 'calendar';
+    if (view === 'calendar') { window.location.href = '../#calendar'; return; }
+    const calendar = false;
     el['practice-view'].hidden = calendar;
     el['calendar-view'].hidden = !calendar;
     el['practice-tab'].setAttribute('aria-pressed', String(!calendar));
@@ -120,7 +123,7 @@
   function renderCalendar() {
     const counts = new Map();
     state.completions.forEach((entry) => counts.set(entry.date, (counts.get(entry.date) || 0) + 1));
-    el['completion-total'].textContent = String(state.completions.length);
+    el['completion-total'].textContent = String(window.PracticeUI.hats().size);
     el['calendar-empty'].hidden = state.completions.length > 0;
     el['month-label'].textContent = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric' }).format(month);
     const today = core.dayKey();
@@ -170,7 +173,8 @@
   el.recitation.addEventListener('input', () => {
     if (finished()) return;
     state.draft.text = el.recitation.value;
-    save();
+    save(true);
+    el['hat-total'].textContent = String(window.PracticeUI.hats().size);
   });
   el['recitation-form'].addEventListener('submit', check);
   el.recitation.addEventListener('keydown', (event) => {
@@ -193,7 +197,7 @@
     try {
       const incoming = core.restore(JSON.parse(event.newValue));
       state.completions = [...new Map([...state.completions, ...incoming.completions].map((entry) => [entry.id, entry])).values()];
-      el['hat-total'].textContent = String(state.completions.length);
+      el['hat-total'].textContent = String(window.PracticeUI.hats().size);
       renderCompletion();
       if (!el['calendar-view'].hidden) renderCalendar();
     } catch { /* Keep the current draft when another tab contains an unreadable value. */ }

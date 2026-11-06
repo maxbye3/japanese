@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
     <title>Max's Japanese Listening Website</title>
-    <link rel="stylesheet" href="katakana.css?v=answer-screens" />
+    <link rel="stylesheet" href="katakana.css?v=practice-flow-2" />
     <link rel="stylesheet" href="practice-switcher.css?v=1" />
   </head>
   <body>
+    <div id="answer-win" class="answer-win" role="status" aria-live="polite" hidden></div>
     <main class="app-shell">
       <header class="site-header">
         <a class="brand" href="index.html" aria-label="Max's Japanese Listening Website home">
@@ -53,6 +54,7 @@
               <input id="answer-input" name="answer" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="type your answer" required />
               <button class="primary-button" id="submit-answer" type="submit">Check answer <span aria-hidden="true">↗</span></button>
             </div>
+          <button id="katakana-dont-know" class="not-sure-button" type="button">I don’t know</button>
           </form>
           <div class="answer-feedback-row">
             <div id="feedback" class="feedback" role="status" aria-live="polite" hidden></div>
@@ -84,7 +86,7 @@
         <div class="progress-track" aria-label="Listening progress"><span id="listening-progress"></span></div>
 
         <div class="practice-card listening-card">
-          <div class="card-meta"><span>Listen first · N4 + a little N5</span><span id="listening-step">Phrase 1 of 10</span></div>
+          <div class="card-meta"><span>Listen first · Beginner-friendly · N5 + N4</span><span id="listening-step">Phrase 1 of 10</span></div>
           <div id="listening-prompt" class="audio-prompt">
             <span class="audio-mark" aria-hidden="true">♪</span>
             <button class="play-button" id="listening-play" type="button">▶ Play Japanese</button>
@@ -97,7 +99,7 @@
               <input id="listening-input" name="translation" type="text" autocomplete="off" spellcheck="false" maxlength="180" placeholder="type what it means" required />
               <button class="primary-button" type="submit">Compare translation <span aria-hidden="true">↗</span></button>
             </div>
-            <button id="listening-not-sure" class="not-sure-button" type="button">Not sure</button>
+            <button id="listening-not-sure" class="not-sure-button" type="button">I don’t know</button>
           </form>
           <div id="listening-transcript" class="listening-transcript" role="status" aria-live="polite" hidden>
             <p class="transcript-label">What you heard</p>
@@ -108,16 +110,17 @@
             <p>Suggested meaning <strong id="listening-meaning"></strong></p>
             <p>Your translation <span id="listening-attempt"></span></p>
             <p class="translation-hint" id="listening-grade-prompt">Did your answer convey the same meaning?</p>
+
+            <p id="listening-grade-status" class="listening-grade-status" hidden></p>
+            <div class="listening-result-actions">
+              <button id="listening-next" class="primary-button" type="button" hidden>Next phrase →</button>
+            </div>
+          </div>
             <div class="mark-actions" id="listening-mark-actions">
               <button class="mark-got" type="button" data-listening-mark="got">Correct · next →</button>
               <button class="mark-review" type="button" data-listening-mark="review">Wrong · next →</button>
             </div>
-            <p id="listening-grade-status" class="listening-grade-status" hidden></p>
-            <div class="listening-result-actions">
-              <button id="listening-grade-override" class="grade-override" type="button" hidden></button>
-              <button id="listening-next" class="primary-button" type="button" hidden>Next phrase →</button>
-            </div>
-          </div>
+          <button id="listening-grade-override" class="grade-override" type="button" hidden></button>
           <div id="listening-done" class="listening-done" hidden>
             <span class="done-mark" aria-hidden="true">✦</span>
             <h3>Today’s ten complete!</h3>
@@ -173,6 +176,7 @@
               <input id="kanji-input" name="meaning" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="100" placeholder="type the meaning" required />
               <button id="kanji-submit" class="primary-button" type="submit">Check answer ↗</button>
             </div>
+          <button id="kanji-dont-know" class="not-sure-button" type="button">I don’t know</button>
           </form>
           <div class="kanji-feedback-row">
             <div id="kanji-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
@@ -213,6 +217,7 @@
             <span><span class="day-stamp stamp-katakana" aria-hidden="true">カ</span> Katakana</span>
             <span><span class="day-stamp stamp-listening" aria-hidden="true">♪</span> Listening</span>
             <span><span class="day-stamp stamp-kanji" aria-hidden="true">漢</span> Kanji</span>
+            <span>🎩 Gettysburg practice</span>
           </div>
         </div>
 
@@ -304,12 +309,13 @@
       <span id="kanji-tooltip-meaning"></span>
       <small>Character meaning — a word’s meaning can differ.</small>
     </div>
+    <script src="practice-ui.js?v=2"></script>
     <script src="kanji-meanings.js?v=n5-sprinkling"></script>
     <script src="kanji-tooltips.js?v=kanji-tooltips"></script>
     <script src="japanese-audio.js?v=answer-audio"></script>
     <script src="sushi-rolls.js?v=weekly-sushi"></script>
     <script src="gacha.js?v=calendar-celebration"></script>
-    <script src="katakana.js?v=n5-sprinkling"></script>
-    <script src="kanji.js?v=n5-sprinkling"></script>
+    <script src="katakana.js?v=practice-flow-2"></script>
+    <script src="kanji.js?v=practice-flow-2"></script>
   </body>
 </html>

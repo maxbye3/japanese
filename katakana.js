@@ -440,6 +440,26 @@
     { id: 'cook-able', japanese: '簡単な料理なら、作ることができます。', meaning: 'I can cook simple dishes.' },
     { id: 'practice-daily', japanese: '毎日練習すれば、少しずつ上手になります。', meaning: "If you practise every day, you'll gradually improve." },
 
+    { id: 'n5-extra-name', japanese: '私の名前はマックスです。', meaning: 'My name is Max.' },
+    { id: 'n5-extra-cat', japanese: '猫は白いです。', meaning: 'The cat is white.' },
+    { id: 'n5-extra-dog', japanese: '犬が好きです。', meaning: 'I like dogs.' },
+    { id: 'n5-extra-tea', japanese: 'お茶を飲みます。', meaning: 'I drink tea.' },
+    { id: 'n5-extra-bread', japanese: 'パンを買います。', meaning: 'I buy bread.' },
+    { id: 'n5-extra-home', japanese: '家に帰ります。', meaning: 'I go home.' },
+    { id: 'n5-extra-mother', japanese: '母は先生です。', meaning: 'My mother is a teacher.' },
+    { id: 'n5-extra-father', japanese: '父は会社員です。', meaning: 'My father is an office worker.' },
+    { id: 'n5-extra-today', japanese: '今日は月曜日です。', meaning: 'Today is Monday.' },
+    { id: 'n5-extra-tomorrow', japanese: '明日、学校に行きます。', meaning: 'I will go to school tomorrow.' },
+    { id: 'n5-extra-cold', japanese: '今日は寒いです。', meaning: 'It is cold today.' },
+    { id: 'n5-extra-hot', japanese: 'このお茶は熱いです。', meaning: 'This tea is hot.' },
+    { id: 'n5-extra-price', japanese: 'これはいくらですか。', meaning: 'How much is this?' },
+    { id: 'n5-extra-where', japanese: 'トイレはどこですか。', meaning: 'Where is the toilet?' },
+    { id: 'n5-extra-big', japanese: 'この家は大きいです。', meaning: 'This house is big.' },
+    { id: 'n5-extra-small', japanese: 'この犬は小さいです。', meaning: 'This dog is small.' },
+    { id: 'n5-extra-friend', japanese: '友達と行きます。', meaning: 'I go with a friend.' },
+    { id: 'n5-extra-read', japanese: '本を読みます。', meaning: 'I read a book.' },
+    { id: 'n5-extra-sleep', japanese: '十時に寝ます。', meaning: 'I go to bed at ten.' },
+    { id: 'n5-extra-wake', japanese: '七時に起きます。', meaning: 'I get up at seven.' },
     // A small helping of short, N5-style beginner phrases.
     { id: 'n5-student', japanese: '私は学生です。', meaning: 'I am a student.' },
     { id: 'n5-book', japanese: 'これは本です。', meaning: 'This is a book.' },
@@ -457,6 +477,7 @@
   const QUEST_SIZE = 10;
   const LISTENING_SIZE = 10;
   const STAMP_TYPES = [
+    { key: 'gettysburg', label: 'Gettysburg practice', symbol: '🎩' },
     { key: 'katakana', label: 'Katakana', symbol: 'カ' },
     { key: 'listening', label: 'N4 listening', symbol: '♪' },
     { key: 'kanji', label: 'Everyday kanji', symbol: '漢' },
@@ -630,7 +651,7 @@
 
   function correctableKatakanaWord() {
     const grade = state.lastKatakanaGrade;
-    if (!grade || grade.date !== today || !grade.showResult || typeof grade.correct !== 'boolean') return null;
+    if (!grade || grade.date !== today || typeof grade.correct !== 'boolean') return null;
     return WORDS.find((word) => word.id === grade.wordId) || null;
   }
 
@@ -638,7 +659,7 @@
     const word = correctableKatakanaWord();
     elements.gradeOverride.hidden = !word;
     if (word) {
-      elements.gradeOverride.textContent = state.lastKatakanaGrade.correct ? 'Actually... I got this wrong' : 'Actually... I got this right';
+      elements.gradeOverride.textContent = 'I got that last one wrong';
       elements.gradeOverride.setAttribute('aria-label', `${elements.gradeOverride.textContent}: ${word.kana}`);
     }
   }
@@ -664,6 +685,7 @@
       // Katakana and listening stamps remain available if kanji storage cannot be read.
     }
     return {
+      gettysburg: window.PracticeUI.hats(),
       katakana: new Set(Object.keys(state.days).filter((date) => state.days[date] && state.days[date].completed)),
       listening: new Set(state.listeningCompletedDays),
       kanji: new Set(kanjiDays.filter((date) => typeof date === 'string')),
@@ -768,7 +790,9 @@
         used = new Set(selected);
         available = PHRASES.filter((phrase) => !used.has(phrase.id));
       }
-      const phrase = available[Math.floor(Math.random() * available.length)];
+      const basics = PHRASES.filter((phrase) => phrase.id.startsWith('n5-') && !selected.includes(phrase.id));
+      const pool = basics.length && Math.random() < 0.7 ? basics : available;
+      const phrase = pool[Math.floor(Math.random() * pool.length)];
       selected.push(phrase.id);
       used.add(phrase.id);
     }
@@ -840,25 +864,26 @@
   function renderListeningCorrection() {
     const session = getListeningSession();
     const answer = session.answers.at(-1);
-    elements.listeningGradeOverride.hidden = !session.showGradedAnswer || !answer || listeningAttempt !== null;
+    elements.listeningGradeOverride.hidden = !answer;
     if (answer) {
-      elements.listeningGradeOverride.textContent = answer.gotIt ? 'Actually... I got this wrong' : 'Actually... I got this right';
+      elements.listeningGradeOverride.textContent = 'I got that last one wrong';
       const phrase = PHRASES.find((entry) => entry.id === answer.id);
       elements.listeningGradeOverride.setAttribute('aria-label', elements.listeningGradeOverride.textContent + ': ' + phrase.meaning);
     }
   }
 
   elements.listeningGradeOverride.addEventListener('click', () => {
-    if (refreshListeningDay() || listeningAttempt !== null || !getListeningSession().showGradedAnswer) return;
+    if (refreshListeningDay()) return;
     const session = getListeningSession();
     const answer = session.answers.at(-1);
     if (!answer) return;
-    answer.gotIt = !answer.gotIt;
+    answer.gotIt = false;
     answer.manuallyGraded = true;
     state.listeningReview = state.listeningReview.filter((entry) => entry && entry.id !== answer.id);
     if (!answer.gotIt) state.listeningReview.push({ id: answer.id, translation: answer.translation });
     saveState();
-    renderListening();
+    renderListeningCorrection();
+    renderListeningReview();
     if (session.answers.length === LISTENING_SIZE) {
       const understood = session.answers.filter((entry) => entry.gotIt).length;
       elements.listeningSummary.textContent = `You marked ${understood} of ${LISTENING_SIZE} as understood. Come back tomorrow for a new set, or replay saved phrases below.`;
@@ -879,7 +904,7 @@
     elements.listeningForm.hidden = done || graded;
     elements.listeningFeedback.hidden = true;
     elements.listeningNext.hidden = !graded;
-    elements.listeningMarkActions.hidden = graded;
+    elements.listeningMarkActions.hidden = done || graded;
     elements.listeningGradePrompt.hidden = graded;
     elements.listeningGradeStatus.hidden = !graded;
     elements.listeningTranscript.hidden = true;
@@ -918,7 +943,6 @@
       return;
     }
     listeningAttempt = translation;
-    elements.listeningGradeOverride.hidden = true;
     elements.listeningForm.hidden = true;
     elements.listeningMeaning.textContent = phrase.meaning;
     elements.listeningAttempt.textContent = listeningAttempt || 'Not sure';
@@ -930,7 +954,8 @@
 
   function markListening(gotIt) {
     if (refreshListeningDay()) return;
-    if (listeningAttempt === null || getListeningSession().showGradedAnswer) return;
+    if (getListeningSession().showGradedAnswer) return;
+    if (listeningAttempt === null) listeningAttempt = elements.listeningInput.value.trim();
     const phrase = currentListeningPhrase();
     if (!phrase) return;
     const session = getListeningSession();
@@ -946,6 +971,7 @@
     stopListeningAudio();
     renderListening();
     refreshCalendar();
+    if (gotIt) window.PracticeUI.win();
     if (session.answers.length === LISTENING_SIZE) elements.listeningRestart.focus();
     else elements.listeningPlay.focus();
   }
@@ -956,7 +982,7 @@
     elements.cardPrompt.textContent = 'Translate this word';
     elements.answerForm.hidden = false;
     elements.practiceCard.classList.remove('is-correct', 'is-wrong');
-    const gradedWord = correctableKatakanaWord();
+    const gradedWord = state.lastKatakanaGrade?.showResult ? correctableKatakanaWord() : null;
     if (gradedWord) {
       elements.kanaWord.textContent = gradedWord.kana;
       elements.answerInput.value = state.lastKatakanaGrade.givenAnswer || '';
@@ -1005,7 +1031,7 @@
     elements.submitAnswer.textContent = 'Next word  →';
   }
 
-  function submitAnswer(event) {
+  function submitAnswer(event, dontKnow = false) {
     event.preventDefault();
     if (refreshKatakanaDay()) return;
     if (elements.answerInput.disabled) {
@@ -1017,13 +1043,13 @@
     }
     const word = currentWord();
     if (!word) return;
-    if (!elements.answerInput.value.trim()) {
+    if (!elements.answerInput.value.trim() && !dontKnow) {
       elements.answerInput.focus();
       return;
     }
     const correct = word.answers.some((answer) => normalize(answer) === normalize(elements.answerInput.value));
     const reviewing = Boolean(state.currentQuestion?.review);
-    state.lastKatakanaGrade = { date: today, wordId: word.id, givenAnswer: elements.answerInput.value.trim(), correct, reviewing, showResult: true };
+    state.lastKatakanaGrade = { date: today, wordId: word.id, givenAnswer: elements.answerInput.value.trim(), correct, reviewing, showResult: false };
     state.wrongAnswers = state.wrongAnswers.filter((answer) => answer && answer.wordId !== word.id);
     if (correct) {
       getToday().correct += 1;
@@ -1038,6 +1064,8 @@
     saveState();
     renderQuestion();
     window.JapaneseAudio.speak(word.kana);
+    if (correct) window.PracticeUI.win();
+    else window.PracticeUI.notice(`${word.kana} = ${word.english} · saved for review`);
   }
 
   elements.gradeOverride.addEventListener('click', () => {
@@ -1045,7 +1073,8 @@
     const word = correctableKatakanaWord();
     if (!word) return;
     const grade = state.lastKatakanaGrade;
-    grade.correct = !grade.correct;
+    if (!grade.correct) return;
+    grade.correct = false;
     grade.manuallyGraded = true;
     const day = getToday();
     day.correct = Math.max(0, day.correct + (grade.correct ? 1 : -1));
@@ -1053,8 +1082,10 @@
     state.wrongAnswers = state.wrongAnswers.filter((answer) => answer && answer.wordId !== word.id);
     if (!grade.correct) state.wrongAnswers.push({ wordId: word.id, givenAnswer: grade.givenAnswer });
     saveState();
+    const typed = elements.answerInput.value;
     renderReview();
     renderQuestion();
+    if (!elements.answerInput.disabled) elements.answerInput.value = typed;
   });
 
   function renderCalendar() {
@@ -1112,6 +1143,7 @@
     }
   }
 
+  document.querySelector('#katakana-dont-know').addEventListener('click', (event) => { elements.answerInput.value = ''; submitAnswer(event, true); });
   elements.answerForm.addEventListener('submit', submitAnswer);
   elements.tabs.forEach((tab) => tab.addEventListener('click', () => setView(tab.dataset.view)));
   elements.listeningPlay.addEventListener('click', () => {
@@ -1120,7 +1152,7 @@
     if (phrase) playListening(phrase);
   });
   elements.listeningForm.addEventListener('submit', submitListening);
-  elements.listeningNotSure.addEventListener('click', (event) => submitListening(event, true));
+  elements.listeningNotSure.addEventListener('click', (event) => { submitListening(event, true); markListening(false); });
   elements.listeningMarks.forEach((button) => button.addEventListener('click', () => markListening(button.dataset.listeningMark === 'got')));
   elements.listeningNext.addEventListener('click', () => {
     if (refreshListeningDay()) return;
@@ -1157,9 +1189,14 @@
     renderListening();
   });
 
+  if (state.lastKatakanaGrade?.showResult) { state.lastKatakanaGrade.showResult = false; state.currentQuestion = null; saveState(); }
+  if (state.listeningSession?.showGradedAnswer) { state.listeningSession.showGradedAnswer = false; saveState(); }
+  if (window.location?.hash === '#calendar') setView('calendar');
   renderReview();
   renderQuestion();
   renderListening();
+  window.addEventListener('storage', refreshCalendar);
+  window.addEventListener('focus', refreshCalendar);
   window.addEventListener('kanji:progress', refreshCalendar);
   window.addEventListener('gacha:calendar', () => {
     setView('calendar');

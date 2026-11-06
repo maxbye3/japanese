@@ -9,3 +9,7 @@ Completing the entire speech, including words revealed through hints, earns one 
 Draft text saves as you type. Hints, checked progress, and completion history persist under the separate `gettysburg-practice-v1` localStorage key; Japanese data is untouched. Storage failures show a visible notice, and unreadable saved data recovers to a fresh draft. This is browser-local storage; clearing site data removes the history. Earned hats are merged across open tabs; the most recently saved draft is the draft restored on reload.
 
 Run the checker and persistence tests with `node --test tests/gettysburg.test.cjs` from the repository root. The app also supports keyboard operation and reduced motion.
+
+## Shared calendar update
+
+The Calendar controls now open `../#calendar`, shared with Japanese. Any nonblank writing earns one practice hat per local day, including unfinished drafts and attempts with mistakes. Reloading does not add another daily hat. Past completion records remain saved; their dates also show hats. A correct checked passage now shows a brief win animation.

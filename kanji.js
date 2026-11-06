@@ -129,6 +129,26 @@
     ['忘れ物', 'わすれもの', 'lost property', 'Public facilities', ['lost items', 'lost belongings', 'lost and found', 'forgotten items']],
     ['避難所', 'ひなんじょ', 'evacuation shelter', 'Public notices', ['evacuation centre', 'evacuation center', 'emergency shelter', 'shelter']],
 
+    ['雨', 'あめ', 'rain', 'N5 basics', []],
+    ['火', 'ひ', 'fire', 'N5 basics', []],
+    ['木', 'き', 'tree', 'N5 basics', []],
+    ['金', 'かね', 'money', 'N5 basics', []],
+    ['土', 'つち', 'soil', 'N5 basics', []],
+    ['月', 'つき', 'moon', 'N5 basics', []],
+    ['日', 'ひ', 'day', 'N5 basics', []],
+    ['年', 'とし', 'year', 'N5 basics', []],
+    ['白', 'しろ', 'white', 'N5 basics', []],
+    ['赤', 'あか', 'red', 'N5 basics', []],
+    ['青', 'あお', 'blue', 'N5 basics', []],
+    ['大きい', 'おおきい', 'big', 'N5 basics', []],
+    ['小さい', 'ちいさい', 'small', 'N5 basics', []],
+    ['空', 'そら', 'sky', 'N5 basics', []],
+    ['耳', 'みみ', 'ear', 'N5 basics', []],
+    ['目', 'め', 'eye', 'N5 basics', []],
+    ['手', 'て', 'hand', 'N5 basics', []],
+    ['母', 'はは', 'mother', 'N5 basics', []],
+    ['父', 'ちち', 'father', 'N5 basics', []],
+    ['友達', 'ともだち', 'friend', 'N5 basics', []],
     // A few N5-style basics alongside the everyday signs.
     ['学校', 'がっこう', 'school', 'N5 basics', ["a school"]],
     ['先生', 'せんせい', 'teacher', 'N5 basics', ["a teacher"]],
@@ -146,6 +166,18 @@
 
   const STORAGE_KEY = 'katakana-quest-kanji-v1';
   const CLUES = {
+    '雨': 'Drops of water falling from clouds.', '空': 'Look above you on a clear day.',
+    '耳': 'You hear sounds with this.', '目': 'You see with this.', '手': 'The part of your body with fingers.',
+    '水': 'You drink this when you are thirsty.', '火': 'A flame that gives heat and light.',
+    '木': 'A tall plant with a trunk and branches.', '金': 'You use this to pay for things.',
+    '土': 'Plants grow in this on the ground.', '月': 'The bright object in the night sky.',
+    '日': 'A period of twenty-four hours.', '年': 'Twelve months make one of these.',
+    '白': 'The colour of fresh snow.', '赤': 'The colour of a ripe tomato.',
+    '青': 'The colour of a clear sky.', '大きい': 'The opposite of small.',
+    '小さい': 'The opposite of big.', '上': 'Higher than something else.',
+    '下': 'Lower than something else.', '右': 'The opposite direction to left.',
+    '左': 'The opposite direction to right.', '母': 'A female parent.',
+    '父': 'A male parent.', '友達': 'Someone you enjoy spending time with.',
     '入口': 'Look for this when you want to go into a building.',
     '出口': 'Look for this when you want to leave a building.',
     '非常口': 'The way out to use in a fire or other emergency.',
@@ -470,11 +502,18 @@
     };
   }
 
-  function renderCorrection(answer, reviewing) {
-    correctionTarget = { answer, reviewing };
-    elements['grade-override'].hidden = false;
-    elements['grade-override'].textContent = answer.correct ? 'Actually... I got this wrong' : 'Actually... I got this right';
-    elements['grade-override'].setAttribute('aria-label', elements['grade-override'].textContent + ': ' + answer.id);
+  function renderCorrection() {
+    const grade = state.lastGrade;
+    correctionTarget = null;
+    elements['grade-override'].hidden = !grade || grade.date !== dateKey();
+    if (!grade || grade.date !== dateKey()) return;
+    // Locate the persisted answer: lastGrade may be a deserialized copy after reload.
+    const list = grade.reviewing ? state.day.reviewAnswers : state.day.answers;
+    const answer = grade.reviewing ? list[grade.answer.dailyReviewIndex] : list.find((entry) => entry.id === grade.answer.id);
+    if (!answer) { elements['grade-override'].hidden = true; return; }
+    correctionTarget = { answer, reviewing: grade.reviewing };
+    elements['grade-override'].textContent = 'I got that last one wrong';
+    elements['grade-override'].setAttribute('aria-label', 'I got that last one wrong: ' + answer.id);
   }
 
   function renderSign(sign, answered, reviewing) {
@@ -517,6 +556,12 @@
 
   function render() {
     const day = getDay();
+    if (day.currentId && day.answers.some((answer) => answer.id === day.currentId)) { day.currentId = null; save(); }
+    if (state.reviewSession && state.reviewSession.answers.some((answer) => answer.id === state.reviewSession.ids[state.reviewSession.index])) {
+      if (state.reviewSession.index + 1 < state.reviewSession.ids.length) state.reviewSession.index += 1;
+      else state.reviewSession = null;
+      save();
+    }
     const stats = summarizeDay(day);
     elements.date.textContent = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());
     elements.count.textContent = String(stats.answered);
@@ -529,7 +574,7 @@
     elements.card.classList.remove('is-correct', 'is-wrong');
     elements.feedback.hidden = true;
     elements['grade-override'].hidden = true;
-    correctionTarget = null;
+    renderCorrection();
     elements.reading.hidden = true;
     elements.round.hidden = true;
     elements.hints.hidden = true;
@@ -550,7 +595,9 @@
     if (!day.currentId) {
       const available = SIGNS.filter((sign) => !state.usedIds.includes(sign.id));
       if (available.length) {
-        const sign = available[Math.floor(Math.random() * available.length)];
+        const basics = available.filter((sign) => sign.context === 'N5 basics');
+        const pool = basics.length && Math.random() < 0.7 ? basics : available;
+        const sign = pool[Math.floor(Math.random() * pool.length)];
         day.currentId = sign.id;
         state.usedIds.push(sign.id);
         save();
@@ -570,7 +617,7 @@
     renderSign(sign, answered, false);
   }
 
-  elements.form.addEventListener('submit', (event) => {
+  function submitAnswer(event, dontKnow = false) {
     event.preventDefault();
     if (!state.day || state.day.date !== dateKey()) {
       render();
@@ -586,7 +633,7 @@
         else state.reviewSession = null;
       } else {
         const translation = elements.input.value.trim();
-        if (!translation) return;
+        if (!translation && !dontKnow) return;
         const answer = makeAnswer(sign, translation);
         answer.dailyReviewIndex = day.reviewAnswers.length;
         day.reviewAnswers.push(answer);
@@ -595,6 +642,10 @@
         state.review = state.review.filter((entry) => entry && entry.id !== sign.id);
         if (!answer.correct || answer.assisted) state.review.push(answer);
         reading = sign.reading;
+        if (round.index + 1 < round.ids.length) round.index += 1;
+        else state.reviewSession = null;
+        if (answer.correct) window.PracticeUI.win();
+        else window.PracticeUI.notice(`${sign.text} = ${sign.meaning} · saved for review`);
       }
       save();
       render();
@@ -610,15 +661,20 @@
       return;
     }
     const translation = elements.input.value.trim();
-    if (!translation) return;
+    if (!translation && !dontKnow) return;
     const answer = makeAnswer(sign, translation);
     day.answers.push(answer);
+    day.currentId = null;
     state.lastGrade = { date: day.date, reviewing: false, answer };
     if (!answer.correct || answer.assisted) state.review.push(answer);
     save();
     render();
     window.JapaneseAudio.speak(sign.reading);
-  });
+    if (answer.correct) window.PracticeUI.win();
+    else window.PracticeUI.notice(`${sign.text} = ${sign.meaning} · saved for review`);
+  }
+  elements.form.addEventListener('submit', submitAnswer);
+  document.querySelector('#kanji-dont-know').addEventListener('click', (event) => { elements.input.value = ''; submitAnswer(event, true); });
 
   elements['grade-override'].addEventListener('click', () => {
     if (!state.day || state.day.date !== dateKey()) {
@@ -627,7 +683,7 @@
     }
     if (!correctionTarget) return;
     const { answer, reviewing } = correctionTarget;
-    answer.correct = !answer.correct;
+    answer.correct = false;
     answer.manuallyGraded = true;
     state.lastGrade = { date: state.day.date, reviewing, answer };
     state.review = state.review.filter((entry) => entry && entry.id !== answer.id);
