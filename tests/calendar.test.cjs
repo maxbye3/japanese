@@ -52,7 +52,7 @@ test('each category earns one distinct stamp only when its daily set is complete
   assert.equal(app.els['nav-stamp-count'].textContent, '3');
   app.tabs[3].listeners.click();
   assert.deepEqual(stamps(app, '2026-10-16'), ['カ', '♪', '漢']);
-  assert.match(cell(app, '2026-10-16').attributes['aria-label'], /Katakana, N4 listening, Everyday kanji/);
+  assert.match(cell(app, '2026-10-16').attributes['aria-label'], /Katakana, Hard N5 listening, Everyday kanji/);
   assert.equal(app.els['stamp-total'].textContent, '3');
 
   app = launch({ saved: app.saved });

@@ -306,171 +306,69 @@
     ['アイロン', 'iron', ['iron', 'clothes iron']],
   ].map(([kana, english, answers], index) => ({ id: `word-${index + 1}`, kana, english, answers }));
 
-  // Japanese stays audio-only until comparing a translation or choosing Not sure.
+  // Original N5-style listening practice: longer sentences and contrasting details.
+  // These are practice materials, not official JLPT exam questions.
   const PHRASES = [
-    { id: 'repeat', japanese: 'もう一度言ってください。', meaning: 'Please say that again.' },
-    { id: 'station', japanese: '駅までどうやって行きますか。', meaning: 'How do I get to the station?' },
-    { id: 'rain', japanese: '明日は雨が降るかもしれません。', meaning: 'It might rain tomorrow.' },
-    { id: 'closing', japanese: 'この店は何時まで開いていますか。', meaning: 'What time does this shop close?' },
-    { id: 'home', japanese: '今日は早く帰らなければなりません。', meaning: 'I have to go home early today.' },
-    { id: 'speak-slowly', japanese: 'もう少しゆっくり話していただけませんか。', meaning: 'Could you speak a little more slowly?' },
-    { id: 'write-name', japanese: '名前をここに書いてください。', meaning: 'Please write your name here.' },
-    { id: 'word-meaning', japanese: 'この言葉の意味を教えてもらえますか。', meaning: 'Could you tell me what this word means?' },
-    { id: 'not-understood', japanese: 'すみませんが、よく分かりませんでした。', meaning: "I'm sorry, I didn't quite understand." },
-    { id: 'call-later', japanese: '後で電話してもいいですか。', meaning: 'May I call you later?' },
-
-    { id: 'change-trains', japanese: '次の駅で電車を乗り換えてください。', meaning: 'Please change trains at the next station.' },
-    { id: 'last-train', japanese: '最後の電車に間に合わないかもしれません。', meaning: 'I might not make it in time for the last train.' },
-    { id: 'bus-stop', japanese: 'バスが止まってから降りてください。', meaning: 'Please get off after the bus has stopped.' },
-    { id: 'walk-station', japanese: '駅まで歩いて十分ぐらいかかります。', meaning: 'It takes about ten minutes to walk to the station.' },
-    { id: 'missed-bus', japanese: 'バスに乗れなかったので、歩いて帰りました。', meaning: "I couldn't catch the bus, so I walked home." },
-    { id: 'ticket-before', japanese: '電車に乗る前に、切符を買ってください。', meaning: 'Please buy a ticket before boarding the train.' },
-    { id: 'bus-faster', japanese: '歩くより、バスで行ったほうが早いです。', meaning: 'Taking the bus is faster than walking.' },
-    { id: 'train-delay', japanese: '電車が遅れているので、少し待ちましょう。', meaning: "The train is delayed, so let's wait a little." },
-    { id: 'seat-free', japanese: 'この席に座ってもいいですか。', meaning: 'May I sit in this seat?' },
-    { id: 'next-bus', japanese: '次のバスが来るまで、ここで待ちましょう。', meaning: "Let's wait here until the next bus comes." },
-
-    { id: 'try-clothes', japanese: 'この服を着てみてもいいですか。', meaning: 'May I try on these clothes?' },
-    { id: 'smaller-size', japanese: 'もう少し小さいサイズはありませんか。', meaning: 'Do you have a slightly smaller size?' },
-    { id: 'pay-card', japanese: 'カードで払うことができますか。', meaning: 'Can I pay by card?' },
-    { id: 'bag-lighter', japanese: 'このかばんはあのかばんより軽いです。', meaning: 'This bag is lighter than that bag.' },
-    { id: 'too-expensive', japanese: '少し高すぎるので、今日は買いません。', meaning: "It's a little too expensive, so I won't buy it today." },
-    { id: 'buy-present', japanese: '友達にあげるプレゼントを探しています。', meaning: "I'm looking for a present to give to a friend." },
-    { id: 'shop-closed', japanese: '店が閉まっていたので、何も買えませんでした。', meaning: "The shop was closed, so I couldn't buy anything." },
-    { id: 'return-item', japanese: '昨日買ったシャツを返したいんですが。', meaning: "I'd like to return the shirt I bought yesterday." },
-    { id: 'cheaper-shop', japanese: 'もっと安い店があるかもしれません。', meaning: 'There might be a cheaper shop.' },
-    { id: 'look-only', japanese: '今日は見るだけにしておきます。', meaning: "I'll just have a look today." },
-
-    { id: 'order-ready', japanese: '注文してもいいですか。', meaning: 'May I order?' },
-    { id: 'no-meat', japanese: '肉が入っていない料理はありますか。', meaning: 'Do you have any dishes without meat?' },
-    { id: 'less-spicy', japanese: 'あまり辛くしないでください。', meaning: "Please don't make it too spicy." },
-    { id: 'looks-good', japanese: 'このケーキはおいしそうですね。', meaning: "This cake looks delicious, doesn't it?" },
-    { id: 'too-hot', japanese: '熱すぎて、まだ飲めません。', meaning: "It's too hot to drink yet." },
-    { id: 'try-food', japanese: 'この料理を食べてみたいです。', meaning: "I'd like to try this dish." },
-    { id: 'already-eaten', japanese: 'もう昼ご飯を食べてしまいました。', meaning: "I've already eaten lunch." },
-    { id: 'eat-before', japanese: '出かける前に、何か食べておきましょう。', meaning: "Let's eat something before going out." },
-    { id: 'drink-water', japanese: 'コーヒーではなく、水をお願いします。', meaning: "I'd like water instead of coffee, please." },
-    { id: 'bill-separate', japanese: '別々に払ってもいいですか。', meaning: 'May we pay separately?' },
-
-    { id: 'close-window', japanese: '寒いので、窓を閉めてもいいですか。', meaning: "It's cold, so may I close the window?" },
-    { id: 'light-left', japanese: '電気をつけたまま寝てしまいました。', meaning: 'I fell asleep with the light on.' },
-    { id: 'clean-room', japanese: '友達が来る前に、部屋を掃除しておきます。', meaning: "I'll clean the room before my friend comes." },
-    { id: 'take-shoes', japanese: 'ここで靴を脱いでください。', meaning: 'Please take off your shoes here.' },
-    { id: 'lost-key', japanese: '家の鍵をなくしてしまいました。', meaning: "I've lost my house key." },
-    { id: 'wash-dishes', japanese: 'ご飯を食べてから、お皿を洗います。', meaning: "I'll wash the dishes after eating." },
-    { id: 'help-carry', japanese: 'この箱を運ぶのを手伝ってもらえますか。', meaning: 'Could you help me carry this box?' },
-    { id: 'door-open', japanese: 'ドアが開いているので、閉めてください。', meaning: 'The door is open, so please close it.' },
-    { id: 'quiet-home', japanese: '子供が寝ているので、静かにしてください。', meaning: 'The child is sleeping, so please be quiet.' },
-    { id: 'laundry-rain', japanese: '雨が降る前に、洗濯物を中に入れましょう。', meaning: "Let's bring the laundry inside before it rains." },
-
-    { id: 'homework-tomorrow', japanese: '明日までに宿題を出さなければなりません。', meaning: 'I have to hand in my homework by tomorrow.' },
-    { id: 'forgot-book', japanese: '教科書を持ってくるのを忘れました。', meaning: 'I forgot to bring my textbook.' },
-    { id: 'borrow-pen', japanese: 'ペンを貸してもらえませんか。', meaning: 'Could you lend me a pen?' },
-    { id: 'meeting-time', japanese: '会議は三時に始まる予定です。', meaning: 'The meeting is scheduled to start at three.' },
-    { id: 'study-library', japanese: '図書館なら、静かに勉強できます。', meaning: 'You can study quietly at the library.' },
-    { id: 'late-work', japanese: '寝坊したので、仕事に遅れてしまいました。', meaning: 'I overslept, so I was late for work.' },
-    { id: 'finish-report', japanese: 'この仕事は今日中に終わると思います。', meaning: 'I think this work will be finished today.' },
-    { id: 'read-again', japanese: '分からなかったら、もう一度読んでください。', meaning: "If you don't understand, please read it again." },
-    { id: 'teacher-ask', japanese: '先生に聞いてから、答えを書きます。', meaning: "I'll write the answer after asking the teacher." },
-    { id: 'work-together', japanese: '一人でやるより、二人でやったほうがいいです。', meaning: "It's better to do it with another person than alone." },
-
-    { id: 'headache-rest', japanese: '頭が痛いので、少し休んでもいいですか。', meaning: 'I have a headache, so may I rest for a while?' },
-    { id: 'medicine-after', japanese: 'この薬は食事の後で飲んでください。', meaning: 'Please take this medicine after meals.' },
-    { id: 'see-doctor', japanese: '熱があるなら、病院に行ったほうがいいです。', meaning: 'If you have a fever, you should go to the hospital.' },
-    { id: 'feel-better', japanese: '昨日より、ずっと元気になりました。', meaning: "I feel much better than yesterday." },
-    { id: 'no-running', japanese: '足が痛くて、走ることができません。', meaning: "My leg hurts, so I can't run." },
-    { id: 'sleep-early', japanese: '今日は早く寝たほうがいいですよ。', meaning: 'You should go to bed early today.' },
-    { id: 'cold-maybe', japanese: '風邪をひいたかもしれません。', meaning: 'I might have caught a cold.' },
-    { id: 'water-often', japanese: '水をたくさん飲むようにしています。', meaning: 'I make a point of drinking plenty of water.' },
-    { id: 'better-medicine', japanese: '薬を飲んだら、少し楽になりました。', meaning: 'After taking the medicine, I felt a little better.' },
-    { id: 'not-overdo', japanese: '疲れているときは、無理をしないでください。', meaning: "When you're tired, please don't push yourself too hard." },
-
-    { id: 'weekend-plan', japanese: '週末は友達と映画を見るつもりです。', meaning: 'I plan to watch a film with a friend at the weekend.' },
-    { id: 'after-shopping', japanese: '買い物が終わったら、電話します。', meaning: "I'll call you when I've finished shopping." },
-    { id: 'meet-station', japanese: '駅の前で待ち合わせることにしました。', meaning: 'We decided to meet in front of the station.' },
-    { id: 'free-sunday', japanese: '日曜日なら、時間があります。', meaning: "If it's Sunday, I'm free." },
-    { id: 'cancel-rain', japanese: '雨だったら、出かけないつもりです。', meaning: "If it rains, I don't plan to go out." },
-    { id: 'reserve-early', japanese: '旅行の前に、ホテルを予約しておきます。', meaning: "I'll book a hotel before the trip." },
-    { id: 'change-time', japanese: '約束の時間を変えてもいいですか。', meaning: 'May we change the time we arranged to meet?' },
-    { id: 'arrive-soon', japanese: 'あと十分ぐらいで着くと思います。', meaning: "I think I'll arrive in about ten minutes." },
-    { id: 'wait-five', japanese: 'もう五分だけ待ってもらえませんか。', meaning: 'Could you wait just five more minutes?' },
-    { id: 'next-month-move', japanese: '来月、引っ越すことになりました。', meaning: "It's been arranged that I'll move house next month." },
-
-    { id: 'umbrella-take', japanese: '雨が降りそうなので、傘を持っていきます。', meaning: "It looks like rain, so I'll take an umbrella." },
-    { id: 'getting-cold', japanese: '夕方になると、寒くなります。', meaning: 'It gets cold in the evening.' },
-    { id: 'snow-first', japanese: 'こんなに雪が降るのを見たのは初めてです。', meaning: "This is the first time I've seen this much snow fall." },
-    { id: 'wind-strong', japanese: '風が強いので、窓を開けないでください。', meaning: "The wind is strong, so please don't open the window." },
-    { id: 'sunny-walk', japanese: '天気がよければ、公園を散歩しましょう。', meaning: "If the weather is good, let's take a walk in the park." },
-    { id: 'rain-stopped', japanese: '雨がやんだので、外に出ても大丈夫です。', meaning: "The rain has stopped, so it's all right to go outside." },
-    { id: 'hot-yesterday', japanese: '今日は昨日ほど暑くありません。', meaning: "Today isn't as hot as yesterday." },
-    { id: 'wet-clothes', japanese: '傘を忘れて、服がぬれてしまいました。', meaning: 'I forgot my umbrella and my clothes got wet.' },
-    { id: 'weather-news', japanese: '天気予報によると、明日は晴れるそうです。', meaning: 'According to the weather forecast, it will be sunny tomorrow.' },
-    { id: 'dark-soon', japanese: '暗くなる前に、家に帰りましょう。', meaning: "Let's go home before it gets dark." },
-
-    { id: 'been-kyoto', japanese: '京都に行ったことがありますか。', meaning: 'Have you ever been to Kyoto?' },
-    { id: 'hotel-bag', japanese: '荷物をここに置いておいてもいいですか。', meaning: 'May I leave my luggage here?' },
-    { id: 'photo-permission', japanese: 'ここで写真を撮ってもいいですか。', meaning: 'May I take photos here?' },
-    { id: 'no-parking', japanese: 'ここに車を止めてはいけません。', meaning: 'You must not park here.' },
-    { id: 'show-map', japanese: '地図を見せてもらえますか。', meaning: 'Could you show me the map?' },
-    { id: 'lost-way', japanese: '道が分からなくなってしまいました。', meaning: "I've lost my way." },
-    { id: 'room-view', japanese: 'この部屋から海が見えます。', meaning: 'You can see the sea from this room.' },
-    { id: 'travel-alone', japanese: '一人で旅行するのは初めてです。', meaning: 'This is my first time travelling alone.' },
-    { id: 'passport-needed', japanese: 'パスポートを見せなければなりませんか。', meaning: 'Do I have to show my passport?' },
-    { id: 'leave-hotel', japanese: '何時までに部屋を出ればいいですか。', meaning: 'By what time should I leave the room?' },
-
-    { id: 'help-friend', japanese: '困ったら、いつでも連絡してください。', meaning: 'If you have a problem, please contact me anytime.' },
-    { id: 'friend-taught', japanese: '友達が日本語を教えてくれました。', meaning: 'My friend taught me Japanese.' },
-    { id: 'give-directions', japanese: '駅までの道を教えてあげました。', meaning: 'I told someone how to get to the station.' },
-    { id: 'invite-dinner', japanese: 'よかったら、一緒に晩ご飯を食べませんか。', meaning: "If you'd like, shall we have dinner together?" },
-    { id: 'sorry-late', japanese: '遅れてしまって、すみません。', meaning: "I'm sorry I'm late." },
-    { id: 'thanks-help', japanese: '手伝ってくれて、ありがとうございます。', meaning: 'Thank you for helping me.' },
-    { id: 'looking-forward', japanese: 'また会えるのを楽しみにしています。', meaning: "I'm looking forward to seeing you again." },
-    { id: 'bring-friend', japanese: '友達を連れてきてもいいですか。', meaning: 'May I bring a friend?' },
-    { id: 'seems-busy', japanese: '今日は忙しそうですね。', meaning: 'You seem busy today.' },
-    { id: 'friend-moving', japanese: '友達は来年、日本に住むつもりだそうです。', meaning: 'I hear my friend plans to live in Japan next year.' },
-
-    { id: 'music-studying', japanese: '音楽を聞きながら、日本語を勉強しています。', meaning: "I'm studying Japanese while listening to music." },
-    { id: 'weekend-activities', japanese: '休みの日は、本を読んだり、散歩したりします。', meaning: 'On my days off, I do things like read books and take walks.' },
-    { id: 'exercise-daily', japanese: '毎日、少し運動するようにしています。', meaning: 'I try to get a little exercise every day.' },
-    { id: 'stop-sweets', japanese: '夜は甘い物を食べないことにしました。', meaning: "I've decided not to eat sweet things at night." },
-    { id: 'used-early', japanese: '最近、早く起きられるようになりました。', meaning: "Recently, I've become able to wake up early." },
-    { id: 'forgot-phone', japanese: '携帯電話を家に忘れてきました。', meaning: 'I left my mobile phone at home.' },
-    { id: 'pack-phone', japanese: '出かける前に、携帯電話をかばんに入れておきます。', meaning: "I'll put my mobile phone in my bag before going out." },
-    { id: 'read-book', japanese: 'この本は読みやすいので、おすすめです。', meaning: "This book is easy to read, so I recommend it." },
-    { id: 'cook-able', japanese: '簡単な料理なら、作ることができます。', meaning: 'I can cook simple dishes.' },
-    { id: 'practice-daily', japanese: '毎日練習すれば、少しずつ上手になります。', meaning: "If you practise every day, you'll gradually improve." },
-
-    { id: 'n5-extra-name', japanese: '私の名前はマックスです。', meaning: 'My name is Max.' },
-    { id: 'n5-extra-cat', japanese: '猫は白いです。', meaning: 'The cat is white.' },
-    { id: 'n5-extra-dog', japanese: '犬が好きです。', meaning: 'I like dogs.' },
-    { id: 'n5-extra-tea', japanese: 'お茶を飲みます。', meaning: 'I drink tea.' },
-    { id: 'n5-extra-bread', japanese: 'パンを買います。', meaning: 'I buy bread.' },
-    { id: 'n5-extra-home', japanese: '家に帰ります。', meaning: 'I go home.' },
-    { id: 'n5-extra-mother', japanese: '母は先生です。', meaning: 'My mother is a teacher.' },
-    { id: 'n5-extra-father', japanese: '父は会社員です。', meaning: 'My father is an office worker.' },
-    { id: 'n5-extra-today', japanese: '今日は月曜日です。', meaning: 'Today is Monday.' },
-    { id: 'n5-extra-tomorrow', japanese: '明日、学校に行きます。', meaning: 'I will go to school tomorrow.' },
-    { id: 'n5-extra-cold', japanese: '今日は寒いです。', meaning: 'It is cold today.' },
-    { id: 'n5-extra-hot', japanese: 'このお茶は熱いです。', meaning: 'This tea is hot.' },
-    { id: 'n5-extra-price', japanese: 'これはいくらですか。', meaning: 'How much is this?' },
-    { id: 'n5-extra-where', japanese: 'トイレはどこですか。', meaning: 'Where is the toilet?' },
-    { id: 'n5-extra-big', japanese: 'この家は大きいです。', meaning: 'This house is big.' },
-    { id: 'n5-extra-small', japanese: 'この犬は小さいです。', meaning: 'This dog is small.' },
-    { id: 'n5-extra-friend', japanese: '友達と行きます。', meaning: 'I go with a friend.' },
-    { id: 'n5-extra-read', japanese: '本を読みます。', meaning: 'I read a book.' },
-    { id: 'n5-extra-sleep', japanese: '十時に寝ます。', meaning: 'I go to bed at ten.' },
-    { id: 'n5-extra-wake', japanese: '七時に起きます。', meaning: 'I get up at seven.' },
-    // A small helping of short, N5-style beginner phrases.
-    { id: 'n5-student', japanese: '私は学生です。', meaning: 'I am a student.' },
-    { id: 'n5-book', japanese: 'これは本です。', meaning: 'This is a book.' },
-    { id: 'n5-water', japanese: '水をください。', meaning: 'Please give me some water.' },
-    { id: 'n5-time', japanese: '今、何時ですか。', meaning: 'What time is it now?' },
-    { id: 'n5-cat', japanese: '猫がいます。', meaning: 'There is a cat.' },
-    { id: 'n5-bread', japanese: 'パンを食べます。', meaning: 'I eat bread.' },
-    { id: 'n5-school', japanese: '毎日、学校へ行きます。', meaning: 'I go to school every day.' },
-    { id: 'n5-hot', japanese: '今日は暑いです。', meaning: 'It is hot today.' },
-    { id: 'n5-station', japanese: '駅はどこですか。', meaning: 'Where is the station?' },
-    { id: 'n5-coffee', japanese: 'コーヒーが好きです。', meaning: 'I like coffee.' },
+    { id: 'n5-hard-01', japanese: '明日は八時に家を出ます。学校には八時半に着きます。', meaning: "Tomorrow I will leave home at eight. I will arrive at school at half past eight." },
+    { id: 'n5-hard-02', japanese: '授業は九時から十二時までです。昼ご飯は十二時半に食べます。', meaning: "Class is from nine until twelve. I will eat lunch at half past twelve." },
+    { id: 'n5-hard-03', japanese: '毎朝六時に起きます。でも、日曜日は八時に起きます。', meaning: "I get up at six every morning. But on Sundays I get up at eight." },
+    { id: 'n5-hard-04', japanese: '昨日は十一時に寝ました。今日は十時に寝ます。', meaning: "Yesterday I went to bed at eleven. Today I will go to bed at ten." },
+    { id: 'n5-hard-05', japanese: '電車は七時二十分に来ます。今は七時十分です。', meaning: "The train comes at seven twenty. It is seven ten now." },
+    { id: 'n5-hard-06', japanese: '図書館は午後五時に閉まります。今から一時間、本を読みます。', meaning: "The library closes at five in the afternoon. I will read for an hour from now." },
+    { id: 'n5-hard-07', japanese: '土曜日の午前中は働きます。午後は友達と遊びます。', meaning: "I work on Saturday morning. In the afternoon I spend time with a friend." },
+    { id: 'n5-hard-08', japanese: '映画は六時に始まります。五時四十分に駅で会いましょう。', meaning: "The film starts at six. Let's meet at the station at five forty." },
+    { id: 'n5-hard-09', japanese: '毎日三十分、日本語を勉強します。昨日は一時間勉強しました。', meaning: "I study Japanese for thirty minutes every day. Yesterday I studied for an hour." },
+    { id: 'n5-hard-10', japanese: '月曜日と木曜日に学校へ行きます。火曜日は家で勉強します。', meaning: "I go to school on Mondays and Thursdays. On Tuesdays I study at home." },
+    { id: 'n5-hard-11', japanese: 'りんごを三つと、バナナを二本ください。みかんはいりません。', meaning: "Please give me three apples and two bananas. I do not need any mandarins." },
+    { id: 'n5-hard-12', japanese: 'このパンは一つ百円です。二つ買います。', meaning: "This bread costs one hundred yen each. I will buy two." },
+    { id: 'n5-hard-13', japanese: '牛乳を一本買いました。でも、卵は買いませんでした。', meaning: "I bought one bottle of milk. But I did not buy any eggs." },
+    { id: 'n5-hard-14', japanese: '青いシャツは二千円です。白いシャツは千五百円です。', meaning: "The blue shirt costs two thousand yen. The white shirt costs one thousand five hundred yen." },
+    { id: 'n5-hard-15', japanese: 'コーヒーを二杯と、お茶を一杯お願いします。砂糖はいりません。', meaning: "Two cups of coffee and one cup of tea, please. I do not need sugar." },
+    { id: 'n5-hard-16', japanese: '切手を五枚ください。それから、はがきを二枚ください。', meaning: "Please give me five stamps. Then please give me two postcards." },
+    { id: 'n5-hard-17', japanese: 'このかばんは高いです。あの小さいかばんを買います。', meaning: "This bag is expensive. I will buy that small bag over there." },
+    { id: 'n5-hard-18', japanese: '冷蔵庫に卵が四つあります。牛乳はありません。', meaning: "There are four eggs in the fridge. There is no milk." },
+    { id: 'n5-hard-19', japanese: '今日は千円あります。六百円の本を買います。', meaning: "I have one thousand yen today. I will buy a book that costs six hundred yen." },
+    { id: 'n5-hard-20', japanese: 'ケーキを四つ買いました。一つは母にあげました。', meaning: "I bought four cakes. I gave one to my mother." },
+    { id: 'n5-hard-21', japanese: '駅の前に銀行があります。郵便局は駅の後ろです。', meaning: "There is a bank in front of the station. The post office is behind the station." },
+    { id: 'n5-hard-22', japanese: '本は机の上にあります。かばんは机の下です。', meaning: "The book is on the desk. The bag is under the desk." },
+    { id: 'n5-hard-23', japanese: '猫は椅子の下にいます。犬はドアの近くにいます。', meaning: "The cat is under the chair. The dog is near the door." },
+    { id: 'n5-hard-24', japanese: 'スーパーは銀行の隣です。学校の隣ではありません。', meaning: "The supermarket is next to the bank. It is not next to the school." },
+    { id: 'n5-hard-25', japanese: '二階に教室が三つあります。先生の部屋は一階です。', meaning: "There are three classrooms on the second floor. The teachers' room is on the first floor." },
+    { id: 'n5-hard-26', japanese: '台所に母がいます。父は庭にいます。', meaning: "My mother is in the kitchen. My father is in the garden." },
+    { id: 'n5-hard-27', japanese: '駅までバスで十分です。歩いて二十分です。', meaning: "It takes ten minutes to the station by bus. It takes twenty minutes on foot." },
+    { id: 'n5-hard-28', japanese: '学校へは自転車で行きます。でも、雨の日はバスで行きます。', meaning: "I go to school by bicycle. But on rainy days I go by bus." },
+    { id: 'n5-hard-29', japanese: 'この道をまっすぐ行ってください。右に小さい公園があります。', meaning: "Please go straight along this road. There is a small park on the right." },
+    { id: 'n5-hard-30', japanese: '入口は左です。右のドアから入らないでください。', meaning: "The entrance is on the left. Please do not enter through the door on the right." },
+    { id: 'n5-hard-31', japanese: '昨日は魚を食べました。今日は肉を食べたいです。', meaning: "Yesterday I ate fish. Today I want to eat meat." },
+    { id: 'n5-hard-32', japanese: '朝ご飯は食べませんでした。でも、お茶を飲みました。', meaning: "I did not eat breakfast. But I drank tea." },
+    { id: 'n5-hard-33', japanese: '先週は忙しかったです。今週はあまり忙しくないです。', meaning: "Last week was busy. This week is not very busy." },
+    { id: 'n5-hard-34', japanese: '昨日の天気はよくなかったです。今日はいい天気です。', meaning: "The weather was not good yesterday. The weather is nice today." },
+    { id: 'n5-hard-35', japanese: '去年は京都に住んでいました。今は東京に住んでいます。', meaning: "Last year I lived in Kyoto. Now I live in Tokyo." },
+    { id: 'n5-hard-36', japanese: '昨日、映画を見ました。とてもおもしろかったです。', meaning: "I watched a film yesterday. It was very interesting." },
+    { id: 'n5-hard-37', japanese: '日曜日はどこにも行きませんでした。家で本を読みました。', meaning: "I did not go anywhere on Sunday. I read a book at home." },
+    { id: 'n5-hard-38', japanese: '今朝は寒くなかったです。でも、今は寒いです。', meaning: "It was not cold this morning. But it is cold now." },
+    { id: 'n5-hard-39', japanese: '昨日は宿題がありませんでした。今日はたくさんあります。', meaning: "I did not have any homework yesterday. Today I have a lot." },
+    { id: 'n5-hard-40', japanese: '先月、新しい靴を買いました。今日はその靴を履いています。', meaning: "I bought new shoes last month. Today I am wearing those shoes." },
+    { id: 'n5-hard-41', japanese: '私は魚が好きです。でも、弟は魚が好きではありません。', meaning: "I like fish. But my younger brother does not like fish." },
+    { id: 'n5-hard-42', japanese: '姉は英語が上手です。私はまだあまり上手ではありません。', meaning: "My older sister is good at English. I am not very good at it yet." },
+    { id: 'n5-hard-43', japanese: 'この部屋は広いです。でも、少し暗いです。', meaning: "This room is spacious. But it is a little dark." },
+    { id: 'n5-hard-44', japanese: '今日は暑いですから、冷たい水を飲みたいです。', meaning: "It is hot today, so I want to drink cold water." },
+    { id: 'n5-hard-45', japanese: '明日は休みですから、早く起きません。', meaning: "Tomorrow is a day off, so I will not get up early." },
+    { id: 'n5-hard-46', japanese: '母はコーヒーをよく飲みます。父はお茶をよく飲みます。', meaning: "My mother often drinks coffee. My father often drinks tea." },
+    { id: 'n5-hard-47', japanese: 'この町は静かです。そして、公園がたくさんあります。', meaning: "This town is quiet. And there are many parks." },
+    { id: 'n5-hard-48', japanese: '朝はいつもパンを食べます。でも、今日はご飯を食べました。', meaning: "I always eat bread in the morning. But today I ate rice." },
+    { id: 'n5-hard-49', japanese: '私は毎日テレビを見ます。兄はあまり見ません。', meaning: "I watch television every day. My older brother does not watch it very much." },
+    { id: 'n5-hard-50', japanese: '赤い花が好きです。でも、今日は白い花を買いました。', meaning: "I like red flowers. But today I bought white flowers." },
+    { id: 'n5-hard-51', japanese: '窓を開けてください。ドアは閉めてください。', meaning: "Please open the window. Please close the door." },
+    { id: 'n5-hard-52', japanese: 'ここで写真を撮ってもいいです。でも、食べ物を食べてはいけません。', meaning: "You may take photographs here. But you must not eat food." },
+    { id: 'n5-hard-53', japanese: '名前を書いてください。それから、この紙を先生に渡してください。', meaning: "Please write your name. Then please give this paper to the teacher." },
+    { id: 'n5-hard-54', japanese: '明日、友達と昼ご飯を食べます。その後で、買い物をします。', meaning: "Tomorrow I will eat lunch with a friend. After that I will go shopping." },
+    { id: 'n5-hard-55', japanese: 'シャワーを浴びてから、寝ます。まだ宿題があります。', meaning: "I will go to bed after taking a shower. I still have homework." },
+    { id: 'n5-hard-56', japanese: '一緒に公園へ行きませんか。三時に家を出ましょう。', meaning: "Would you like to go to the park together? Let's leave home at three." },
+    { id: 'n5-hard-57', japanese: '今日は病院へ行きますから、学校を休みます。', meaning: "I am going to the hospital today, so I will be absent from school." },
+    { id: 'n5-hard-58', japanese: '明日は母の誕生日です。花を買って、母にあげます。', meaning: "Tomorrow is my mother's birthday. I will buy flowers and give them to her." },
+    { id: 'n5-hard-59', japanese: '今、妹は本を読んでいます。私は手紙を書いています。', meaning: "My younger sister is reading a book now. I am writing a letter." },
+    { id: 'n5-hard-60', japanese: 'この本を借りてもいいですか。金曜日に返します。', meaning: "May I borrow this book? I will return it on Friday." },
   ];
 
   const STORAGE_KEY = 'katakana-quest-progress-v1';
@@ -479,7 +377,7 @@
   const STAMP_TYPES = [
     { key: 'gettysburg', label: 'Gettysburg practice', symbol: '🎩' },
     { key: 'katakana', label: 'Katakana', symbol: 'カ' },
-    { key: 'listening', label: 'N4 listening', symbol: '♪' },
+    { key: 'listening', label: 'Hard N5 listening', symbol: '♪' },
     { key: 'kanji', label: 'Everyday kanji', symbol: '漢' },
   ];
   let today = dateKey(new Date());
@@ -770,6 +668,9 @@
     const date = dateKey(new Date());
     const session = state.listeningSession;
     const phraseIds = new Set(PHRASES.map((phrase) => phrase.id));
+    // Retired exercises must disappear from saved review and selection history too.
+    state.listeningReview = state.listeningReview.filter((answer) => answer && phraseIds.has(answer.id));
+    state.usedListeningPhrases = state.usedListeningPhrases.filter((id) => phraseIds.has(id));
     if (session && session.date === date
       && Array.isArray(session.phraseIds) && session.phraseIds.length === LISTENING_SIZE
       && new Set(session.phraseIds).size === LISTENING_SIZE
@@ -790,9 +691,7 @@
         used = new Set(selected);
         available = PHRASES.filter((phrase) => !used.has(phrase.id));
       }
-      const basics = PHRASES.filter((phrase) => phrase.id.startsWith('n5-') && !selected.includes(phrase.id));
-      const pool = basics.length && Math.random() < 0.7 ? basics : available;
-      const phrase = pool[Math.floor(Math.random() * pool.length)];
+      const phrase = available[Math.floor(Math.random() * available.length)];
       selected.push(phrase.id);
       used.add(phrase.id);
     }
@@ -900,7 +799,7 @@
     elements.listeningProgress.style.width = `${count / LISTENING_SIZE * 100}%`;
     elements.listeningStep.textContent = done ? 'Complete' : `Phrase ${graded ? count : count + 1} of ${LISTENING_SIZE}`;
     elements.listeningPrompt.hidden = done;
-    elements.listeningInstruction.textContent = 'Listen as often as you like, then translate into English.';
+    elements.listeningInstruction.textContent = 'Listen again if you need to. Catch the times, quantities, negatives and changes of plan.';
     elements.listeningForm.hidden = done || graded;
     elements.listeningFeedback.hidden = true;
     elements.listeningNext.hidden = !graded;
