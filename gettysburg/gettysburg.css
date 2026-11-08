@@ -112,3 +112,7 @@ textarea:disabled { opacity:1; -webkit-text-fill-color:var(--ink); }
  .day-hats img { width:21px; }
 }
 @media(prefers-reduced-motion:reduce) { .just-earned .earned-hat { animation:none; } .progress-track span { transition:none; } }
+
+.mode-nav .shared-calendar-link { width: 50%; min-width: 0; text-align: center; display: inline-flex; align-items: center; justify-content: center; color: var(--ink, #262c27); font: inherit; font-size: 14px; font-weight: 700; text-decoration: none; padding: 13px 16px; border-radius: 12px; }
+.mode-nav .shared-calendar-link:hover { background: #eee8dc; }
+.mode-nav .shared-calendar-link:focus-visible { outline: 3px solid #225943; outline-offset: 3px; }

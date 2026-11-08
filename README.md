@@ -44,7 +44,7 @@ Katakana and kanji now check and advance in one click. Listening offers direct *
 
 Listening is now entirely Hard N5, with 60 new exercises. Kanji has 30 beginner entries; new kanji selection favours those basics with a 70% chance whenever eligible basics remain. Kanji avoids repeats among new signs, and saved misses return in review.
 
-Both apps open the same calendar. Any nonblank writing in Gettysburg earns a daily top hat, alongside Japanese stamps, and counts towards the shared practice streak. Old completed-recitation records remain saved and contribute their dates. Drafts and Japanese answers still use separate storage. No hat is awarded merely for opening the page or checking an empty draft.
+Both apps open the same calendar. Opening Gettysburg or any interaction with it earns a daily top hat, alongside Japanese stamps, and counts towards the shared practice streak. Old completed-recitation records remain saved and contribute their dates. Drafts and Japanese answers still use separate storage. Opening the page, clicking, scrolling, focusing, typing or checking even an empty draft all count. There is no separate Gettysburg calendar.
 
 Run `node --test tests/practice-flow.test.cjs` for the new answer-flow regression checks. Older tests describing a separate result/Next screen or the smaller beginner bank predate this flow.
 
@@ -73,7 +73,7 @@ Run `node --test tests/*.test.cjs` to check daily selection, saved progress, rol
 
 ## Gettysburg Address version
 
-[Four Score](gettysburg/) is a separate writing-from-memory version: type the speech, receive the next two words after a mistake, and earn a top-hat calendar stamp for every full recitation. Its draft and history use separate browser storage. See [its README](gettysburg/README.md).
+[Four Score](gettysburg/) is a separate writing-from-memory version: type the speech, receive the next two words after a mistake, and earn a daily top-hat stamp on the shared calendar for any interaction. Its draft and history use separate browser storage. See [its README](gettysburg/README.md).
 
 A prominent **Japanese / Gettysburg Address** navigation switch appears above the mode tabs on both pages. Switching pages keeps each app’s saved practice separate.
 

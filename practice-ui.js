@@ -22,8 +22,7 @@
       (Array.isArray(saved.completions) ? saved.completions : []).forEach((entry) => { if (entry && entry.date) days.add(entry.date); });
       return days;
     },
-    recordWriting(text) {
-      if (!text.trim()) return;
+    recordActivity() {
       const date = new Date();
       const key = [date.getFullYear(), String(date.getMonth()+1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-');
       const days = read(activityKey);
