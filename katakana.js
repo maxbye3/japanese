@@ -374,7 +374,14 @@
   const STORAGE_KEY = 'katakana-quest-progress-v1';
   const QUEST_SIZE = 10;
   const LISTENING_SIZE = 10;
+  const CHECKIN_KEY = 'practice-checkins-v1';
+  const CHECKINS = [
+    { key: 'aiInvestment', label: 'AI investment', symbol: '🤖' },
+    { key: 'quietMoment', label: 'Quiet moment', icon: 'assets/meditating-buddha.svg' },
+    { key: 'exercised', label: 'Exercised', icon: 'assets/dumbbell.svg' },
+  ];
   const STAMP_TYPES = [
+    ...CHECKINS,
     { key: 'gettysburg', label: 'Gettysburg practice', symbol: '🎩' },
     { key: 'katakana', label: 'Katakana', symbol: 'カ' },
     { key: 'listening', label: 'Hard N5 listening', symbol: '♪' },
@@ -562,6 +569,33 @@
     }
   }
 
+  function loadCheckins() {
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(CHECKIN_KEY) || '{}') || {}; } catch { /* Recover unreadable check-ins. */ }
+    return Object.fromEntries(CHECKINS.map(({key}) => [key, new Set(
+      (Array.isArray(saved[key]) ? saved[key] : []).filter((date) => typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date))
+    )]));
+  }
+
+  CHECKINS.forEach(({key, label}) => {
+    document.querySelector('#checkin-' + key).addEventListener('click', () => {
+      const checkins = loadCheckins();
+      const date = dateKey(new Date());
+      if (checkins[key].has(date)) return;
+      checkins[key].add(date);
+      try {
+        localStorage.setItem(CHECKIN_KEY, JSON.stringify(Object.fromEntries(
+          CHECKINS.map(({key}) => [key, [...checkins[key]]])
+        )));
+      } catch {
+        document.querySelector('#checkin-status').textContent = 'Your browser could not save this stamp. Please try again.';
+        return;
+      }
+      refreshCalendar();
+      document.querySelector('#checkin-status').textContent = label + ' stamped for today.';
+    });
+  });
+
   function getCalendarCompletions() {
     let kanjiDays = [];
     let kanjiStats = {};
@@ -583,6 +617,7 @@
       // Katakana and listening stamps remain available if kanji storage cannot be read.
     }
     return {
+      ...loadCheckins(),
       gettysburg: window.PracticeUI.hats(),
       katakana: new Set(Object.keys(state.days).filter((date) => state.days[date] && state.days[date].completed)),
       listening: new Set(state.listeningCompletedDays),
@@ -593,6 +628,13 @@
 
   function renderCalendarStats() {
     const completions = getCalendarCompletions();
+    CHECKINS.forEach(({key, label}) => {
+      const button = document.querySelector('#checkin-' + key);
+      const stamped = completions[key].has(dateKey(new Date()));
+      button.disabled = stamped;
+      button.setAttribute('aria-pressed', String(stamped));
+      button.textContent = stamped ? label + ' · Stamped today ✓' : label;
+    });
     const total = STAMP_TYPES.reduce((sum, type) => sum + completions[type.key].size, 0);
     elements.navStampCount.textContent = String(total);
     elements.stampTotal.textContent = String(total);
@@ -724,7 +766,7 @@
   function refreshDailyPractice() {
     const katakanaChanged = refreshKatakanaDay();
     const listeningChanged = refreshListeningDay();
-    if (katakanaChanged || listeningChanged) refreshCalendar();
+    refreshCalendar();
   }
 
   function playListening(phrase) {
@@ -1028,7 +1070,11 @@
           earned.forEach((type) => {
             const stamp = document.createElement('span');
             stamp.className = 'day-stamp stamp-' + type.key;
-            stamp.textContent = type.symbol;
+            if (type.icon) {
+              const icon = document.createElement('img');
+              icon.src = type.icon; icon.alt = ''; icon.width = 18; icon.height = 18;
+              stamp.appendChild(icon);
+            } else stamp.textContent = type.symbol;
             if (type.key === 'kanji' && showKanjiScore) {
               stamp.classList.add('has-score');
               stamp.textContent += ' ' + kanjiStats.correct;

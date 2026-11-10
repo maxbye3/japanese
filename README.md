@@ -78,3 +78,7 @@ Run `node --test tests/*.test.cjs` to check daily selection, saved progress, rol
 A prominent **Japanese / Gettysburg Address** navigation switch appears above the mode tabs on both pages. Switching pages keeps each app’s saved practice separate.
 
 Listening now uses only the new Hard N5 bank; the older N4 and short N5 listening phrases have been retired. Run `node --test tests/hard-n5-listening.test.cjs tests/practice-flow.test.cjs tests/listening-review-priority.test.cjs` for bank migration, saved progress, daily selection, review and answer-flow checks.
+
+## Daily check-ins
+
+The shared calendar has **AI investment**, **Quiet moment** and **Exercised** buttons. Each adds its own stamp for the current local date once per day: robot, meditating Buddha and dumbbell. Check-ins persist under the separate `practice-checkins-v1` key, survive the Japanese reset, and contribute to the shared streak. Their explanations are shown beside the buttons; the Exercised explanation uses the requested AI research wording.

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f3eb" />
     <title>Max's Japanese Listening Website</title>
-    <link rel="stylesheet" href="katakana.css?v=practice-flow-2" />
+    <link rel="stylesheet" href="katakana.css?v=daily-checkins-1" />
     <link rel="stylesheet" href="practice-switcher.css?v=1" />
   </head>
   <body>
@@ -205,6 +205,29 @@
           <div class="calendar-stats"><strong id="stamp-total">0</strong><span>stamps earned</span></div>
         </div>
 
+        <section class="daily-checkins" aria-labelledby="checkins-title">
+          <h3 id="checkins-title">A little time for yourself</h3>
+          <p>Done your 15 minutes? Add today’s stamp.</p>
+          <div class="checkin-grid">
+            <article class="checkin-card">
+              <span class="checkin-icon" aria-hidden="true">🤖</span>
+              <h4>AI investment</h4><p id="aiInvestment-description">Spend 15 minutes or more on AI research</p>
+              <button id="checkin-aiInvestment" class="primary-button" type="button" aria-pressed="false" aria-describedby="aiInvestment-description">AI investment</button>
+            </article>
+            <article class="checkin-card">
+              <span class="checkin-icon" aria-hidden="true"><img src="assets/meditating-buddha.svg" alt="" width="32" height="32" /></span>
+              <h4>Quiet moment</h4><p id="quietMoment-description">Spend 15 minutes or more walking without phone</p>
+              <button id="checkin-quietMoment" class="primary-button" type="button" aria-pressed="false" aria-describedby="quietMoment-description">Quiet moment</button>
+            </article>
+            <article class="checkin-card">
+              <span class="checkin-icon" aria-hidden="true"><img src="assets/dumbbell.svg" alt="" width="32" height="32" /></span>
+              <h4>Exercised</h4><p id="exercised-description">Spend 15 minutes or more on AI research</p>
+              <button id="checkin-exercised" class="primary-button" type="button" aria-pressed="false" aria-describedby="exercised-description">Exercised</button>
+            </article>
+          </div>
+          <p id="checkin-status" role="status" aria-live="polite"></p>
+        </section>
+
         <div class="calendar-card">
           <div class="month-toolbar">
             <button class="icon-button" type="button" id="previous-month" aria-label="Previous month">←</button>
@@ -218,7 +241,10 @@
             <span><span class="day-stamp stamp-listening" aria-hidden="true">♪</span> Listening</span>
             <span><span class="day-stamp stamp-kanji" aria-hidden="true">漢</span> Kanji</span>
             <span>🎩 Gettysburg practice</span>
-          </div>
+          <span><span class="day-stamp stamp-aiInvestment" aria-hidden="true">🤖</span> AI investment</span>
+<span><span class="day-stamp stamp-quietMoment" aria-hidden="true"><img src="assets/meditating-buddha.svg" alt="" width="18" height="18" /></span> Quiet moment</span>
+<span><span class="day-stamp stamp-exercised" aria-hidden="true"><img src="assets/dumbbell.svg" alt="" width="18" height="18" /></span> Exercised</span>
+</div>
         </div>
 
         <section id="gacha-collection" class="gacha-collection" aria-labelledby="gacha-title">
@@ -314,8 +340,8 @@
     <script src="kanji-tooltips.js?v=kanji-tooltips"></script>
     <script src="japanese-audio.js?v=answer-audio"></script>
     <script src="sushi-rolls.js?v=weekly-sushi"></script>
-    <script src="gacha.js?v=calendar-celebration"></script>
-    <script src="katakana.js?v=hard-n5-1"></script>
+    <script src="gacha.js?v=daily-checkins-1"></script>
+    <script src="katakana.js?v=daily-checkins-1"></script>
     <script src="kanji.js?v=practice-flow-2"></script>
   </body>
 </html>
