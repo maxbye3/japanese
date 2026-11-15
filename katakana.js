@@ -808,7 +808,7 @@
     const answer = session.answers.at(-1);
     elements.listeningGradeOverride.hidden = !answer;
     if (answer) {
-      elements.listeningGradeOverride.textContent = 'I got that last one wrong';
+      elements.listeningGradeOverride.textContent = answer.gotIt ? 'I got that last one wrong' : 'I got that last one right';
       const phrase = PHRASES.find((entry) => entry.id === answer.id);
       elements.listeningGradeOverride.setAttribute('aria-label', elements.listeningGradeOverride.textContent + ': ' + phrase.meaning);
     }
@@ -819,7 +819,7 @@
     const session = getListeningSession();
     const answer = session.answers.at(-1);
     if (!answer) return;
-    answer.gotIt = false;
+    answer.gotIt = !answer.gotIt;
     answer.manuallyGraded = true;
     state.listeningReview = state.listeningReview.filter((entry) => entry && entry.id !== answer.id);
     if (!answer.gotIt) state.listeningReview.push({ id: answer.id, translation: answer.translation });
@@ -844,9 +844,10 @@
     elements.listeningPrompt.hidden = done;
     elements.listeningInstruction.textContent = 'Listen again if you need to. Catch the times, quantities, negatives and changes of plan.';
     elements.listeningForm.hidden = done || graded;
+    elements.listeningNotSure.hidden = done || graded;
     elements.listeningFeedback.hidden = true;
     elements.listeningNext.hidden = !graded;
-    elements.listeningMarkActions.hidden = done || graded;
+    elements.listeningMarkActions.hidden = done || graded || listeningAttempt === null;
     elements.listeningGradePrompt.hidden = graded;
     elements.listeningGradeStatus.hidden = !graded;
     elements.listeningTranscript.hidden = true;
@@ -886,6 +887,8 @@
     }
     listeningAttempt = translation;
     elements.listeningForm.hidden = true;
+    elements.listeningNotSure.hidden = true;
+    elements.listeningMarkActions.hidden = false;
     elements.listeningMeaning.textContent = phrase.meaning;
     elements.listeningAttempt.textContent = listeningAttempt || 'Not sure';
     window.KanjiTooltips.render(elements.listeningJapanese, phrase.japanese);
@@ -897,7 +900,7 @@
   function markListening(gotIt) {
     if (refreshListeningDay()) return;
     if (getListeningSession().showGradedAnswer) return;
-    if (listeningAttempt === null) listeningAttempt = elements.listeningInput.value.trim();
+    if (listeningAttempt === null) return; // Grade only after the translation has been compared.
     const phrase = currentListeningPhrase();
     if (!phrase) return;
     const session = getListeningSession();
