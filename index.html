@@ -86,11 +86,11 @@
         <div class="progress-track" aria-label="Listening progress"><span id="listening-progress"></span></div>
 
         <div class="practice-card listening-card">
-          <div class="card-meta"><span>Listen first · N5 vocabulary · listen for the details</span><span id="listening-step">Phrase 1 of 10</span></div>
+          <span id="listening-step" hidden>Phrase 1 of 10</span>
           <div id="listening-prompt" class="audio-prompt">
             <span class="audio-mark" aria-hidden="true">♪</span>
             <button class="play-button" id="listening-play" type="button">▶ Play Japanese</button>
-            <p id="listening-instruction">Listen again if you need to. Catch the times, quantities, negatives and changes of plan.</p>
+            <p id="listening-instruction" hidden></p>
           </div>
           <p id="audio-status" class="audio-status" role="status" aria-live="polite" hidden></p>
           <form id="listening-form">
@@ -99,8 +99,11 @@
               <input id="listening-input" name="translation" type="text" autocomplete="off" spellcheck="false" maxlength="180" placeholder="type what it means" required />
               <button class="primary-button" type="submit">Compare translation <span aria-hidden="true">↗</span></button>
             </div>
-            <button id="listening-not-sure" class="not-sure-button" type="button">I don’t know</button>
           </form>
+          <div class="listening-assist-actions">
+            <button id="listening-not-sure" class="not-sure-button" type="button">I don’t know</button>
+            <button id="listening-grade-override" class="grade-override" type="button" hidden></button>
+          </div>
           <div id="listening-transcript" class="listening-transcript" role="status" aria-live="polite" hidden>
             <p class="transcript-label">What you heard</p>
             <p id="listening-japanese" class="listening-japanese" lang="ja"></p>
@@ -116,11 +119,10 @@
               <button id="listening-next" class="primary-button" type="button" hidden>Next phrase →</button>
             </div>
           </div>
-            <div class="mark-actions" id="listening-mark-actions">
-              <button class="mark-got" type="button" data-listening-mark="got">Correct · next →</button>
-              <button class="mark-review" type="button" data-listening-mark="review">Wrong · next →</button>
+            <div class="mark-actions" id="listening-mark-actions" hidden>
+              <button class="mark-got" type="button" data-listening-mark="got">Correct</button>
+              <button class="mark-review" type="button" data-listening-mark="review">Wrong</button>
             </div>
-          <button id="listening-grade-override" class="grade-override" type="button" hidden></button>
           <div id="listening-done" class="listening-done" hidden>
             <span class="done-mark" aria-hidden="true">✦</span>
             <h3>Today’s ten complete!</h3>
