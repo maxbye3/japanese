@@ -108,6 +108,9 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
 .not-sure-button { min-height: 44px; margin-top: 10px; padding: 0 17px; border: 1px solid var(--teal); border-radius: 10px; color: var(--teal); background: transparent; font-size: 13px; font-weight: 800; }
 .not-sure-button:hover { background: #dfeee8; }
 .not-sure-button:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+.listening-assist-actions { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: stretch; gap: 10px; margin-top: 10px; }
+.listening-assist-actions .not-sure-button, .listening-assist-actions .grade-override { min-width: 0; margin-top: 0; padding: 10px 12px; }
+.listening-assist-actions .grade-override { overflow-wrap: anywhere; }
 .primary-button:disabled { cursor: default; opacity: .72; transform: none; }
 .feedback { display: flex; align-items: center; gap: 14px; margin-top: 20px; padding: 16px; border-radius: 12px; background: #e5f1e9; color: var(--teal-dark); font-size: 13px; line-height: 1.4; }
 .feedback.is-wrong { background: #fbe8df; color: #9c4d3c; }
