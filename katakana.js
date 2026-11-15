@@ -1142,7 +1142,6 @@
   renderQuestion();
   renderListening();
   window.addEventListener('exercise:progress', refreshCalendar);
-  window.addEventListener('focus', () => { if (!elements.calendarView.hidden) window.ExerciseAlbum.check(); });
   window.addEventListener('storage', refreshCalendar);
   window.addEventListener('focus', refreshCalendar);
   window.addEventListener('kanji:progress', refreshCalendar);
