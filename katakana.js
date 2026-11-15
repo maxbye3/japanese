@@ -541,7 +541,7 @@
     if (view === 'quest') refreshKatakanaDay();
     if (view === 'listening') refreshListeningDay();
     if (view === 'kanji') window.dispatchEvent(new Event('kanji:open'));
-    if (view === 'calendar') renderCalendar();
+    if (view === 'calendar') { renderCalendar(); window.ExerciseAlbum.check(); }
   }
 
   function renderStats() {
@@ -577,7 +577,7 @@
     )]));
   }
 
-  CHECKINS.forEach(({key, label}) => {
+  CHECKINS.filter(({key}) => key !== 'exercised').forEach(({key, label}) => {
     document.querySelector('#checkin-' + key).addEventListener('click', () => {
       const checkins = loadCheckins();
       const date = dateKey(new Date());
@@ -618,6 +618,7 @@
     }
     return {
       ...loadCheckins(),
+      exercised: new Set([...loadCheckins().exercised, ...window.ExerciseAlbum.days()]),
       gettysburg: window.PracticeUI.hats(),
       katakana: new Set(Object.keys(state.days).filter((date) => state.days[date] && state.days[date].completed)),
       listening: new Set(state.listeningCompletedDays),
@@ -628,7 +629,7 @@
 
   function renderCalendarStats() {
     const completions = getCalendarCompletions();
-    CHECKINS.forEach(({key, label}) => {
+    CHECKINS.filter(({key}) => key !== 'exercised').forEach(({key, label}) => {
       const button = document.querySelector('#checkin-' + key);
       const stamped = completions[key].has(dateKey(new Date()));
       button.disabled = stamped;
@@ -1140,6 +1141,8 @@
   renderReview();
   renderQuestion();
   renderListening();
+  window.addEventListener('exercise:progress', refreshCalendar);
+  window.addEventListener('focus', () => { if (!elements.calendarView.hidden) window.ExerciseAlbum.check(); });
   window.addEventListener('storage', refreshCalendar);
   window.addEventListener('focus', refreshCalendar);
   window.addEventListener('kanji:progress', refreshCalendar);

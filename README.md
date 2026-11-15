@@ -81,4 +81,10 @@ Listening now uses only the new Hard N5 bank; the older N4 and short N5 listenin
 
 ## Daily check-ins
 
-The shared calendar has **AI investment**, **Quiet moment** and **Exercised** buttons. Each adds its own stamp for the current local date once per day: robot, meditating Buddha and dumbbell. Check-ins persist under the separate `practice-checkins-v1` key, survive the Japanese reset, and contribute to the shared streak. Their explanations are shown beside the buttons; the Exercised explanation uses the requested AI research wording.
+The shared calendar has **AI investment** and **Quiet moment** buttons, awarding daily robot and meditating Buddha stamps. Check-ins persist under the separate `practice-checkins-v1` key, survive the Japanese reset, and contribute to the shared streak. The old manual Exercised button is replaced by automatic workout album monitoring below; past manual dumbbell stamps are preserved.
+
+## Automatic workout stamps
+
+The manual Exercised button has been replaced by the linked workout album. A GitHub Actions job checks its public item count about every five minutes; schedules can be delayed. Opening Calendar or returning focus to it fetches the latest published snapshot. This is a scheduled snapshot, not a live Google Photos request from the browser (Google blocks that cross-origin access). A count increase of one or more earns one dumbbell stamp on the detection date in Europe/London. The initial 74-item baseline, unchanged counts and decreases do not earn stamps. Past manual exercise stamps are kept. Snapshot dates are shared across browsers/devices; the other stamps retain their existing storage behaviour.
+
+Only counts, timestamps and earned dates are published to the generated `exercise-album-data` branch. No photographs, photo URLs or album-owner details are stored. Failures leave the previous snapshot intact and never award a stamp. The album counter reads Google's public viewer data, which is not a supported API and can change; an unexpected format fails the workflow instead of inventing a count. A newer count after a delayed check earns a stamp on the day detected, since photo upload dates cannot reliably establish when you exercised.

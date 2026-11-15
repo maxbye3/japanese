@@ -389,3 +389,6 @@ h2 { margin-bottom: 0; font-size: clamp(26px, 4vw, 39px); letter-spacing: -.05em
 .stamp-quietMoment { color: #93651f; }
 .stamp-exercised { color: #3b586c; }
 @media (max-width: 650px) { .checkin-grid { grid-template-columns: minmax(0, 1fr); } }
+
+.checkin-card a.primary-button { margin-top: auto; width: 100%; white-space: normal; text-align: center; text-decoration: none; overflow-wrap: anywhere; }
+#exercise-album-status { font-size: 12px; }
