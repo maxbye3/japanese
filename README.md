@@ -81,12 +81,6 @@ Listening now uses only the new Hard N5 bank; the older N4 and short N5 listenin
 
 ## Daily check-ins
 
-The shared calendar has **AI investment** and **Quiet moment** buttons, awarding daily robot and meditating Buddha stamps. Check-ins persist under the separate `practice-checkins-v1` key, survive the Japanese reset, and contribute to the shared streak. The old manual Exercised button is replaced by automatic workout album monitoring below; past manual dumbbell stamps are preserved.
+The shared calendar has **AI investment**, **Quiet moment**, and **Exercised** buttons. Each awards its own stamp once per local day and contributes to the shared streak. The exercise button reads “work out. 15 mins or more a day of unadulterated shred.” and awards a dumbbell stamp. Check-ins persist under `practice-checkins-v1`, survive Japanese resets, and become available again on the next local day.
 
-## On-demand workout album checks
-
-The manual Exercised button has been replaced by the linked workout album. Calendar requests a fresh count only on page load with `#calendar` or when switching to the Calendar view. There are no scheduled album scans, background polling, focus-triggered checks or cached GitHub snapshot reads. Existing exercise stamps are retained. The first successful live check establishes a baseline; later count increases award one dumbbell stamp on the browser's current local date. Unchanged counts, decreases and failed reads do not award stamps.
-
-`api/exercise-album.mjs` is a stateless Node endpoint that requests only the fixed public Google Photos album and returns its current count and check time with `no-store` headers. No account credentials, photos or photo URLs are sent to the browser. The public viewer format is not a supported Google API; unexpected formats fail instead of inventing a count.
-
-GitHub Pages cannot execute this endpoint. To enable live checks, deploy the repository's API to Node/Vercel hosting and set `window.EXERCISE_ALBUM_ENDPOINT` in `exercise-album-config.js` to its HTTPS URL (or `/api/exercise-album` if hosted together). Until connected, the calendar explicitly says live checks need a backend connection and makes no count requests. The prior GitHub Action is removed, and no timed replacement runs. No other exercise or stamp storage is changed.
+Exercise tracking is manual again. Calendar no longer requests album counts. Previously earned manual and cached automatic exercise stamps are preserved. The unused album-check endpoint and helpers remain in the repository, but no scheduled or calendar-triggered checks run.

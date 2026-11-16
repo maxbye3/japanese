@@ -378,7 +378,7 @@
   const CHECKINS = [
     { key: 'aiInvestment', label: 'AI investment', symbol: '🤖' },
     { key: 'quietMoment', label: 'Quiet moment', icon: 'assets/meditating-buddha.svg' },
-    { key: 'exercised', label: 'Exercised', icon: 'assets/dumbbell.svg' },
+    { key: 'exercised', label: 'Exercised', buttonLabel: 'work out. 15 mins or more a day of unadulterated shred.', icon: 'assets/dumbbell.svg' },
   ];
   const STAMP_TYPES = [
     ...CHECKINS,
@@ -541,7 +541,7 @@
     if (view === 'quest') refreshKatakanaDay();
     if (view === 'listening') refreshListeningDay();
     if (view === 'kanji') window.dispatchEvent(new Event('kanji:open'));
-    if (view === 'calendar') { renderCalendar(); window.ExerciseAlbum.check(); }
+    if (view === 'calendar') renderCalendar();
   }
 
   function renderStats() {
@@ -577,7 +577,7 @@
     )]));
   }
 
-  CHECKINS.filter(({key}) => key !== 'exercised').forEach(({key, label}) => {
+  CHECKINS.forEach(({key, label, buttonLabel}) => {
     document.querySelector('#checkin-' + key).addEventListener('click', () => {
       const checkins = loadCheckins();
       const date = dateKey(new Date());
@@ -629,12 +629,13 @@
 
   function renderCalendarStats() {
     const completions = getCalendarCompletions();
-    CHECKINS.filter(({key}) => key !== 'exercised').forEach(({key, label}) => {
+    CHECKINS.forEach(({key, label, buttonLabel}) => {
       const button = document.querySelector('#checkin-' + key);
       const stamped = completions[key].has(dateKey(new Date()));
       button.disabled = stamped;
       button.setAttribute('aria-pressed', String(stamped));
-      button.textContent = stamped ? label + ' · Stamped today ✓' : label;
+      const text = buttonLabel || label;
+      button.textContent = stamped ? text + ' · Stamped today ✓' : text;
     });
     const total = STAMP_TYPES.reduce((sum, type) => sum + completions[type.key].size, 0);
     elements.navStampCount.textContent = String(total);

@@ -8,11 +8,11 @@ function launch({seed,endpoint='https://example.test/api/exercise-album',reply}=
 }
 const snapshot=(count,earnedDays=[])=>({version:1,count,earnedDays,checkedAt:new Date().toISOString()});
 const response=count=>({ok:true,json:async()=>({count,checkedAt:new Date().toISOString()})});
-test('no background scheduler remains and only Calendar opening triggers checks',()=>{
+test('no background scheduler remains and manual workouts no longer trigger album checks',()=>{
  assert.equal(fs.existsSync(path.join(__dirname,'../.github/workflows/exercise-album.yml')),false);
  assert.doesNotMatch(script,/setInterval|raw\.githubusercontent/);
  const source=fs.readFileSync(path.join(__dirname,'../katakana.js'),'utf8');
- assert.match(source,/view === 'calendar'\) \{ renderCalendar\(\); window.ExerciseAlbum.check\(\)/);
+ assert.doesNotMatch(source,/ExerciseAlbum\.check\(/);
  assert.doesNotMatch(source,/addEventListener\('focus'.*ExerciseAlbum/);
 });
 test('first live check sets baseline; subsequent increase stamps once without repeated requests on its own',async()=>{

@@ -23,13 +23,13 @@ test('detection uses London date across British Summer Time midnight',async()=>{
  const {updateSnapshot}=await import('../scripts/exercise-album.mjs');
  assert.deepEqual(updateSnapshot({count:1,earnedDays:[]},2,new Date('2026-06-01T23:30:00Z')).earnedDays,['2026-06-02']);
 });
-test('shared calendar merges automatic and old exercise stamps; manual exercised control is gone',()=>{
+test('shared calendar merges automatic and old exercise stamps; manual exercise control is restored',()=>{
  const saved=new Map([
   ['practice-checkins-v1',JSON.stringify({exercised:['2026-10-15']})],
   ['exercise-album-snapshot-v1',JSON.stringify({version:1,count:75,checkedAt:'2026-10-16T10:00:00Z',earnedDays:['2026-10-16']})],
  ]);
  const app=launch({saved});app.tabs[3].listeners.click();
- assert.equal(app.els['checkin-exercised'],undefined);
+ assert.ok(app.els['checkin-exercised']);
  assert.equal(app.els['stamp-total'].textContent,'2');
  for(const date of ['2026-10-15','2026-10-16']){
   const cell=app.els['calendar-grid'].children.find(c=>c.dataset.date===date);
@@ -38,8 +38,8 @@ test('shared calendar merges automatic and old exercise stamps; manual exercised
  app.els['checkin-aiInvestment'].listeners.click();
  assert.deepEqual(JSON.parse(saved.get('practice-checkins-v1')).exercised,['2026-10-15']);
 });
-test('removed wrong AI description is no longer present in the workout card',()=>{
+test('workout card restores the manual button without the wrong AI description or album link',()=>{
  const html=fs.readFileSync(require('node:path').join(__dirname,'../index.html'),'utf8');
- const card=html.slice(html.indexOf('<h4>Workout album'),html.indexOf('id="checkin-status"'));
- assert.doesNotMatch(card,/AI research|checkin-exercised/);assert.match(card,/Z18e59WB1EXEJXeHA/);
+ const card=html.slice(html.indexOf('<h4>Exercised'),html.indexOf('id="checkin-status"'));
+ assert.doesNotMatch(card,/AI research|Z18e59WB1EXEJXeHA/);assert.match(card,/work out\. 15 mins or more a day of unadulterated shred\./);
 });
