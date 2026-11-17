@@ -423,6 +423,7 @@
     listeningForm: document.querySelector('#listening-form'),
     listeningInput: document.querySelector('#listening-input'),
     listeningNotSure: document.querySelector('#listening-not-sure'),
+    listeningAssistActions: document.querySelector('#listening-assist-actions'),
     listeningFeedback: document.querySelector('#listening-feedback'),
     listeningTranscript: document.querySelector('#listening-transcript'),
     listeningMeaning: document.querySelector('#listening-meaning'),
@@ -808,6 +809,8 @@
     const session = getListeningSession();
     const answer = session.answers.at(-1);
     elements.listeningGradeOverride.hidden = !answer;
+    // Keep 'I don’t know' full width before a grade exists; split the row for a correction.
+    elements.listeningAssistActions.classList.toggle('has-correction', Boolean(answer) && !elements.listeningNotSure.hidden);
     if (answer) {
       elements.listeningGradeOverride.textContent = answer.gotIt ? 'I got that last one wrong' : 'I got that last one right';
       const phrase = PHRASES.find((entry) => entry.id === answer.id);
@@ -890,6 +893,7 @@
     elements.listeningForm.hidden = true;
     elements.listeningNotSure.hidden = true;
     elements.listeningMarkActions.hidden = false;
+    renderListeningCorrection();
     elements.listeningMeaning.textContent = phrase.meaning;
     elements.listeningAttempt.textContent = listeningAttempt || 'Not sure';
     window.KanjiTooltips.render(elements.listeningJapanese, phrase.japanese);
