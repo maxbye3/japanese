@@ -2,11 +2,46 @@
   'use strict';
 
   let activeUtterance = null;
+  let activeAudio = null;
 
   function stop() {
+    if (activeAudio) {
+      const audio = activeAudio;
+      activeAudio = null;
+      audio.pause();
+      audio.removeAttribute('src');
+      audio.load();
+    }
     const wasPlaying = activeUtterance;
     activeUtterance = null;
     if (wasPlaying && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+  }
+
+  function playListening(phrase, setStatus = () => {}) {
+    stop();
+    const audio = new window.Audio(`assets/listening/${encodeURIComponent(phrase.id)}.mp3`);
+    activeAudio = audio;
+    audio.onplaying = () => {
+      if (activeAudio === audio) setStatus('Playing Japanese audio…');
+    };
+    audio.onended = () => {
+      if (activeAudio !== audio) return;
+      activeAudio = null;
+      setStatus('Tap play to listen again.');
+    };
+    const failed = () => {
+      if (activeAudio !== audio) return;
+      stop();
+      setStatus('Audio could not load. Check your connection and tap play to retry.');
+    };
+    audio.onerror = failed;
+    setStatus('Preparing Japanese audio…');
+    try {
+      const playback = audio.play();
+      if (playback) playback.catch(failed);
+    } catch {
+      failed();
+    }
   }
 
   function speak(text, setStatus = () => {}) {
@@ -50,5 +85,5 @@
     }
   }
 
-  window.JapaneseAudio = { speak, stop };
+  window.JapaneseAudio = { speak, stop, playListening };
 })();

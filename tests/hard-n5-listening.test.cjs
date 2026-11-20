@@ -61,7 +61,7 @@ test('new N5 misses lead tomorrow’s set; reload keeps the same phrases and cor
  assert.equal(app.state().listeningSession.phraseIds[0],ids[0]);
  assert.equal(new Set(app.state().listeningSession.phraseIds).size,10);
  app.els['listening-play'].listeners.click();
- assert.equal(app.spoken.at(-1).text,phrases[0].japanese);
+ assert.equal(app.audioClips.at(-1).src,`assets/listening/${phrases[0].id}.mp3`);
  app.els['listening-input'].value='my translation';app.els['listening-form'].listeners.submit(event);
  assert.equal(app.els['listening-japanese'].textContent,phrases[0].japanese);
  assert.equal(app.els['listening-meaning'].textContent,phrases[0].meaning);

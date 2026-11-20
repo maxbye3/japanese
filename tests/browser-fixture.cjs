@@ -70,6 +70,14 @@ function launch({ saved = new Map(), clock = { now: localDay(0) }, random = 0.37
     return button;
   });
   const spoken = [];
+  const audioClips = [];
+  class Audio {
+    constructor(src) { this.src = src; audioClips.push(this); }
+    play() { this.onplaying(); return Promise.resolve(); }
+    pause() { this.paused = true; }
+    removeAttribute() { this.src = ''; }
+    load() {}
+  }
   const intervals = [];
   const timeouts = new Map();
   let timeoutId = 0;
@@ -105,6 +113,7 @@ function launch({ saved = new Map(), clock = { now: localDay(0) }, random = 0.37
     createElement: element,
   });
   const window = Object.assign(eventTarget(), {
+    Audio,
     innerWidth: 375, innerHeight: 900,
     confirm: () => true,
     setInterval: (callback) => intervals.push(callback),
@@ -119,7 +128,7 @@ function launch({ saved = new Map(), clock = { now: localDay(0) }, random = 0.37
   });
   sources.forEach((source) => vm.runInContext(source, context));
   return {
-    els, marks, tabs, spoken, synth, clock, saved, intervals, timeouts,
+    els, marks, tabs, spoken, audioClips, synth, clock, saved, intervals, timeouts,
     windowEvents: window.listeners, documentEvents: document.listeners,
     state: () => JSON.parse(saved.get(key)),
     kanjiState: () => JSON.parse(saved.get(kanjiKey) || 'null'),

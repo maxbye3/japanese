@@ -985,7 +985,7 @@
   }
 
   function playListening(phrase) {
-    window.JapaneseAudio.speak(phrase.japanese, setAudioStatus);
+    window.JapaneseAudio.playListening(phrase, setAudioStatus);
   }
 
   function renderListeningReview() {

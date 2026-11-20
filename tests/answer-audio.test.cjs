@@ -92,7 +92,8 @@ test('new speech and switching modes cancel active audio instead of queuing word
   assert.equal(app.synth.cancellations, 2);
   app.els['listening-play'].listeners.click();
   app.tabs[2].listeners.click();
-  assert.equal(app.synth.cancellations, 3);
+  assert.equal(app.synth.cancellations, 2);
+  assert.equal(app.audioClips.at(-1).paused, true);
   submit(app, 'kanji', 'entrance');
   assert.equal(app.spoken.at(-1).text, 'いりぐち');
 });
