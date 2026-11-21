@@ -19,7 +19,7 @@
 
   function playListening(phrase, setStatus = () => {}) {
     stop();
-    const audio = new window.Audio(`assets/listening/${encodeURIComponent(phrase.id)}.mp3`);
+    const audio = new window.Audio(`assets/listening/${encodeURIComponent(phrase.id)}.mp3?v=nanami-1`);
     activeAudio = audio;
     audio.onplaying = () => {
       if (activeAudio === audio) setStatus('Playing Japanese audio…');

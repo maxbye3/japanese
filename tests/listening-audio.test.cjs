@@ -21,7 +21,7 @@ test('listening plays without speech synthesis or Japanese voices', () => {
     app.tabs[1].listeners.click();
     const before = app.saved.get('katakana-quest-progress-v1');
     app.els['listening-play'].listeners.click();
-    assert.match(app.audioClips[0].src, /^assets\/listening\/n5-hard-\d\d\.mp3$/);
+    assert.match(app.audioClips[0].src, /^assets\/listening\/n5-hard-\d\d\.mp3\?v=nanami-1$/);
     assert.equal(app.spoken.length, 0);
     assert.match(app.els['audio-status'].textContent, /Playing/);
     assert.equal(app.saved.get('katakana-quest-progress-v1'), before);
